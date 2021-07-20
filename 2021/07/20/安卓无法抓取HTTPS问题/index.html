@@ -20,17 +20,22 @@
     <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
     
     <meta name="description" content="">
-    <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://example.com/tags/CTF/index.html">
+    <meta name="description" content="安卓无法抓取HTTPS问题  原因1、证书问题 2、ssl pinning问题 解决方案如果不需要重放等功能直接使用 HttpCanary ，傻瓜式一键操作。 原因：新版本功能也比较强大，也是支持的但是就是不太舒服。 正经说 网上教程也太多了，就不说了。默认root+Magisk+EdXposed 导入CA导出 Burp 根证书，然后用 openssl 将证书转换为安卓认识的 .0 文件  ope">
+<meta property="og:type" content="article">
+<meta property="og:title" content="安卓无法抓取HTTPS问题">
+<meta property="og:url" content="http://example.com/2021/07/20/%E5%AE%89%E5%8D%93%E6%97%A0%E6%B3%95%E6%8A%93%E5%8F%96HTTPS%E9%97%AE%E9%A2%98/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="安卓无法抓取HTTPS问题  原因1、证书问题 2、ssl pinning问题 解决方案如果不需要重放等功能直接使用 HttpCanary ，傻瓜式一键操作。 原因：新版本功能也比较强大，也是支持的但是就是不太舒服。 正经说 网上教程也太多了，就不说了。默认root+Magisk+EdXposed 导入CA导出 Burp 根证书，然后用 openssl 将证书转换为安卓认识的 .0 文件  ope">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-07-20T09:26:00.000Z">
+<meta property="article:modified_time" content="2021-07-20T09:28:24.898Z">
 <meta property="article:author" content="R0ser1">
+<meta property="article:tag" content="杂七杂八">
 <meta name="twitter:card" content="summary">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     
-    <title>R0ser1&#39;s Blog</title>
+    <title>安卓无法抓取HTTPS问题 · R0ser1&#39;s Blog</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -212,6 +217,8 @@
 <meta name="generator" content="Hexo 5.4.0"></head>
 
     
+        <body class="post-body">
+    
     
 <header class="header">
 
@@ -234,6 +241,17 @@
     <!-- back to home page text -->
     <a class="home-link header-element" href=/>R0ser1's Blog</a>
     <!-- toggle banner for post layout -->
+    
+    
+    <div class="banner">
+    
+        <div class="blog-title header-element">
+            <a href="/" >R0ser1&#39;s Blog</a>
+        </div>
+        <div class="post-title header-element">
+            <a href="#" class="post-name">安卓无法抓取HTTPS问题</a>
+        </div>
+    </div>
     
 </header>
     
@@ -258,24 +276,74 @@
 
 
 
+
+height:50vh;
 ">
     
     <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
             
     <div class="site-intro-placeholder"></div>
-    <div class="site-intro-img" style="background-image: url(/)"></div>
+    <div class="site-intro-img" style="background-image: url(https://tvax1.sinaimg.cn/large/00774lbQly1gsk7i9yw6zj31z413jgra.jpg)"></div>
     <div class="site-intro-meta">
         <!-- 标题  -->
         <h1 class="intro-title">
             <!-- 主页  -->
+            
+            安卓无法抓取HTTPS问题
+            <!-- 404 -->
             
         </h1>
         <!-- 副标题 -->
         <p class="intro-subtitle">
             <!-- 主页副标题  -->
             
+            
+            <!-- 404 -->
+            
         </p>
         <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "杂七杂八">杂七杂八</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>Word count: <span class="post-count word-count">347</span>Reading time: <span class="post-count reading-time">1 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2021/07/20</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
         
     </div>
 </div>
@@ -376,41 +444,81 @@
 </script>        
         <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
         <div class="container container-unloaded">
-            <main class="main index-page">
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2021/05/03/CTF%E5%8F%8D%E5%BA%8F%E5%88%97%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%80%83%E9%80%B8/" >
-            
-                <span>CTF反序列字符串逃逸</span>
-        </a>
-        <div class="abstract-content">
-            刷了一下CTF反序列化的题，去年没有好好了解。又补了一次PHP，害太菜了。每天看看别人的博客真的可以鼓舞人。简单记录一下两道字符串逃逸问题
-推荐一个反序列化总结的很好的笔记https://www.cnblogs.com/wjrblogs/p/12800358.html
-123456789101112131415161718192021222324//变长 直接构造多个关键词，这样就能逃出几个字符&lt;?phperror_reporting(255);class A&#123;    public  $filename = __FILE__;    public  function __...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/05/03</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "CTF">CTF</a>
-    
-</div>
-            
-        </div>
+            <main class="main post-page">
+    <article class="article-entry">
+        <center>安卓无法抓取HTTPS问题</center>
+
+<h3 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h3><p>1、证书问题</p>
+<p>2、ssl pinning问题</p>
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>如果不需要重放等功能直接使用 HttpCanary ，傻瓜式一键操作。</p>
+<p>原因：新版本功能也比较强大，也是支持的但是就是不太舒服。</p>
+<p>正经说 网上教程也太多了，就不说了。默认root+Magisk+EdXposed</p>
+<h4 id="导入CA"><a href="#导入CA" class="headerlink" title="导入CA"></a>导入CA</h4><p>导出 Burp 根证书，然后用 openssl 将证书转换为安卓认识的 .0 文件</p>
+<blockquote>
+<p>openssl x509 -inform DER -in cacert.der -out cacert.pem<br>openssl x509 -inform PEM -subject_hash_old -in cacert.pem |head -1</p>
+</blockquote>
+<p>//得到的字符串命名文件为 字符串.0 例如    9a5ba575.0</p>
+<p>如果导出的是 Burp 的证书，操作正确文件名一定为 9a5ba575.0</p>
+<p>如果不懂 Magisk 包的制作也不想了解怎么制作直接将这个文件扔进 <code>/system/etc/security/cacerts</code> 然后权限改为 600，最后重启就行了</p>
+<p>如果想用 Magisk 加载就用我提供的 copy_burp_ca.zip，替换压缩包里的 <code>/system/etc/security/cacerts/9a5ba575.0</code> 为你自己的文件，然后用 Magisk 刷入</p>
+<h4 id="加载-SSLUnpinning"><a href="#加载-SSLUnpinning" class="headerlink" title="加载 SSLUnpinning"></a>加载 SSLUnpinning</h4><p>Xposed 使用 <a target="_blank" rel="noopener" href="https://github.com/ElderDrivers/EdXposed">EdXposed</a>，如果 root 管理器使用的是 Magisk 可以直接在然后 Magisk 里面搜 EdXposed 就可安装，EdXposed 装好后加载 <a target="_blank" rel="noopener" href="https://github.com/ViRb3/TrustMeAlready">TrustMeAlready</a> 可开启 SSLUnpinning<br>网上看到很多人说用JustTrustMe，亲测效果很差。这个很OK。</p>
+<h3 id="附件下载"><a href="#附件下载" class="headerlink" title="附件下载"></a>附件下载</h3><p><a target="_blank" rel="noopener" href="https://pan.baidu.com/s/18ej1cRfnEkzOKXICeYUFEQ">copy_burp_ca.zip</a>提取码:6d64</p>
+<p>参考：<a target="_blank" rel="noopener" href="https://loli.world/archives/fxxk-android-app/">https://loli.world/archives/fxxk-android-app/</a></p>
+
     </article>
+    <!-- license  -->
     
-    <!-- paginator  -->
-    
+        <div class="license-wrapper">
+            <p>
+                Author：<a href="http://example.com">
+                        R0ser1
+                    </a>
+                    <p>发表日期：<a href="http://example.com/2021/07/20/%E5%AE%89%E5%8D%93%E6%97%A0%E6%B3%95%E6%8A%93%E5%8F%96HTTPS%E9%97%AE%E9%A2%98/">
+                            July 20th 2021, 5:26:00 pm
+                        </a>
+                    <p>更新日期：<a href="http://example.com/2021/07/20/%E5%AE%89%E5%8D%93%E6%97%A0%E6%B3%95%E6%8A%93%E5%8F%96HTTPS%E9%97%AE%E9%A2%98/">
+                            July 20th 2021, 5:28:24 pm
+                        </a>
+                    <p>版权声明：本文采用<a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可
+                    </p>
+        </div>
+        
+            <!-- paginator  -->
+            <ul class="post-paginator">
+                <li class="next">
+                    
+                </li>
+                <li class="previous">
+                    
+                        <div class="prevSlogan">Previous Post</div>
+                        <a href="/2021/07/18/DedeCMS%E5%8E%86%E5%8F%B2%E7%89%88%E6%9C%AC%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%AD%A6%E4%B9%A0/" title="DedeCMS历史版本代码审计学习">
+                            <div class="prevTitle">
+                                DedeCMS历史版本代码审计学习
+                            </div>
+                        </a>
+                        
+                </li>
+            </ul>
+            <!-- 评论插件 -->
+            <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+                
+                    
+                         
+                            <!-- utteranc评论 -->
+
+                                <!-- partial('_partial/comment/changyan') -->
+                                <!--PC版-->
+
+
+                                    
+                                        
+
+                                            <!-- 评论 -->
+
+                                            <!-- idea from: https://hexo.fluid-dev.com/posts/hexo-injector/#%E6%96%87%E7%AB%A0%E6%97%B6%E6%95%88%E6%80%A7%E6%8F%90%E7%A4%BA -->
+                                            
 </main>
             <!-- profile -->
             
@@ -484,6 +592,24 @@
 </footer>
     </div>
     <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8E%9F%E5%9B%A0"><span class="toc-number">1.</span> <span class="toc-text">原因</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number">2.</span> <span class="toc-text">解决方案</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%AF%BC%E5%85%A5CA"><span class="toc-number">2.1.</span> <span class="toc-text">导入CA</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8A%A0%E8%BD%BD-SSLUnpinning"><span class="toc-number">2.2.</span> <span class="toc-text">加载 SSLUnpinning</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%99%84%E4%BB%B6%E4%B8%8B%E8%BD%BD"><span class="toc-number">3.</span> <span class="toc-text">附件下载</span></a></li></ol>
+    </div>
     
     <div class="sidebar sidebar-hide">
     <ul class="sidebar-tabs sidebar-tabs-active-0">
@@ -778,6 +904,8 @@ jsonContent:
     
     </div>
     <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
      
     </body>
 </html>

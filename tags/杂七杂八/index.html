@@ -22,7 +22,7 @@
     <meta name="description" content="">
     <meta property="og:type" content="website">
 <meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://example.com/tags/CTF/index.html">
+<meta property="og:url" content="http://example.com/tags/%E6%9D%82%E4%B8%83%E6%9D%82%E5%85%AB/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:locale" content="en_US">
 <meta property="article:author" content="R0ser1">
@@ -384,25 +384,69 @@
     
     
     <article class="index-post">
-        <a class="abstract-title" href = "/2021/05/03/CTF%E5%8F%8D%E5%BA%8F%E5%88%97%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%80%83%E9%80%B8/" >
+        <a class="abstract-title" href = "/2021/07/20/%E5%AE%89%E5%8D%93%E6%97%A0%E6%B3%95%E6%8A%93%E5%8F%96HTTPS%E9%97%AE%E9%A2%98/" >
             
-                <span>CTF反序列字符串逃逸</span>
+                <span>安卓无法抓取HTTPS问题</span>
         </a>
         <div class="abstract-content">
-            刷了一下CTF反序列化的题，去年没有好好了解。又补了一次PHP，害太菜了。每天看看别人的博客真的可以鼓舞人。简单记录一下两道字符串逃逸问题
-推荐一个反序列化总结的很好的笔记https://www.cnblogs.com/wjrblogs/p/12800358.html
-123456789101112131415161718192021222324//变长 直接构造多个关键词，这样就能逃出几个字符&lt;?phperror_reporting(255);class A&#123;    public  $filename = __FILE__;    public  function __...
+            安卓无法抓取HTTPS问题
+
+原因1、证书问题
+2、ssl pinning问题
+解决方案如果不需要重放等功能直接使用 HttpCanary ，傻瓜式一键操作。
+原因：新版本功能也比较强大，也是支持的但是就是不太舒服。
+正经说 网上教程也太多了，就不说了。默认root+Magisk+EdXposed
+导入CA导出 Burp 根证书，然后用 openssl 将证书转换为安卓认识的 .0 文件
+
+openssl x509 -inform DER -in cacert.der -out cacert.pemopenssl x509 -inform PEM -subject_hash_old -i...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
             <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/05/03</span>
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/07/20</span>
             </div>
             <!-- tags  -->
             
             <div class= abstract-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-tags = "CTF">CTF</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags = "杂七杂八">杂七杂八</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
+        <a class="abstract-title" href = "/2021/07/17/Volatility/" >
+            
+                <span>Volatility</span>
+        </a>
+        <div class="abstract-content">
+            #Volatility学习
+
+查看活动进程，我们还可以查看创建镜像时的活动网络连接！现在让我们使用命令 volatility -f MEMORY_FILE.raw --profile=PROFILE netscan 来执行此操作。
+
+
+恶意软件试图隐藏自身以及与之关联的进程是很常见的。话虽如此，我们可以通过命令 psxview 查看有意隐藏的进程
+
+
+除了通过 psxview 查看隐藏进程之外，我们还可以通过命令“ldrmodules”更加专注地检查这一点。这里中间会出现三列，InLoad、InInit、InMem。如果其中任何一个是错误的，则该模块可能已被注入，这是一件非常糟糕的事情。...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/07/17</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "杂七杂八">杂七杂八</a>
     
 </div>
             
