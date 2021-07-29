@@ -384,6 +384,42 @@
     
     
     <article class="index-post">
+        <a class="abstract-title" href = "/2021/07/29/ThinkPHP3-2%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/" >
+            
+                <span>ThinkPHP3.2注入漏洞学习</span>
+        </a>
+        <div class="abstract-content">
+            ThinkPHP3.2注入漏洞学习
+
+Exp注入漏洞复现我们可以看到漏洞代码并没有使用I函数（使用I函数则不会产生exp注入）原因后面会分析
+123456789101112&lt;?phpnamespace Home\Controller;use Think\Controller;class IndexController extends Controller &#123;    public function index()&#123;//        $username=I(username);        $username=$_GET[&#x27;username&#x27;...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/07/29</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "SQL注入">SQL注入</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "代码审计">代码审计</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "ThinkPHP">ThinkPHP</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href = "/2021/07/17/Mysql%E6%B3%A8%E5%85%A5%E6%8A%80%E5%B7%A7%E5%A4%87%E5%BF%98%E5%BD%95/" >
             
                 <span>Mysql注入技巧备忘录</span>
@@ -699,9 +735,22 @@ BugscanTeam 项...
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 11
+        Total : 12
         </div>
         <!-- search  -->
         
@@ -714,6 +763,11 @@ BugscanTeam 项...
     
     <div class="archive-year"> 2021 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/29</span><a class="archive-post-title" href= "/2021/07/29/ThinkPHP3-2%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/" >ThinkPHP3.2注入漏洞学习</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -786,6 +840,8 @@ BugscanTeam 项...
         <span class="sidebar-tag-name" data-tags="代码审计"><span class="iconfont-archer">&#xe606;</span>代码审计</span>
     
         <span class="sidebar-tag-name" data-tags="杂七杂八"><span class="iconfont-archer">&#xe606;</span>杂七杂八</span>
+    
+        <span class="sidebar-tag-name" data-tags="ThinkPHP"><span class="iconfont-archer">&#xe606;</span>ThinkPHP</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
