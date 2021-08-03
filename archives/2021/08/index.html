@@ -22,7 +22,7 @@
     <meta name="description" content="">
     <meta property="og:type" content="website">
 <meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://example.com/tags/meterpreter/index.html">
+<meta property="og:url" content="http://example.com/archives/2021/08/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:locale" content="en_US">
 <meta property="article:author" content="R0ser1">
@@ -384,34 +384,36 @@
     
     
     <article class="index-post">
-        <a class="abstract-title" href = "/2021/03/21/Meterpreter%E5%90%8E%E6%B8%97%E9%80%8F/" >
+        <a class="abstract-title" href = "/2021/08/03/ThinkPHP5-x%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/" >
             
-                <span>Meterpreter后渗透</span>
+                <span>ThinkPHP5.x注入漏洞学习</span>
         </a>
         <div class="abstract-content">
-            仅此记录自己的学习笔记罢了。持续更新本文章
+            ThinkPHP5.x注入漏洞学习
 
-Msf后渗透测试阶段做什么
+前言
+以下复现均需要在application/database.php 文件中配置数据库相关信息，并开启 **application/config 中的 ** app_debug 和 app_trace 
 
--提权
--信息收集
--渗透内网
--永久后门
+通过以下命令获取测试环境代码：
+1composer create-project --prefer-dist topthink/think=版本 tpdemo
 
-在meterpreter中首先要获取system账号权限-load priv -getsystem▪ priv_elevate_getsystem: Operation failed: Access is denied. //说明有UAC限制
-绕过UAC限制use exploit/windows/local/ask //就是需要请求ask同意我才能执行’ VNC去访问那种▪ set session▪ set filename
-此时session会多出来一个新的具有sy...
+将 composer.json 文件的 require 字段设置成如下，之后执行一次 composer update
+1234&quot;require&quot;: &#123;   ...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
             <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/03/21</span>
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/08/03</span>
             </div>
             <!-- tags  -->
             
             <div class= abstract-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-tags = "meterpreter">meterpreter</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags = "SQL注入">SQL注入</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "代码审计">代码审计</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "ThinkPHP">ThinkPHP</a>
     
 </div>
             

