@@ -384,6 +384,48 @@
     
     
     <article class="index-post">
+        <a class="abstract-title" href = "/2021/08/06/bluecms1-6%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%AD%A6%E4%B9%A0/" >
+            
+                <span>bluecms1.6代码审计学习</span>
+        </a>
+        <div class="abstract-content">
+            前言最近也一直跟着师傅们学习代码审计，基本没独立起来自己审计一些东西。最近审计一些不知名的小众CMS吧，然后慢慢去审计一些POP链。比较简单的审计记录一下罢了，大牛忽略。
+环境
+BlueCMS v1.6 sp1
+seay、PHPstorm
+PHP 5.2 [毕竟很老的CMS了版本高了容易出问题]
+
+漏洞因为CMS比较老，这里就以定位敏感关键字快速定位。
+ad_js文件SQL注入
+
+Common.fun文件SQL注入
+我们发现comment是评论系统，所以我们先要去发表一篇文章然后进行评论
+我们开始可以对源码进行调试，输出一下语句什么的。当然也可以xdebug
+
+然后我们去数据库构造一下语...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/08/06</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "代码审计">代码审计</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href = "/2021/08/04/Laravel%E4%B8%8D%E8%A7%84%E8%8C%83%E5%86%99%E6%B3%95%E5%AF%BC%E8%87%B4%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/" >
             
                 <span>Laravel不规范写法导致注入漏洞</span>
@@ -838,9 +880,22 @@ PHPCMSV9.2上传Getshell漏洞复现我们搭建好环境直接注册，找到�
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 15
+        Total : 16
         </div>
         <!-- search  -->
         
@@ -853,6 +908,11 @@ PHPCMSV9.2上传Getshell漏洞复现我们搭建好环境直接注册，找到�
     
     <div class="archive-year"> 2021 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/06</span><a class="archive-post-title" href= "/2021/08/06/bluecms1-6%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%AD%A6%E4%B9%A0/" >bluecms1.6代码审计学习</a>
+        </li>
     
     
         <li class="archive-post-item">
