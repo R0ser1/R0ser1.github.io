@@ -1683,7 +1683,7 @@
 
 <p><img src="https://tvax2.sinaimg.cn/large/00774lbQly1gt9tb762swj30u10ddqb5.jpg" alt="image-20210808234114695"></p>
 <p>进入数据库查看<br><img src="https://tva1.sinaimg.cn/large/00774lbQly1gt9tbcu5g9j310n07e46v.jpg" alt="image-20210808234148282"></p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>师傅写的太好了，很多就直接搬过来了,也随着师傅思路找到了其他漏洞。<br><a href="https://p0rz9.github.io/2018/10/17/PbootCMS_V1.2.1%E7%BB%84%E5%90%88%E6%BC%8F%E6%B4%9E%E4%B9%8B%E5%89%8D%E5%8F%B0%E6%97%A0%E9%99%90%E5%88%B6%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1">https://p0rz9.github.io/2018/10/17/PbootCMS_V1.2.1%E7%BB%84%E5%90%88%E6%BC%8F%E6%B4%9E%E4%B9%8B%E5%89%8D%E5%8F%B0%E6%97%A0%E9%99%90%E5%88%B6%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1</a></p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>师傅写的太好了，很多就直接搬过来了,也随着师傅思路找到了其他漏洞。<br><a href="https://p0rz9.github.io/2018/10/17/PbootCMS_V1.2.1%E7%BB%84%E5%90%88%E6%BC%8F%E6%B4%9E%E4%B9%8B%E5%89%8D%E5%8F%B0%E6%97%A0%E9%99%90%E5%88%B6%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C/">https://p0rz9.github.io/2018/10/17/PbootCMS_V1.2.1组合漏洞之前台无限制命令执行/</a></p>
 ]]></content>
       <tags>
         <tag>代码审计</tag>
