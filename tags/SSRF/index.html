@@ -22,7 +22,7 @@
     <meta name="description" content="">
     <meta property="og:type" content="website">
 <meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://example.com/tags/XSS/index.html">
+<meta property="og:url" content="http://example.com/tags/SSRF/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:locale" content="en_US">
 <meta property="article:author" content="R0ser1">
@@ -384,24 +384,26 @@
     
     
     <article class="index-post">
-        <a class="abstract-title" href = "/2021/05/17/XSS%E4%B8%80%E4%BA%9B%E8%AE%B0%E5%BD%95/" >
+        <a class="abstract-title" href = "/2021/08/17/SSRF%E4%B8%80%E4%BA%9B%E7%9F%A5%E8%AF%86%E7%82%B9/" >
             
-                <span>XSS一些记录</span>
+                <span>SSRF一些知识点</span>
         </a>
         <div class="abstract-content">
-            XSS一些总结除了script以外大多标签自动加载触发JS代码大多用的都是on事件，以下标签都可以用下面的方法去打Cookie以及url等
-123456789101112131415161718192021常见标签&lt;img&gt;&lt;input&gt;&lt;details&gt;&lt;svg&gt;&lt;select&gt;&lt;iframe&gt;&lt;video&gt;&lt;audio&gt;&lt;textarea&gt;  &lt;body&gt;&lt;Style&gt;&lt;Media&gt;such as: 其他的标签自动触发百度一下就好了&lt;b...
+            漏洞介绍 SSRF(Server-Side Request Forgery:服务器端请求伪造) 是一种利用漏洞伪造服务器端发起请求。一般情况下，SSRF攻击的目标是从外网无法访问的内部系统。
+SSRF原理 通过控制功能中的发起请求的服务来当作跳板攻击内网中其他服务。比如，通过控制前台的请求远程地址加载的响应，来让请求数据由远程的URL域名修改为请求本地、或者内网的IP地址及服务，来造成对内网系统的攻击。
+
+SSRF危害1.向内部任意主机的任意端口发送payload来攻击内网服务2.DOS攻击（请求大文件，始终保持连接Keep-Alive Always）3.攻击内网的web应用，例如直接S...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
             <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/05/17</span>
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/08/17</span>
             </div>
             <!-- tags  -->
             
             <div class= abstract-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-tags = "XSS">XSS</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags = "SSRF">SSRF</a>
     
 </div>
             

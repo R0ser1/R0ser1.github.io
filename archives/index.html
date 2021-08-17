@@ -384,6 +384,38 @@
     
     
     <article class="index-post">
+        <a class="abstract-title" href = "/2021/08/17/SSRF%E4%B8%80%E4%BA%9B%E7%9F%A5%E8%AF%86%E7%82%B9/" >
+            
+                <span>SSRF一些知识点</span>
+        </a>
+        <div class="abstract-content">
+            漏洞介绍 SSRF(Server-Side Request Forgery:服务器端请求伪造) 是一种利用漏洞伪造服务器端发起请求。一般情况下，SSRF攻击的目标是从外网无法访问的内部系统。
+SSRF原理 通过控制功能中的发起请求的服务来当作跳板攻击内网中其他服务。比如，通过控制前台的请求远程地址加载的响应，来让请求数据由远程的URL域名修改为请求本地、或者内网的IP地址及服务，来造成对内网系统的攻击。
+
+SSRF危害1.向内部任意主机的任意端口发送payload来攻击内网服务2.DOS攻击（请求大文件，始终保持连接Keep-Alive Always）3.攻击内网的web应用，例如直接S...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/08/17</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "SSRF">SSRF</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href = "/2021/08/11/JS/" >
             
                 <span>JS(密文保护)</span>
@@ -726,46 +758,6 @@ PHPCMSV9.2上传Getshell漏洞复现我...
         </div>
     </article>
     
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2021/07/21/DedeCMS%E5%8E%86%E5%8F%B2%E7%89%88%E6%9C%AC%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%AD%A6%E4%B9%A0/" >
-            
-                <span>DedeCMS历史版本代码审计学习</span>
-        </a>
-        <div class="abstract-content">
-            DEDECMS历史版本代码审计学习
-
-
-学习代码审计，自己简单记录一下。如有错误望师傅斧正。
-
-DedeCMS重装漏洞这里我们用的版本是20120430，版本查看/data/admin/ver.txt。
-一、首先这个漏洞的本质是 Apache的解析漏洞
-参考以下文章分析Apache与php的结合方式的不同造成的结果
-
-https://www.cnblogs.com/milantgh/p/5116955.htmlhttps://blog.csdn.net/nuanyangH/article/details/105694856
-
-我们就当默认存在解析漏洞。当我们安装成功DedeCMS之后会在...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/07/21</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "代码审计">代码审计</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
     <!-- paginator  -->
     
     <nav class="page-nav">
@@ -1082,9 +1074,24 @@ https://www.cnblogs.com/milantgh/p/5116955.htmlhttps://blog.csdn.net/nuanyangH/a
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 19
+        Total : 20
         </div>
         <!-- search  -->
         
@@ -1097,6 +1104,11 @@ https://www.cnblogs.com/milantgh/p/5116955.htmlhttps://blog.csdn.net/nuanyangH/a
     
     <div class="archive-year"> 2021 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/17</span><a class="archive-post-title" href= "/2021/08/17/SSRF%E4%B8%80%E4%BA%9B%E7%9F%A5%E8%AF%86%E7%82%B9/" >SSRF一些知识点</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1213,6 +1225,8 @@ https://www.cnblogs.com/milantgh/p/5116955.htmlhttps://blog.csdn.net/nuanyangH/a
         <span class="sidebar-tag-name" data-tags="杂七杂八"><span class="iconfont-archer">&#xe606;</span>杂七杂八</span>
     
         <span class="sidebar-tag-name" data-tags="XSS"><span class="iconfont-archer">&#xe606;</span>XSS</span>
+    
+        <span class="sidebar-tag-name" data-tags="SSRF"><span class="iconfont-archer">&#xe606;</span>SSRF</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
