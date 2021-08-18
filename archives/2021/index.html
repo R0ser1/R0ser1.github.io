@@ -384,6 +384,46 @@
     
     
     <article class="index-post">
+        <a class="abstract-title" href = "/2021/08/18/%E9%87%8D%E8%A3%85%E6%BC%8F%E6%B4%9E%E5%B0%8F%E7%BB%93/" >
+            
+                <span>重装漏洞小结</span>
+        </a>
+        <div class="abstract-content">
+            重装漏洞总结常见的重装漏洞种类
+
+1、自动删除这个安装文件
+​      通过生成一个lock文件判断是否安装过
+2、无验证
+​     安装完成不会自动 删除文件，也不会生成lock判断
+3、安装file
+​     直接用Get提交step绕过，直接到下一步
+4、变量覆盖导致重置
+​     可以GET,POST,COOKIE任意方式提交变量名给$insLockfile给其赋值空，覆盖$insLockfile,从而让file_exists为false就不会退出
+5、判断lock后无exit
+​     判断是否存在Lock文件，如果存在Lock文件和header到index.php但...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/08/18</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "代码审计">代码审计</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href = "/2021/08/17/SSRF%E4%B8%80%E4%BA%9B%E7%9F%A5%E8%AF%86%E7%82%B9/" >
             
                 <span>SSRF一些知识点</span>
@@ -697,71 +737,10 @@ Exp注入漏洞复现我们可以看到漏洞代码并没有使用I函数（使�
         </div>
     </article>
     
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2021/07/21/PHPCMSV9%E7%89%88%E6%9C%AC%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%AD%A6%E4%B9%A0/" >
-            
-                <span>PHPCMSV9版本代码审计学习</span>
-        </a>
-        <div class="abstract-content">
-            PHPCMSV9版本代码审计学习
-
-学习代码审计，自己简单记录一下。如有错误望师傅斧正。
-PHPCMS预备知识PHPCMS是采用MVC设计模式开发,基于模块和操作的方式进行访问，采用单一入口模式进行项目部署和访问，无论访问任何一个模块或者功能，只有一个统一的入口。
-
-
-
-参数名称
-描述
-位置
-备注
-
-
-
-m
-模型/模块名称
-phpcms/modules中模块目录名称
-必须
-
-
-c
-控制器名称
-phpcms/modules/模块/*.php 文件名称
-必须
-
-
-a
-事件名称
-phpcms/modules/模块/*.php 中方法名称
-
-
-
-PHPCMSV9.2上传Getshell漏洞复现我...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/07/21</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "代码审计">代码审计</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
     <!-- paginator  -->
     
     <nav class="page-nav">
-        <span class="page-number current">1</span><a class="page-number" href="/archives/2021/page/2/">2</a><a class="extend next" rel="next" href="/archives/2021/page/2/">NEXT &gt;</a>
+        <span class="page-number current">1</span><a class="page-number" href="/archives/2021/page/2/">2</a><a class="page-number" href="/archives/2021/page/3/">3</a><a class="extend next" rel="next" href="/archives/2021/page/2/">NEXT &gt;</a>
     </nav>
     
 </main>
@@ -1089,9 +1068,24 @@ PHPCMSV9.2上传Getshell漏洞复现我...
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 20
+        Total : 21
         </div>
         <!-- search  -->
         
@@ -1104,6 +1098,11 @@ PHPCMSV9.2上传Getshell漏洞复现我...
     
     <div class="archive-year"> 2021 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/18</span><a class="archive-post-title" href= "/2021/08/18/%E9%87%8D%E8%A3%85%E6%BC%8F%E6%B4%9E%E5%B0%8F%E7%BB%93/" >重装漏洞小结</a>
+        </li>
     
     
         <li class="archive-post-item">

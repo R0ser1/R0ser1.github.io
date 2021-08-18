@@ -384,6 +384,46 @@
     
     
     <article class="index-post">
+        <a class="abstract-title" href = "/2021/08/18/%E9%87%8D%E8%A3%85%E6%BC%8F%E6%B4%9E%E5%B0%8F%E7%BB%93/" >
+            
+                <span>重装漏洞小结</span>
+        </a>
+        <div class="abstract-content">
+            重装漏洞总结常见的重装漏洞种类
+
+1、自动删除这个安装文件
+​      通过生成一个lock文件判断是否安装过
+2、无验证
+​     安装完成不会自动 删除文件，也不会生成lock判断
+3、安装file
+​     直接用Get提交step绕过，直接到下一步
+4、变量覆盖导致重置
+​     可以GET,POST,COOKIE任意方式提交变量名给$insLockfile给其赋值空，覆盖$insLockfile,从而让file_exists为false就不会退出
+5、判断lock后无exit
+​     判断是否存在Lock文件，如果存在Lock文件和header到index.php但...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/08/18</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "代码审计">代码审计</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href = "/2021/08/17/SSRF%E4%B8%80%E4%BA%9B%E7%9F%A5%E8%AF%86%E7%82%B9/" >
             
                 <span>SSRF一些知识点</span>
@@ -953,9 +993,24 @@ Common.fun文件SQL注入
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 20
+        Total : 21
         </div>
         <!-- search  -->
         
@@ -968,6 +1023,11 @@ Common.fun文件SQL注入
     
     <div class="archive-year"> 2021 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/18</span><a class="archive-post-title" href= "/2021/08/18/%E9%87%8D%E8%A3%85%E6%BC%8F%E6%B4%9E%E5%B0%8F%E7%BB%93/" >重装漏洞小结</a>
+        </li>
     
     
         <li class="archive-post-item">

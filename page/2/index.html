@@ -397,6 +397,67 @@ height:50vh;
     
     
     <article class="index-post">
+        <a class="abstract-title" href = "/2021/07/21/PHPCMSV9%E7%89%88%E6%9C%AC%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%AD%A6%E4%B9%A0/" >
+            
+                <span>PHPCMSV9版本代码审计学习</span>
+        </a>
+        <div class="abstract-content">
+            PHPCMSV9版本代码审计学习
+
+学习代码审计，自己简单记录一下。如有错误望师傅斧正。
+PHPCMS预备知识PHPCMS是采用MVC设计模式开发,基于模块和操作的方式进行访问，采用单一入口模式进行项目部署和访问，无论访问任何一个模块或者功能，只有一个统一的入口。
+
+
+
+参数名称
+描述
+位置
+备注
+
+
+
+m
+模型/模块名称
+phpcms/modules中模块目录名称
+必须
+
+
+c
+控制器名称
+phpcms/modules/模块/*.php 文件名称
+必须
+
+
+a
+事件名称
+phpcms/modules/模块/*.php 中方法名称
+
+
+
+PHPCMSV9.2上传Getshell漏洞复现我...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/07/21</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "代码审计">代码审计</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href = "/2021/07/21/DedeCMS%E5%8E%86%E5%8F%B2%E7%89%88%E6%9C%AC%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%AD%A6%E4%B9%A0/" >
             
                 <span>DedeCMS历史版本代码审计学习</span>
@@ -718,50 +779,10 @@ BugscanTeam 项...
         </div>
     </article>
     
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2021/03/21/Meterpreter%E5%90%8E%E6%B8%97%E9%80%8F/" >
-            
-                <span>Meterpreter后渗透</span>
-        </a>
-        <div class="abstract-content">
-            仅此记录自己的学习笔记罢了。持续更新本文章
-
-Msf后渗透测试阶段做什么
-
--提权
--信息收集
--渗透内网
--永久后门
-
-在meterpreter中首先要获取system账号权限-load priv -getsystem▪ priv_elevate_getsystem: Operation failed: Access is denied. //说明有UAC限制
-绕过UAC限制use exploit/windows/local/ask //就是需要请求ask同意我才能执行’ VNC去访问那种▪ set session▪ set filename
-此时session会多出来一个新的具有sy...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2021/03/21</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "meterpreter">meterpreter</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
     <!-- paginator  -->
     
     <nav class="page-nav">
-        <a class="extend prev" rel="prev" href="/">&lt; PREV</a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+        <a class="extend prev" rel="prev" href="/">&lt; PREV</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/3/">NEXT &gt;</a>
     </nav>
     
 </main>
@@ -1165,9 +1186,24 @@ Msf后渗透测试阶段做什么
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 20
+        Total : 21
         </div>
         <!-- search  -->
         
@@ -1180,6 +1216,11 @@ Msf后渗透测试阶段做什么
     
     <div class="archive-year"> 2021 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">08/18</span><a class="archive-post-title" href= "/2021/08/18/%E9%87%8D%E8%A3%85%E6%BC%8F%E6%B4%9E%E5%B0%8F%E7%BB%93/" >重装漏洞小结</a>
+        </li>
     
     
         <li class="archive-post-item">
