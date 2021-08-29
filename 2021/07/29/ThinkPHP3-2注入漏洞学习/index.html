@@ -5,57 +5,17 @@
 
 
 
-<!-- keywords -->
-
-
-
-
 <head>
     <meta charset="utf-8">
+	<meta name="referrer" content="no-referrer" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
     <meta name="author" content="R0ser1">
     <meta name="renderer" content="webkit">
     <meta name="copyright" content="R0ser1">
-    
-    <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
-    
+    <meta name="keywords" content="Hexo | R0ser1">
     <meta name="description" content="">
-    <meta name="description" content="ThinkPHP3.2注入漏洞学习  Exp注入漏洞复现我们可以看到漏洞代码并没有使用I函数（使用I函数则不会产生exp注入）原因后面会分析 123456789101112&lt;?phpnamespace Home\Controller;use Think\Controller;class IndexController extends Controller &amp;#123;    public f">
-<meta property="og:type" content="article">
-<meta property="og:title" content="ThinkPHP3.2注入漏洞学习">
-<meta property="og:url" content="http://example.com/2021/07/29/ThinkPHP3-2%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%E5%AD%A6%E4%B9%A0/index.html">
-<meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="ThinkPHP3.2注入漏洞学习  Exp注入漏洞复现我们可以看到漏洞代码并没有使用I函数（使用I函数则不会产生exp注入）原因后面会分析 123456789101112&lt;?phpnamespace Home\Controller;use Think\Controller;class IndexController extends Controller &amp;#123;    public f">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://tvax2.sinaimg.cn/large/00774lbQly1gsxo4uwmygj31cr0hm4ak.jpg">
-<meta property="og:image" content="https://tvax3.sinaimg.cn/large/00774lbQly1gsxo53cothj30zx0lq47e.jpg">
-<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gsxo58n26oj319t0fbk6h.jpg">
-<meta property="og:image" content="https://tvax3.sinaimg.cn/large/00774lbQly1gsxo5dli2wj31c50kowu7.jpg">
-<meta property="og:image" content="https://tva3.sinaimg.cn/large/00774lbQly1gsxo5iiow1j315t068tc0.jpg">
-<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gsxo5nu5gij31ey0h6qeu.jpg">
-<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gsxo5tsjyaj30yt0cyqbk.jpg">
-<meta property="og:image" content="https://tvax1.sinaimg.cn/large/00774lbQly1gsxo5yucepj31d90hhnaj.jpg">
-<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gsxo654rfnj61ef0j2wye02.jpg">
-<meta property="og:image" content="https://tvax4.sinaimg.cn/large/00774lbQly1gsxo6b0jt4j30xc0kojzs.jpg">
-<meta property="og:image" content="https://tvax1.sinaimg.cn/large/00774lbQly1gsxo6guj9gj311f06bdky.jpg">
-<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gsxo6lten3j310p09htew.jpg">
-<meta property="og:image" content="https://tvax2.sinaimg.cn/large/00774lbQly1gsxo6qkr6rj311i0eck11.jpg">
-<meta property="og:image" content="https://tvax1.sinaimg.cn/large/00774lbQly1gsxo6v5pqij31390fdwpp.jpg">
-<meta property="og:image" content="https://tvax3.sinaimg.cn/large/00774lbQly1gsxo72yltsj31270lfq88.jpg">
-<meta property="og:image" content="https://tvax1.sinaimg.cn/large/00774lbQly1gsxo79l74jj31cy0j74gd.jpg">
-<meta property="og:image" content="https://tvax3.sinaimg.cn/large/00774lbQly1gsxo7eg0i2j31670mxdzj.jpg">
-<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gsxo7j44hwj313f0j9n9k.jpg">
-<meta property="article:published_time" content="2021-07-29T03:45:00.000Z">
-<meta property="article:modified_time" content="2021-07-29T03:47:14.258Z">
-<meta property="article:author" content="R0ser1">
-<meta property="article:tag" content="SQL注入">
-<meta property="article:tag" content="代码审计">
-<meta property="article:tag" content="ThinkPHP">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://tvax2.sinaimg.cn/large/00774lbQly1gsxo4uwmygj31cr0hm4ak.jpg">
-    <meta http-equiv="Cache-control" content="no-cache">
+    <meta name="Cache-Control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    
     <title>ThinkPHP3.2注入漏洞学习 · R0ser1&#39;s Blog</title>
     <style type="text/css">
     @font-face {
@@ -109,8 +69,8 @@
 
 </style>
 
-    <link rel="preload" href= "/css/style.css?v=20210204" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-    <link rel="stylesheet" href= "/css/mobile.css?v=20210204" media="(max-width: 980px)">
+    <link rel="preload" href= /css/style.css?v=20180709 as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= /css/mobile.css?v=20180709 media="(max-width: 980px)">
     
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
     
@@ -224,13 +184,12 @@
     <link rel="icon" href= "https://tva2.sinaimg.cn/large/00774lbQly1gsk7gp4qw1j30qo0qojtw.jpg" />
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
-    <link rel="preload" href="/scripts/main.js?v=20210204" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
     <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
     <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
-    <script src="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.15.3/js/all.min.js"  data-auto-replace-svg="nest" ></script>
     
     <!-- fancybox -->
-    <script src="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
     <!-- 百度统计  -->
     
     <!-- 谷歌统计  -->

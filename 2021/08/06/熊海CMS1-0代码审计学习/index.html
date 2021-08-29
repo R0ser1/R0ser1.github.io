@@ -5,49 +5,17 @@
 
 
 
-<!-- keywords -->
-
-
-
-
 <head>
     <meta charset="utf-8">
+	<meta name="referrer" content="no-referrer" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
     <meta name="author" content="R0ser1">
     <meta name="renderer" content="webkit">
     <meta name="copyright" content="R0ser1">
-    
-    <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
-    
+    <meta name="keywords" content="Hexo | R0ser1">
     <meta name="description" content="">
-    <meta name="description" content="前言很老的CMS我们就只审计一下前台的东西就行了，审计后台有点鸡肋。xss一堆评论啥的都有，环境有问题就不测试了，拉跨的代码，后面还是换MVC的代码来学习吧。 环境 熊海cms1.0 （http:&#x2F;&#x2F;js.down.chinaz.com&#x2F;201503&#x2F;xhcms_v1.0.rar）seay、PHPstormPHP 5.2 [毕竟很老的CMS了版本高了容易出问题]  漏洞login注入和index">
-<meta property="og:type" content="article">
-<meta property="og:title" content="熊海CMS1.0代码审计学习">
-<meta property="og:url" content="http://example.com/2021/08/06/%E7%86%8A%E6%B5%B7CMS1-0%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%AD%A6%E4%B9%A0/index.html">
-<meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="前言很老的CMS我们就只审计一下前台的东西就行了，审计后台有点鸡肋。xss一堆评论啥的都有，环境有问题就不测试了，拉跨的代码，后面还是换MVC的代码来学习吧。 环境 熊海cms1.0 （http:&#x2F;&#x2F;js.down.chinaz.com&#x2F;201503&#x2F;xhcms_v1.0.rar）seay、PHPstormPHP 5.2 [毕竟很老的CMS了版本高了容易出问题]  漏洞login注入和index">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gt7fybo3wuj30yh0o8nbk.jpg">
-<meta property="og:image" content="https://tvax4.sinaimg.cn/large/00774lbQly1gt7fyhihtej30rk09x41p.jpg">
-<meta property="og:image" content="https://tvax4.sinaimg.cn/large/00774lbQly1gt7fym8974j30ph05qjtj.jpg">
-<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gt7fys2pn0j318w0k2kdg.jpg">
-<meta property="og:image" content="https://tvax2.sinaimg.cn/large/00774lbQly1gt7fyxgsszj31ey0klwvh.jpg">
-<meta property="og:image" content="https://tvax2.sinaimg.cn/large/00774lbQly1gt7fz22w48j30rk06adi7.jpg">
-<meta property="og:image" content="https://tvax4.sinaimg.cn/large/00774lbQly1gt7fz7csjmj312d0lbdqo.jpg">
-<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gt7fzc0uoej312e0c8ala.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/00774lbQly1gt7fzha4ddj30uw09z0za.jpg">
-<meta property="og:image" content="https://tvax4.sinaimg.cn/large/00774lbQly1gt7fzlwlgdj30w6075aep.jpg">
-<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gt7fzqs4vxj31en0f0tgi.jpg">
-<meta property="og:image" content="https://tva3.sinaimg.cn/large/00774lbQly1gt7fzwbqnpj31cr0f3106.jpg">
-<meta property="article:published_time" content="2021-08-06T14:35:00.000Z">
-<meta property="article:modified_time" content="2021-08-06T14:36:09.104Z">
-<meta property="article:author" content="R0ser1">
-<meta property="article:tag" content="代码审计">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gt7fybo3wuj30yh0o8nbk.jpg">
-    <meta http-equiv="Cache-control" content="no-cache">
+    <meta name="Cache-Control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    
     <title>熊海CMS1.0代码审计学习 · R0ser1&#39;s Blog</title>
     <style type="text/css">
     @font-face {
@@ -101,8 +69,8 @@
 
 </style>
 
-    <link rel="preload" href= "/css/style.css?v=20210204" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-    <link rel="stylesheet" href= "/css/mobile.css?v=20210204" media="(max-width: 980px)">
+    <link rel="preload" href= /css/style.css?v=20180709 as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= /css/mobile.css?v=20180709 media="(max-width: 980px)">
     
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
     
@@ -216,13 +184,12 @@
     <link rel="icon" href= "https://tva2.sinaimg.cn/large/00774lbQly1gsk7gp4qw1j30qo0qojtw.jpg" />
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
-    <link rel="preload" href="/scripts/main.js?v=20210204" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
     <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
     <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
-    <script src="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.15.3/js/all.min.js"  data-auto-replace-svg="nest" ></script>
     
     <!-- fancybox -->
-    <script src="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
     <!-- 百度统计  -->
     
     <!-- 谷歌统计  -->

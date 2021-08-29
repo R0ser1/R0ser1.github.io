@@ -5,64 +5,17 @@
 
 
 
-<!-- keywords -->
-
-
-
-
 <head>
     <meta charset="utf-8">
+	<meta name="referrer" content="no-referrer" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
     <meta name="author" content="R0ser1">
     <meta name="renderer" content="webkit">
     <meta name="copyright" content="R0ser1">
-    
-    <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
-    
+    <meta name="keywords" content="Hexo | R0ser1">
     <meta name="description" content="">
-    <meta name="description" content="前言本文学习的是PbootCMS_V1.2.1版本代码审计，采用的是MVC框架的设计。也是爆了一些洞，在前辈们的基础上学习，看还能不能发现一些有意思的东西。 环境部署部署CMSPbootCMS部署是很方便的,直接下载下来即可使用,但是系统默认使用sqlite的,因为用mysql用的比较多,那这里我就以mysql数据库安装来跑程序。在config\database.php 然后创建自己的数据库，导入">
-<meta property="og:type" content="article">
-<meta property="og:title" content="PbootCMS1.2.1代码审计学习">
-<meta property="og:url" content="http://example.com/2021/08/09/PbootCMS1-2-1%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%AD%A6%E4%B9%A0/index.html">
-<meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="前言本文学习的是PbootCMS_V1.2.1版本代码审计，采用的是MVC框架的设计。也是爆了一些洞，在前辈们的基础上学习，看还能不能发现一些有意思的东西。 环境部署部署CMSPbootCMS部署是很方便的,直接下载下来即可使用,但是系统默认使用sqlite的,因为用mysql用的比较多,那这里我就以mysql数据库安装来跑程序。在config\database.php 然后创建自己的数据库，导入">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gt9d4p9fp8j60u40e678702.jpg">
-<meta property="og:image" content="https://tvax3.sinaimg.cn/large/00774lbQly1gt9t72dueoj60wt0n9h1202.jpg">
-<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gt9t7919xoj311r0gzaix.jpg">
-<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gt9t7e8vwgj30rz098n29.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/00774lbQly1gt9t7k8ie1j30x708mwjn.jpg">
-<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gt9t7t6jeyj30te07x43s.jpg">
-<meta property="og:image" content="https://tva3.sinaimg.cn/large/00774lbQly1gt9t80ebxgj30tx05sdjc.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/00774lbQly1gt9t85jp7xj31340lkdv7.jpg">
-<meta property="og:image" content="https://tvax1.sinaimg.cn/large/00774lbQly1gt9t8ceyyfj30yf06j0xs.jpg">
-<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gt9t8hfmt4j30vi05bq64.jpg">
-<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gt9t8ndcf1j31f80kcwpb.jpg">
-<meta property="og:image" content="https://tvax3.sinaimg.cn/large/00774lbQly1gt9t8u94voj30q5068q5t.jpg">
-<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gt9t8zgl5yj31c80m04m7.jpg">
-<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gt9t974embj31a50fon9f.jpg">
-<meta property="og:image" content="https://tvax4.sinaimg.cn/large/00774lbQly1gt9t9cwc6xj30vs0d6wj4.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/00774lbQly1gt9t9ibflzj31e60butno.jpg">
-<meta property="og:image" content="https://tvax3.sinaimg.cn/large/00774lbQly1gt9t9oq4atj31dp0fwwnm.jpg">
-<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gt9t9vh92lj30pg08vn2m.jpg">
-<meta property="og:image" content="https://tvax3.sinaimg.cn/large/00774lbQly1gt9ta33ix0j316m0idds9.jpg">
-<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gt9ta94pq3j60xy0hkgus02.jpg">
-<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gt9taev4q0j60xy0ht7cq02.jpg">
-<meta property="og:image" content="https://tvax3.sinaimg.cn/large/00774lbQly1gt9takh2uvj31400i4wud.jpg">
-<meta property="og:image" content="https://tvax4.sinaimg.cn/large/00774lbQly1gt9taqfi1nj31el0f2tf5.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/00774lbQly1gt9tavrss1j31eu0jxamm.jpg">
-<meta property="og:image" content="https://tva3.sinaimg.cn/large/00774lbQly1gt9tb0vbj2j312108sgvu.jpg">
-<meta property="og:image" content="https://tvax2.sinaimg.cn/large/00774lbQly1gt9tb762swj30u10ddqb5.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/00774lbQly1gt9tbcu5g9j310n07e46v.jpg">
-<meta property="article:published_time" content="2021-08-09T00:51:00.000Z">
-<meta property="article:modified_time" content="2021-08-09T01:06:44.017Z">
-<meta property="article:author" content="R0ser1">
-<meta property="article:tag" content="代码审计">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gt9d4p9fp8j60u40e678702.jpg">
-    <meta http-equiv="Cache-control" content="no-cache">
+    <meta name="Cache-Control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    
     <title>PbootCMS1.2.1代码审计学习 · R0ser1&#39;s Blog</title>
     <style type="text/css">
     @font-face {
@@ -116,8 +69,8 @@
 
 </style>
 
-    <link rel="preload" href= "/css/style.css?v=20210204" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-    <link rel="stylesheet" href= "/css/mobile.css?v=20210204" media="(max-width: 980px)">
+    <link rel="preload" href= /css/style.css?v=20180709 as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= /css/mobile.css?v=20180709 media="(max-width: 980px)">
     
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
     
@@ -231,13 +184,12 @@
     <link rel="icon" href= "https://tva2.sinaimg.cn/large/00774lbQly1gsk7gp4qw1j30qo0qojtw.jpg" />
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
-    <link rel="preload" href="/scripts/main.js?v=20210204" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
     <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
     <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
-    <script src="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.15.3/js/all.min.js"  data-auto-replace-svg="nest" ></script>
     
     <!-- fancybox -->
-    <script src="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
     <!-- 百度统计  -->
     
     <!-- 谷歌统计  -->

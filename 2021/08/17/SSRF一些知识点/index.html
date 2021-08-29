@@ -5,60 +5,17 @@
 
 
 
-<!-- keywords -->
-
-
-
-
 <head>
     <meta charset="utf-8">
+	<meta name="referrer" content="no-referrer" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
     <meta name="author" content="R0ser1">
     <meta name="renderer" content="webkit">
     <meta name="copyright" content="R0ser1">
-    
-    <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
-    
+    <meta name="keywords" content="Hexo | R0ser1">
     <meta name="description" content="">
-    <meta name="description" content="漏洞介绍 SSRF(Server-Side Request Forgery:服务器端请求伪造) 是一种利用漏洞伪造服务器端发起请求。一般情况下，SSRF攻击的目标是从外网无法访问的内部系统。 SSRF原理 通过控制功能中的发起请求的服务来当作跳板攻击内网中其他服务。比如，通过控制前台的请求远程地址加载的响应，来让请求数据由远程的URL域名修改为请求本地、或者内网的IP地址及服务，来造成对内网系统的">
-<meta property="og:type" content="article">
-<meta property="og:title" content="SSRF一些知识点">
-<meta property="og:url" content="http://example.com/2021/08/17/SSRF%E4%B8%80%E4%BA%9B%E7%9F%A5%E8%AF%86%E7%82%B9/index.html">
-<meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="漏洞介绍 SSRF(Server-Side Request Forgery:服务器端请求伪造) 是一种利用漏洞伪造服务器端发起请求。一般情况下，SSRF攻击的目标是从外网无法访问的内部系统。 SSRF原理 通过控制功能中的发起请求的服务来当作跳板攻击内网中其他服务。比如，通过控制前台的请求远程地址加载的响应，来让请求数据由远程的URL域名修改为请求本地、或者内网的IP地址及服务，来造成对内网系统的">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gtjtthcymyj30k00aumxt.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/00774lbQly1gtjttv23r9j31ai0h1qhk.jpg">
-<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gtjtu09omoj31800gkk2b.jpg">
-<meta property="og:image" content="https://tvax3.sinaimg.cn/large/00774lbQly1gtjtu4wjgrj319e0h8tl0.jpg">
-<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gtjtua76ghj31ar0h84ab.jpg">
-<meta property="og:image" content="https://tvax4.sinaimg.cn/large/00774lbQly1gtjtugc7lzj317u0hj11v.jpg">
-<meta property="og:image" content="https://tvax1.sinaimg.cn/large/00774lbQly1gtjtum4ri6j31940gm4bt.jpg">
-<meta property="og:image" content="https://tva3.sinaimg.cn/large/00774lbQly1gtjtuywel2j30hc0c0752.jpg">
-<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gtjtvb0sqoj30um06aagk.jpg">
-<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gtjtvg9kvwj30sj0gu78q.jpg">
-<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gtjtvlwofdj31a80c5gpq.jpg">
-<meta property="og:image" content="https://tva3.sinaimg.cn/large/00774lbQly1gtjtvsdrerj31f60gldoo.jpg">
-<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gtjtvx0zenj31aa0dr7wh.jpg">
-<meta property="og:image" content="https://tvax4.sinaimg.cn/large/00774lbQly1gtjtw38nihj30r60ebn83.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/00774lbQly1gtjtw8wjz0j313f0frtdi.jpg">
-<meta property="og:image" content="https://tvax2.sinaimg.cn/large/00774lbQly1gtjtwe684sj316j0b077u.jpg">
-<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gtjtwit0v2j30v3094762.jpg">
-<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gtjtwoulrxj30zl0pkncr.jpg">
-<meta property="og:image" content="https://tvax4.sinaimg.cn/large/00774lbQly1gtjtwuemh0j30n5044q4v.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/00774lbQly1gtjtwzqlvsj30zl0jfnc3.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/00774lbQly1gtjtx5icnuj30mh08sjx8.jpg">
-<meta property="og:image" content="https://tvax2.sinaimg.cn/large/00774lbQly1gtjtxayvzdj30yc0e8thc.jpg">
-<meta property="og:image" content="https://tva3.sinaimg.cn/large/00774lbQly1gtjtxggzbij312u0c344v.jpg">
-<meta property="article:published_time" content="2021-08-17T07:44:00.000Z">
-<meta property="article:modified_time" content="2021-08-20T03:24:53.764Z">
-<meta property="article:author" content="R0ser1">
-<meta property="article:tag" content="SSRF">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gtjtthcymyj30k00aumxt.jpg">
-    <meta http-equiv="Cache-control" content="no-cache">
+    <meta name="Cache-Control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    
     <title>SSRF一些知识点 · R0ser1&#39;s Blog</title>
     <style type="text/css">
     @font-face {
@@ -112,8 +69,8 @@
 
 </style>
 
-    <link rel="preload" href= "/css/style.css?v=20210204" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-    <link rel="stylesheet" href= "/css/mobile.css?v=20210204" media="(max-width: 980px)">
+    <link rel="preload" href= /css/style.css?v=20180709 as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= /css/mobile.css?v=20180709 media="(max-width: 980px)">
     
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
     
@@ -227,13 +184,12 @@
     <link rel="icon" href= "https://tva2.sinaimg.cn/large/00774lbQly1gsk7gp4qw1j30qo0qojtw.jpg" />
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
-    <link rel="preload" href="/scripts/main.js?v=20210204" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
     <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
     <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
-    <script src="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.15.3/js/all.min.js"  data-auto-replace-svg="nest" ></script>
     
     <!-- fancybox -->
-    <script src="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
     <!-- 百度统计  -->
     
     <!-- 谷歌统计  -->

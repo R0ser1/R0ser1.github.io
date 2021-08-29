@@ -5,41 +5,17 @@
 
 
 
-<!-- keywords -->
-
-
-
-
 <head>
     <meta charset="utf-8">
+	<meta name="referrer" content="no-referrer" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
     <meta name="author" content="R0ser1">
     <meta name="renderer" content="webkit">
     <meta name="copyright" content="R0ser1">
-    
-    <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
-    
+    <meta name="keywords" content="Hexo | R0ser1">
     <meta name="description" content="">
-    <meta name="description" content="重装漏洞总结常见的重装漏洞种类  1、自动删除这个安装文件 ​      通过生成一个lock文件判断是否安装过 2、无验证 ​     安装完成不会自动 删除文件，也不会生成lock判断 3、安装file ​     直接用Get提交step绕过，直接到下一步 4、变量覆盖导致重置 ​     可以GET,POST,COOKIE任意方式提交变量名给$insLockfile给其赋值空，覆盖$ins">
-<meta property="og:type" content="article">
-<meta property="og:title" content="重装漏洞小结">
-<meta property="og:url" content="http://example.com/2021/08/18/%E9%87%8D%E8%A3%85%E6%BC%8F%E6%B4%9E%E5%B0%8F%E7%BB%93/index.html">
-<meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="重装漏洞总结常见的重装漏洞种类  1、自动删除这个安装文件 ​      通过生成一个lock文件判断是否安装过 2、无验证 ​     安装完成不会自动 删除文件，也不会生成lock判断 3、安装file ​     直接用Get提交step绕过，直接到下一步 4、变量覆盖导致重置 ​     可以GET,POST,COOKIE任意方式提交变量名给$insLockfile给其赋值空，覆盖$ins">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://tva3.sinaimg.cn/large/00774lbQly1gtl6oxxswtj60wz0netlo02.jpg">
-<meta property="og:image" content="https://tvax1.sinaimg.cn/large/00774lbQly1gtl6p363g0j617u0by0yn02.jpg">
-<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gtl6p8fyoyj60wz0q9wuk02.jpg">
-<meta property="og:image" content="https://tvax3.sinaimg.cn/large/00774lbQly1gtl6pdqtkfj61dv0d57c902.jpg">
-<meta property="article:published_time" content="2021-08-18T11:55:00.000Z">
-<meta property="article:modified_time" content="2021-08-18T11:56:00.564Z">
-<meta property="article:author" content="R0ser1">
-<meta property="article:tag" content="代码审计">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://tva3.sinaimg.cn/large/00774lbQly1gtl6oxxswtj60wz0netlo02.jpg">
-    <meta http-equiv="Cache-control" content="no-cache">
+    <meta name="Cache-Control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    
     <title>重装漏洞小结 · R0ser1&#39;s Blog</title>
     <style type="text/css">
     @font-face {
@@ -93,8 +69,8 @@
 
 </style>
 
-    <link rel="preload" href= "/css/style.css?v=20210204" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-    <link rel="stylesheet" href= "/css/mobile.css?v=20210204" media="(max-width: 980px)">
+    <link rel="preload" href= /css/style.css?v=20180709 as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= /css/mobile.css?v=20180709 media="(max-width: 980px)">
     
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
     
@@ -208,13 +184,12 @@
     <link rel="icon" href= "https://tva2.sinaimg.cn/large/00774lbQly1gsk7gp4qw1j30qo0qojtw.jpg" />
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
-    <link rel="preload" href="/scripts/main.js?v=20210204" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
     <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
     <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
-    <script src="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.15.3/js/all.min.js"  data-auto-replace-svg="nest" ></script>
     
     <!-- fancybox -->
-    <script src="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
     <!-- 百度统计  -->
     
     <!-- 谷歌统计  -->

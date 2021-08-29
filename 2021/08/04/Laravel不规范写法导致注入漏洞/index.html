@@ -5,44 +5,17 @@
 
 
 
-<!-- keywords -->
-
-
-
-
 <head>
     <meta charset="utf-8">
+	<meta name="referrer" content="no-referrer" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
     <meta name="author" content="R0ser1">
     <meta name="renderer" content="webkit">
     <meta name="copyright" content="R0ser1">
-    
-    <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
-    
+    <meta name="keywords" content="Hexo | R0ser1">
     <meta name="description" content="">
-    <meta name="description" content="Laravel注入不规范写法导致注入漏洞学习  不规范写法导致的SQL注入漏洞概要只要发现SQL语句是拼凑的基本都会有SQL注入，造成的结果就是没有绑定值，大家可以跟一下代码。 漏洞环境一123456789101112131415161718&lt;?phpnamespace App\Http\Controllers;use Illuminate\Http\Request;use DB;class">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Laravel不规范写法导致注入漏洞">
-<meta property="og:url" content="http://example.com/2021/08/04/Laravel%E4%B8%8D%E8%A7%84%E8%8C%83%E5%86%99%E6%B3%95%E5%AF%BC%E8%87%B4%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E/index.html">
-<meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="Laravel注入不规范写法导致注入漏洞学习  不规范写法导致的SQL注入漏洞概要只要发现SQL语句是拼凑的基本都会有SQL注入，造成的结果就是没有绑定值，大家可以跟一下代码。 漏洞环境一123456789101112131415161718&lt;?phpnamespace App\Http\Controllers;use Illuminate\Http\Request;use DB;class">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://tvax1.sinaimg.cn/large/00774lbQly1gt50t1huivj30n209tq4r.jpg">
-<meta property="og:image" content="https://tvax3.sinaimg.cn/large/00774lbQly1gt50t7nvv9j30qe0gln0o.jpg">
-<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gt50teqlokj31e90minbk.jpg">
-<meta property="og:image" content="https://tvax3.sinaimg.cn/large/00774lbQly1gt50tl6epbj30yt0ebgrd.jpg">
-<meta property="og:image" content="https://tvax4.sinaimg.cn/large/00774lbQly1gt50tqideaj30p3095whb.jpg">
-<meta property="article:published_time" content="2021-08-04T12:20:00.000Z">
-<meta property="article:modified_time" content="2021-08-04T12:20:56.404Z">
-<meta property="article:author" content="R0ser1">
-<meta property="article:tag" content="SQL注入">
-<meta property="article:tag" content="Laravel">
-<meta property="article:tag" content="代码审计">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://tvax1.sinaimg.cn/large/00774lbQly1gt50t1huivj30n209tq4r.jpg">
-    <meta http-equiv="Cache-control" content="no-cache">
+    <meta name="Cache-Control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    
     <title>Laravel不规范写法导致注入漏洞 · R0ser1&#39;s Blog</title>
     <style type="text/css">
     @font-face {
@@ -96,8 +69,8 @@
 
 </style>
 
-    <link rel="preload" href= "/css/style.css?v=20210204" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-    <link rel="stylesheet" href= "/css/mobile.css?v=20210204" media="(max-width: 980px)">
+    <link rel="preload" href= /css/style.css?v=20180709 as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= /css/mobile.css?v=20180709 media="(max-width: 980px)">
     
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
     
@@ -211,13 +184,12 @@
     <link rel="icon" href= "https://tva2.sinaimg.cn/large/00774lbQly1gsk7gp4qw1j30qo0qojtw.jpg" />
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
-    <link rel="preload" href="/scripts/main.js?v=20210204" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
     <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
     <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
-    <script src="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.15.3/js/all.min.js"  data-auto-replace-svg="nest" ></script>
     
     <!-- fancybox -->
-    <script src="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
     <!-- 百度统计  -->
     
     <!-- 谷歌统计  -->

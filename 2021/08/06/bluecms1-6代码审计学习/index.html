@@ -5,59 +5,17 @@
 
 
 
-<!-- keywords -->
-
-
-
-
 <head>
     <meta charset="utf-8">
+	<meta name="referrer" content="no-referrer" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
     <meta name="author" content="R0ser1">
     <meta name="renderer" content="webkit">
     <meta name="copyright" content="R0ser1">
-    
-    <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
-    
+    <meta name="keywords" content="Hexo | R0ser1">
     <meta name="description" content="">
-    <meta name="description" content="前言最近也一直跟着师傅们学习代码审计，基本没独立起来自己审计一些东西。最近审计一些不知名的小众CMS吧，然后慢慢去审计一些POP链。比较简单的审计记录一下罢了，大牛忽略。 环境 BlueCMS v1.6 sp1 seay、PHPstorm PHP 5.2 [毕竟很老的CMS了版本高了容易出问题]  漏洞因为CMS比较老，这里就以定位敏感关键字快速定位。 ad_js文件SQL注入  Common.f">
-<meta property="og:type" content="article">
-<meta property="og:title" content="bluecms1.6代码审计学习">
-<meta property="og:url" content="http://example.com/2021/08/06/bluecms1-6%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1%E5%AD%A6%E4%B9%A0/index.html">
-<meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="前言最近也一直跟着师傅们学习代码审计，基本没独立起来自己审计一些东西。最近审计一些不知名的小众CMS吧，然后慢慢去审计一些POP链。比较简单的审计记录一下罢了，大牛忽略。 环境 BlueCMS v1.6 sp1 seay、PHPstorm PHP 5.2 [毕竟很老的CMS了版本高了容易出问题]  漏洞因为CMS比较老，这里就以定位敏感关键字快速定位。 ad_js文件SQL注入  Common.f">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gt6uk8viypj30we0a9dn6.jpg">
-<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gt6ukgynwnj30uq06n786.jpg">
-<meta property="og:image" content="https://tva3.sinaimg.cn/large/00774lbQly1gt6uko7jqoj31610lmn9y.jpg">
-<meta property="og:image" content="https://tvax2.sinaimg.cn/large/00774lbQly1gt6uktllsxj311n04sdj1.jpg">
-<meta property="og:image" content="https://tvax2.sinaimg.cn/large/00774lbQly1gt6ukz0k6yj30xo09v0xq.jpg">
-<meta property="og:image" content="https://tvax4.sinaimg.cn/large/00774lbQly1gt6ul3vzt0j311l04yq7f.jpg">
-<meta property="og:image" content="https://tvax4.sinaimg.cn/large/00774lbQly1gt6ul9my6zj30yx0iqk2d.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/00774lbQly1gt6ulfu48ej30xz0k2n3j.jpg">
-<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gt6ulkqxrlj30sv08jadx.jpg">
-<meta property="og:image" content="https://tvax4.sinaimg.cn/large/00774lbQly1gt6ulpxk1mj30sg06utcm.jpg">
-<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gt6uluoys5j30wm065ac6.jpg">
-<meta property="og:image" content="https://tvax2.sinaimg.cn/large/00774lbQly1gt6ulzssxbj30sg0cz42z.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/00774lbQly1gt6um59hlej30z30m317u.jpg">
-<meta property="og:image" content="https://tvax3.sinaimg.cn/large/00774lbQly1gt6umdm7vpj311v0m7dtu.jpg">
-<meta property="og:image" content="https://tvax3.sinaimg.cn/large/00774lbQly1gt6umjhlhoj30zp0hu48m.jpg">
-<meta property="og:image" content="https://tvax2.sinaimg.cn/large/00774lbQly1gt6umomrpcj30vq0ea77c.jpg">
-<meta property="og:image" content="https://tvax3.sinaimg.cn/large/00774lbQly1gt6umu2ffwj319q0lbth1.jpg">
-<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gt6umyygttj313h0bd47n.jpg">
-<meta property="og:image" content="https://tvax2.sinaimg.cn/large/00774lbQly1gt6un42tgdj610x0exdmg02.jpg">
-<meta property="og:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gt6un9ajkyj30xv0hon4u.jpg">
-<meta property="og:image" content="https://tva3.sinaimg.cn/large/00774lbQly1gt6unf9oqij318i0kjwn7.jpg">
-<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gt6unknezdj30pz054wfg.jpg">
-<meta property="article:published_time" content="2021-08-06T02:17:00.000Z">
-<meta property="article:modified_time" content="2021-08-06T02:19:04.222Z">
-<meta property="article:author" content="R0ser1">
-<meta property="article:tag" content="代码审计">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://tva4.sinaimg.cn/large/00774lbQly1gt6uk8viypj30we0a9dn6.jpg">
-    <meta http-equiv="Cache-control" content="no-cache">
+    <meta name="Cache-Control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    
     <title>bluecms1.6代码审计学习 · R0ser1&#39;s Blog</title>
     <style type="text/css">
     @font-face {
@@ -111,8 +69,8 @@
 
 </style>
 
-    <link rel="preload" href= "/css/style.css?v=20210204" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-    <link rel="stylesheet" href= "/css/mobile.css?v=20210204" media="(max-width: 980px)">
+    <link rel="preload" href= /css/style.css?v=20180709 as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= /css/mobile.css?v=20180709 media="(max-width: 980px)">
     
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
     
@@ -226,13 +184,12 @@
     <link rel="icon" href= "https://tva2.sinaimg.cn/large/00774lbQly1gsk7gp4qw1j30qo0qojtw.jpg" />
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
-    <link rel="preload" href="/scripts/main.js?v=20210204" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
     <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
     <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
-    <script src="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.15.3/js/all.min.js"  data-auto-replace-svg="nest" ></script>
     
     <!-- fancybox -->
-    <script src="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
     <!-- 百度统计  -->
     
     <!-- 谷歌统计  -->

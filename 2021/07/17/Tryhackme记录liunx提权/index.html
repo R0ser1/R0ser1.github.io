@@ -5,47 +5,17 @@
 
 
 
-<!-- keywords -->
-
-
-
-
 <head>
     <meta charset="utf-8">
+	<meta name="referrer" content="no-referrer" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
     <meta name="author" content="R0ser1">
     <meta name="renderer" content="webkit">
     <meta name="copyright" content="R0ser1">
-    
-    <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
-    
+    <meta name="keywords" content="Hexo | R0ser1">
     <meta name="description" content="">
-    <meta name="description" content="Tryhackme学习liunx提权   LinEnum 是一个简单的 bash 脚本，它执行与权限提升相关的常见命令，从而节省时间并允许投入更多精力来获取 root 权限https:&#x2F;&#x2F;github.com&#x2F;rebootuser&#x2F;LinEnum&#x2F;blob&#x2F;master&#x2F;LinEnum.sh  一、滥用SUIID&#x2F;GUID文件查找和利用 SUID 文件  Linux 提权利用的第一步是检查设置了">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Tryhackme记录liunx提权">
-<meta property="og:url" content="http://example.com/2021/07/17/Tryhackme%E8%AE%B0%E5%BD%95liunx%E6%8F%90%E6%9D%83/index.html">
-<meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="Tryhackme学习liunx提权   LinEnum 是一个简单的 bash 脚本，它执行与权限提升相关的常见命令，从而节省时间并允许投入更多精力来获取 root 权限https:&#x2F;&#x2F;github.com&#x2F;rebootuser&#x2F;LinEnum&#x2F;blob&#x2F;master&#x2F;LinEnum.sh  一、滥用SUIID&#x2F;GUID文件查找和利用 SUID 文件  Linux 提权利用的第一步是检查设置了">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://tvax1.sinaimg.cn/large/00774lbQly1gsi57lokfdj30jv0703zx.jpg">
-<meta property="og:image" content="https://tvax1.sinaimg.cn/large/00774lbQly1gsi57rl6f8j30j702qjsa.jpg">
-<meta property="og:image" content="https://tvax1.sinaimg.cn/large/00774lbQly1gsi57xfq14j30s509sgp6.jpg">
-<meta property="og:image" content="https://tva1.sinaimg.cn/large/00774lbQly1gsi5845iz6j30xu0kf7fi.jpg">
-<meta property="og:image" content="https://tvax1.sinaimg.cn/large/00774lbQly1gsi589k878j30i503dq4e.jpg">
-<meta property="og:image" content="https://tva2.sinaimg.cn/large/00774lbQly1gsi58ekuyoj30uo0bqtii.jpg">
-<meta property="og:image" content="https://tvax4.sinaimg.cn/large/00774lbQly1gsi58tkarrj60wh02imyo02.jpg">
-<meta property="og:image" content="https://tvax4.sinaimg.cn/large/00774lbQly1gsi594z7omj30jp032js9.jpg">
-<meta property="og:image" content="https://tvax2.sinaimg.cn/large/00774lbQly1gsi59bpbm3j30id09478d.jpg">
-<meta property="og:image" content="https://tvax2.sinaimg.cn/large/00774lbQly1gsi59hrhhxj30jk06w0vy.jpg">
-<meta property="og:image" content="https://tvax2.sinaimg.cn/large/00774lbQly1gsi59mtncaj30t502hjss.jpg">
-<meta property="article:published_time" content="2021-07-17T13:45:00.000Z">
-<meta property="article:modified_time" content="2021-07-17T13:45:39.344Z">
-<meta property="article:author" content="R0ser1">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://tvax1.sinaimg.cn/large/00774lbQly1gsi57lokfdj30jv0703zx.jpg">
-    <meta http-equiv="Cache-control" content="no-cache">
+    <meta name="Cache-Control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    
     <title>Tryhackme记录liunx提权 · R0ser1&#39;s Blog</title>
     <style type="text/css">
     @font-face {
@@ -99,8 +69,8 @@
 
 </style>
 
-    <link rel="preload" href= "/css/style.css?v=20210204" as="style" onload="this.onload=null;this.rel='stylesheet'" />
-    <link rel="stylesheet" href= "/css/mobile.css?v=20210204" media="(max-width: 980px)">
+    <link rel="preload" href= /css/style.css?v=20180709 as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= /css/mobile.css?v=20180709 media="(max-width: 980px)">
     
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
     
@@ -214,13 +184,12 @@
     <link rel="icon" href= "https://tva2.sinaimg.cn/large/00774lbQly1gsk7gp4qw1j30qo0qojtw.jpg" />
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
-    <link rel="preload" href="/scripts/main.js?v=20210204" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
     <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
     <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
-    <script src="https://cdn.bootcdn.net/ajax/libs/font-awesome/5.15.3/js/all.min.js"  data-auto-replace-svg="nest" ></script>
     
     <!-- fancybox -->
-    <script src="https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
     <!-- 百度统计  -->
     
     <!-- 谷歌统计  -->
